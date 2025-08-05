@@ -17,16 +17,17 @@ struct OnboardingScreen1: View {
             VStack(spacing: 40) {
                 Spacer()
                 
-                // Illustration placeholder - replace with your meditation illustration
                 ZStack {
-                    Circle()
-                        .fill(Color.purple.opacity(0.1))
-                        .frame(width: 300, height: 300)
+//                    Circle()
+//                        .fill(Color.purple.opacity(0.1))
+//                        .frame(width: 300, height: 300)
                     
-                    Image(systemName: "figure.mind.and.body")
-                        .font(.system(size: 120))
-                        .foregroundColor(.purple)
-                }
+                    if let logoImage = UIImage(named: "OnlineYogaClassIMG.jpeg") {
+                        Image(uiImage: logoImage)
+                            .resizable()
+                            .frame(width: 400, height: 400)
+                    }
+            }
                 
                 VStack(spacing: 16) {
                     Text("Your Personal Yoga &")
@@ -61,12 +62,14 @@ struct OnboardingScreen1: View {
                             .background(
                                 Color(red: 0.4, green: 0.3, blue: 0.8)
                             )
-                            .cornerRadius(25)
+                            .cornerRadius(28)
                     }
                     .padding(.horizontal, 40)
                     
                     Button(action: {
                         // Handle sign in
+                        
+                        
                     }) {
                         Text("Sign in")
                             .font(.headline)
