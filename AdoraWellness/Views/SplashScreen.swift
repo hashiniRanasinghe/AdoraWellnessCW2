@@ -12,7 +12,7 @@ struct SplashScreen: View {
     
     var body: some View {
         ZStack {
-            // Purple gradient background
+            //purple bg
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.4, green: 0.3, blue: 0.8),
@@ -24,7 +24,6 @@ struct SplashScreen: View {
             .ignoresSafeArea()
             
             VStack(spacing: 20) {
-                // Logo placeholder - replace with your actual logo
                 Image(systemName: "leaf.circle")
                     .font(.system(size: 80))
                     .foregroundColor(.white)

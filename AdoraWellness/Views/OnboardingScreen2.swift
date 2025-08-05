@@ -13,7 +13,6 @@ struct OnboardingScreen2: View {
             Color.white.ignoresSafeArea()
             
             VStack(spacing: 30) {
-                // Header
                 VStack(spacing: 8) {
                     Text("Choose Your Path")
                         .font(.title)
@@ -23,26 +22,21 @@ struct OnboardingScreen2: View {
                 
                 Spacer()
                 
-                // Instructor Option
+                //option 1 - instructor
                 VStack(spacing: 20) {
                     Text("I want to teach & guide")
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    // Instructor illustration placeholder
                     ZStack {
                         RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.orange.opacity(0.1))
+                            .fill(Color.white)
                             .frame(height: 150)
                         
-                        HStack {
-                            Image(systemName: "person.2.fill")
-                                .font(.system(size: 40))
-                                .foregroundColor(.orange)
-                            
-                            Image(systemName: "leaf.fill")
-                                .font(.system(size: 30))
-                                .foregroundColor(.green)
+                        if let logoImage = UIImage(named: "InstructorIMG.jpeg") {
+                            Image(uiImage: logoImage)
+                                .resizable()
+                                .frame(width: 200, height: 200)
                         }
                     }
                     .padding(.horizontal, 40)
@@ -92,28 +86,29 @@ struct OnboardingScreen2: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                             .background(Color(red: 0.4, green: 0.3, blue: 0.8))
-                            .cornerRadius(25)
+                            .cornerRadius(28)
                     }
                     .padding(.horizontal, 40)
                 }
                 
                 Spacer()
                 
-                // Student Option
+                //option 2 - student
                 VStack(spacing: 20) {
                     Text("I want to learn & practice")
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    // Student illustration placeholder
                     ZStack {
-                        Circle()
-                            .fill(Color.green.opacity(0.1))
-                            .frame(width: 120, height: 120)
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.white)
+                            .frame(height: 150)
                         
-                        Image(systemName: "figure.yoga")
-                            .font(.system(size: 50))
-                            .foregroundColor(.green)
+                        if let logoImage = UIImage(named: "StudentIMG3.jpeg") {
+                            Image(uiImage: logoImage)
+                                .resizable()
+                                .frame(width: 200, height: 200)
+                        }
                     }
                     
                     VStack(alignment: .leading, spacing: 8) {
@@ -161,7 +156,7 @@ struct OnboardingScreen2: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                             .background(Color(red: 0.4, green: 0.3, blue: 0.8))
-                            .cornerRadius(25)
+                            .cornerRadius(28)
                     }
                     .padding(.horizontal, 40)
                 }
