@@ -11,19 +11,20 @@ struct OnboardingScreen2: View {
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
-            
+            ScrollView {
             VStack(spacing: 30) {
                 VStack(spacing: 8) {
                     Text("Choose Your Path")
                         .font(.title)
                         .fontWeight(.bold)
-                        .padding(.top, 60)
+                        .padding(.top, 30)
+                        .padding(.bottom,-25)
                 }
                 
                 Spacer()
                 
                 //option 1 - instructor
-                VStack(spacing: 20) {
+                VStack(spacing: 10) {
                     Text("I want to teach & guide")
                         .font(.title2)
                         .fontWeight(.semibold)
@@ -163,6 +164,7 @@ struct OnboardingScreen2: View {
                 
                 Spacer().frame(height: 50)
             }
+        }
         }
     }
 }
