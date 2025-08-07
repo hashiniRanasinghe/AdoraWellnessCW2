@@ -101,16 +101,12 @@ struct LoginView: View {
 
                     HStack {
                         Spacer()
-                        Button(action: {
-                            // Handle sign up navigation
-                        }) {
+                        NavigationLink(destination: SignUpView()) {
                             HStack(spacing: 2) {
                                 Text("Don't have an account?")
                                     .foregroundColor(.secondary)
                                 Text("Sign Up")
-                                    .foregroundColor(
-                                        Color(red: 0.4, green: 0.3, blue: 0.8)
-                                    )
+                                    .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
                                     .fontWeight(.medium)
                             }
                             .font(.subheadline)
@@ -205,3 +201,6 @@ struct LoginView_Previews: PreviewProvider {
         LoginView()
     }
 }
+
+
+//https://adorawellnessioscw2.firebaseapp.com/__/auth/handler
