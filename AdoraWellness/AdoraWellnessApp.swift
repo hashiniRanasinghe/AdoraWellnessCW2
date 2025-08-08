@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct AdoraWellnessApp: App {
+    @StateObject var viewModel = AuthViewModel()
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(viewModel) 
         }
     }
 }

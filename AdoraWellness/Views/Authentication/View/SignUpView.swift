@@ -10,10 +10,12 @@ import SwiftUI
 struct SignUpView: View {
     @State private var name: String = ""
     @State private var email: String = ""
+    @State private var fullname: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
     @Environment(\.dismiss) var dismiss
-
+    @EnvironmentObject var viewModel : AuthViewModel
+    
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 0) {
@@ -68,7 +70,9 @@ struct SignUpView: View {
                     // Register button
                     VStack(spacing: 16) {
                         Button(action: {
-                            // Handle registration
+                            Task{
+                                try await viewModel.createUser(withEmail: email, password: password, fullname: fullname)
+                            }
                         }) {
                             Text("Register")
                                 .font(.headline)
@@ -88,9 +92,7 @@ struct SignUpView: View {
                     // Sign In link
                     HStack {
                         Spacer()
-                        Button(action: {
-                            dismiss()
-                        }) {
+                        NavigationLink(destination: LoginView()) {
                             HStack(spacing: 2) {
                                 Text("Have an account?")
                                     .foregroundColor(.secondary)
@@ -103,8 +105,7 @@ struct SignUpView: View {
                             .font(.subheadline)
                         }
                         Spacer()
-                    }
-                    .padding(.horizontal, 24)
+                    }                    .padding(.horizontal, 24)
                     .padding(.bottom, 32)
 
                     //t&c
@@ -154,16 +155,6 @@ struct SignUpView: View {
 
                     Spacer()
 
-                    // Bottom indicator
-                    HStack {
-                        Spacer()
-                        Rectangle()
-                            .frame(width: 134, height: 5)
-                            .cornerRadius(2.5)
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .padding(.bottom, 8)
                 }
             }
             .background(Color.white)

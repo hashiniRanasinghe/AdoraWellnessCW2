@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SplashScreen: View {
     @State private var isActive = false
+    @EnvironmentObject var viewModel: AuthViewModel
     
     var body: some View {
         ZStack {
@@ -40,12 +41,20 @@ struct SplashScreen: View {
                 isActive = true
             }
         }
+//        .fullScreenCover(isPresented: $isActive) {
+//            OnboardingScreen1()
+//        }
         .fullScreenCover(isPresented: $isActive) {
-            OnboardingScreen1()
-        }
+             if viewModel.userSession != nil {
+                 DashboardView()
+             } else {
+                 OnboardingScreen1()
+             }
+         }
     }
 }
 
 #Preview {
     SplashScreen()
 }
+
