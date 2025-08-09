@@ -9,6 +9,7 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 import Foundation
+import GoogleSignIn
 
 //form validator
 protocol AuthenticationFormProtocol {
@@ -22,6 +23,8 @@ class AuthViewModel: ObservableObject {
     @Published var currentUser: User?
     @Published var alertMessage: String?
     @Published var showAlert = false
+    @Published var isError = false
+    @Published var isSuccess = false
 
     init() {
         self.userSession = Auth.auth().currentUser
@@ -84,7 +87,9 @@ class AuthViewModel: ObservableObject {
     func signOut() {
         do {
             try Auth.auth().signOut()
-            //clear the user session
+            GoogleSignIn.GIDSignIn.sharedInstance.signOut()
+
+            // Clear the user session
             self.userSession = nil
             self.currentUser = nil
         } catch {
@@ -102,21 +107,23 @@ class AuthViewModel: ObservableObject {
         }
 
         do {
-           //delete the user from firestire
+            //delete the user from firestire
             try await Firestore.firestore()
                 .collection("users")
                 .document(user.uid)
                 .delete()
 
-    //delete the user from firebase auth
+            //delete the user from firebase auth
             try await user.delete()
 
-//clear the user session
+            //clear the user session
             self.userSession = nil
             self.currentUser = nil
             print("DEBUG: User account deleted successfully.")
         } catch {
-            print("DEBUG: Failed to delete user account: \(error.localizedDescription)")
+            print(
+                "DEBUG: Failed to delete user account: \(error.localizedDescription)"
+            )
             self.alertMessage = Utils.userFriendlyErrorMessage(from: error)
             self.showAlert = true
         }
@@ -132,6 +139,93 @@ class AuthViewModel: ObservableObject {
                 .getDocument()
         else { return }
         self.currentUser = try? snapshot.data(as: User.self)
+    }
+
+    // always creates/updates user document in google
+    func signInWithGoogle() async throws {
+        guard
+            let presentingViewController = UIApplication.shared.windows.first?
+                .rootViewController
+        else {
+            throw NSError(
+                domain: "GoogleSignIn", code: -1,
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "No presenting view controller found"
+                ])
+        }
+
+        do {
+            let result = try await GoogleSignIn.GIDSignIn.sharedInstance.signIn(
+                withPresenting: presentingViewController)
+
+            guard let idToken = result.user.idToken?.tokenString else {
+                throw NSError(
+                    domain: "GoogleSignIn", code: -1,
+                    userInfo: [
+                        NSLocalizedDescriptionKey: "Failed to get ID token"
+                    ])
+            }
+
+            let accessToken = result.user.accessToken.tokenString
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken, accessToken: accessToken)
+
+            let authResult = try await Auth.auth().signIn(with: credential)
+            self.userSession = authResult.user
+
+            await createOrUpdateUser(from: authResult.user)
+            await fetchUser()
+
+        } catch {
+            print(
+                "DEBUG: Google Sign In failed with error: \(error.localizedDescription)"
+            )
+            self.alertMessage = "Google Sign In failed. Please try again."
+            self.showAlert = true
+            throw error
+        }
+    }
+
+    // sets user data
+    func createOrUpdateUser(from firebaseUser: FirebaseAuth.User) async {
+        let user = User(
+            id: firebaseUser.uid,
+            fullname: firebaseUser.displayName ?? "Unknown User",
+            email: firebaseUser.email ?? "",
+            userType: "student"
+        )
+
+        let userData: [String: Any] = [
+            "id": user.id,
+            "fullname": user.fullname,
+            "email": user.email,
+            "userType": user.userType,
+        ]
+
+        do {
+            try await Firestore.firestore()
+                .collection("users")
+                .document(user.id)
+                .setData(userData)
+
+            print("DEBUG: User document created/updated successfully")
+        } catch {
+            print(
+                "DEBUG: Error creating/updating user: \(error.localizedDescription)"
+            )
+        }
+    }
+    func resetPassword(by email: String) async {
+        do {
+            try await Auth.auth().sendPasswordReset(withEmail: email)
+            isError = false
+            isSuccess = true
+            print("Password send to the mail: \(email)")
+        } catch {
+            print("Password reset error: \(error.localizedDescription)")
+            isError = true
+        }
     }
 
 }

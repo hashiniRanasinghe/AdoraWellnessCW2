@@ -9,14 +9,14 @@ import SwiftUI
 
 struct SignUpView: View {
     let userType: String
-    
+
     @State private var email: String = ""
     @State private var fullname: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var viewModel : AuthViewModel
-    
+    @EnvironmentObject var viewModel: AuthViewModel
+
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 0) {
@@ -37,7 +37,7 @@ struct SignUpView: View {
                     .padding(.bottom, 40)
                     .padding(.top, 20)
 
-                //feilds
+                    //feilds
                     VStack(spacing: 24) {
                         InputView(
                             text: $fullname,
@@ -68,11 +68,13 @@ struct SignUpView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 32)
 
-                // register btn
+                    // register btn
                     VStack(spacing: 16) {
                         Button(action: {
-                            Task{
-                                try await viewModel.createUser(withEmail: email, password: password, fullname: fullname, userType: userType)
+                            Task {
+                                try await viewModel.createUser(
+                                    withEmail: email, password: password,
+                                    fullname: fullname, userType: userType)
                             }
                         }) {
                             Text("Register")
@@ -82,7 +84,9 @@ struct SignUpView: View {
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
                                 .background(
-                                    formIsValid ? Color(red: 0.4, green: 0.3, blue: 0.8) : Color.gray
+                                    formIsValid
+                                        ? Color(red: 0.4, green: 0.3, blue: 0.8)
+                                        : Color.gray
                                 )
                                 .cornerRadius(25)
                         }
@@ -90,7 +94,7 @@ struct SignUpView: View {
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 24)
-                    
+
                     // login link
                     HStack {
                         Spacer()
@@ -107,13 +111,15 @@ struct SignUpView: View {
                             .font(.subheadline)
                         }
                         .alert("Error", isPresented: $viewModel.showAlert) {
-                            Button("OK", role: .cancel) { }
+                            Button("OK", role: .cancel) {}
                         } message: {
-                            Text(viewModel.alertMessage ?? "Something went wrong")
+                            Text(
+                                viewModel.alertMessage ?? "Something went wrong"
+                            )
                         }
                         Spacer()
-                    }                    .padding(.horizontal, 24)
-                    .padding(.bottom, 32)
+                    }.padding(.horizontal, 24)
+                        .padding(.bottom, 32)
 
                     //t&c
                     VStack(spacing: 4) {
@@ -174,22 +180,24 @@ struct SignUpView: View {
 extension SignUpView: AuthenticationFormProtocol {
     var formIsValid: Bool {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedFullname = fullname.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+        let trimmedFullname = fullname.trimmingCharacters(
+            in: .whitespacesAndNewlines)
+
         guard !trimmedEmail.isEmpty,
-              !trimmedFullname.isEmpty,
-              !password.isEmpty else {
+            !trimmedFullname.isEmpty,
+            !password.isEmpty
+        else {
             return false
         }
-        
+
         guard password.count > 6,
-              confirmPassword == password else {
+            confirmPassword == password
+        else {
             return false
         }
         return trimmedEmail.contains("@") && trimmedEmail.contains(".")
     }
 }
-
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {

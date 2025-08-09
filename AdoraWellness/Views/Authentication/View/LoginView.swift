@@ -51,14 +51,13 @@ struct LoginView: View {
 
                     //forgot password
                     HStack {
-                        Button(action: {
-                            // Handle forgot password
-                        }) {
+                        NavigationLink(destination: ResetPasswordView()) {
                             Text("Forgot Password?")
                                 .font(.subheadline)
                                 .foregroundColor(
                                     Color(red: 0.4, green: 0.3, blue: 0.8))
                         }
+
                         Spacer()
                     }
                     .padding(.horizontal, 24)
@@ -95,21 +94,6 @@ struct LoginView: View {
                                 viewModel.alertMessage ?? "Something went wrong"
                             )
                         }
-
-                        Button(action: {
-                            // Handle Face ID login
-                        }) {
-                            Text("Login in with Face ID")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 50)
-                                .background(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8)
-                                )
-                                .cornerRadius(25)
-                        }
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 24)
@@ -143,12 +127,20 @@ struct LoginView: View {
                         VStack(spacing: 12) {
                             //google
                             Button(action: {
-                                // Handle Google sign in
+                                Task {
+                                    try await viewModel.signInWithGoogle()
+                                }
                             }) {
                                 HStack(spacing: 12) {
-                                    Image(systemName: "globe")
-                                        .foregroundColor(.black)
-                                        .font(.title3)
+                                    if let googleIcon = UIImage(
+                                        named: "googleIcon")
+                                    {
+                                        Image(uiImage: googleIcon)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 22, height: 22)
+
+                                    }
                                     Text("Sign in with Google")
                                         .foregroundColor(.black)
                                         .font(.headline)
@@ -165,30 +157,12 @@ struct LoginView: View {
                                             Color(.systemGray4), lineWidth: 1)
                                 )
                             }
-
-                            //apple
-                            Button(action: {
-                                // Handle Apple sign in
-                            }) {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "applelogo")
-                                        .foregroundColor(.black)
-                                        .font(.title3)
-                                    Text("Sign in with Apple")
-                                        .foregroundColor(.black)
-                                        .font(.headline)
-                                        .fontWeight(.medium)
-                                    Spacer()
-                                }
-                                .padding(.horizontal, 20)
-                                .frame(height: 50)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(
-                                            Color(.systemGray4), lineWidth: 1)
-                                )
+                            .alert("Error", isPresented: $viewModel.showAlert) {
+                                Button("OK", role: .cancel) {}
+                            } message: {
+                                Text(
+                                    viewModel.alertMessage
+                                        ?? "Something went wrong")
                             }
                         }
                     }
@@ -196,18 +170,12 @@ struct LoginView: View {
 
                     Spacer()
 
-                    HStack {
-                        Spacer()
-                        Rectangle()
-                            .frame(width: 134, height: 5)
-                            .cornerRadius(2.5)
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .padding(.bottom, 8)
+                        .padding(.bottom, 8)
                 }
             }
             .background(Color.white)
+            .navigationBarBackButtonHidden(true)
+
         }
     }
 }
@@ -229,3 +197,4 @@ struct LoginView_Previews: PreviewProvider {
 }
 
 //https://adorawellnessioscw2.firebaseapp.com/__/auth/handler
+//bf3Y5nraJ3x9yte - password of the ranasinghehashinih@gmail.com
