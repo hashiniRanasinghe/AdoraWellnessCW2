@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5397B6942E477894002DDCAF /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 5397B6932E477894002DDCAF /* GoogleSignIn */; };
+		5397B6962E477894002DDCAF /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5397B6952E477894002DDCAF /* GoogleSignInSwift */; };
 		53E27F662E4450C500E90879 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F652E4450C500E90879 /* FirebaseAuth */; };
 		53E27F682E4450C500E90879 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F672E4450C500E90879 /* FirebaseFirestore */; };
 		53E27F6A2E4450C500E90879 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F692E4450C500E90879 /* FirebaseStorage */; };
@@ -35,9 +37,22 @@
 		53298D7C2E42139600B30820 /* AdoraWellnessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdoraWellnessUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5397B6982E477925002DDCAF /* Exceptions for "AdoraWellness" folder in "AdoraWellness" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 53298D612E42138D00B30820 /* AdoraWellness */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		53298D642E42138D00B30820 /* AdoraWellness */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5397B6982E477925002DDCAF /* Exceptions for "AdoraWellness" folder in "AdoraWellness" target */,
+			);
 			path = AdoraWellness;
 			sourceTree = "<group>";
 		};
@@ -58,7 +73,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5397B6962E477894002DDCAF /* GoogleSignInSwift in Frameworks */,
 				53E27F662E4450C500E90879 /* FirebaseAuth in Frameworks */,
+				5397B6942E477894002DDCAF /* GoogleSignIn in Frameworks */,
 				53E27F682E4450C500E90879 /* FirebaseFirestore in Frameworks */,
 				53E27F6A2E4450C500E90879 /* FirebaseStorage in Frameworks */,
 			);
@@ -124,6 +141,8 @@
 				53E27F652E4450C500E90879 /* FirebaseAuth */,
 				53E27F672E4450C500E90879 /* FirebaseFirestore */,
 				53E27F692E4450C500E90879 /* FirebaseStorage */,
+				5397B6932E477894002DDCAF /* GoogleSignIn */,
+				5397B6952E477894002DDCAF /* GoogleSignInSwift */,
 			);
 			productName = AdoraWellness;
 			productReference = 53298D622E42138D00B30820 /* AdoraWellness.app */;
@@ -209,6 +228,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				53E27F642E4450C500E90879 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				5397B6922E477893002DDCAF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 53298D632E42138D00B30820 /* Products */;
@@ -413,6 +433,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"AdoraWellness/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AdoraWellness/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -441,6 +462,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"AdoraWellness/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AdoraWellness/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -569,6 +591,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5397B6922E477893002DDCAF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 		53E27F642E4450C500E90879 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -580,6 +610,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5397B6932E477894002DDCAF /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5397B6922E477893002DDCAF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		5397B6952E477894002DDCAF /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5397B6922E477893002DDCAF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
 		53E27F652E4450C500E90879 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 53E27F642E4450C500E90879 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
