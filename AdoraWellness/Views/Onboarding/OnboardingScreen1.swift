@@ -19,9 +19,6 @@ struct OnboardingScreen1: View {
                     Spacer()
 
                     ZStack {
-                        //                    Circle()
-                        //                        .fill(Color.purple.opacity(0.1))
-                        //                        .frame(width: 300, height: 300)
 
                         if let logoImage = UIImage(
                             named: "OnlineYogaClassIMG.jpeg")
@@ -69,12 +66,12 @@ struct OnboardingScreen1: View {
                         }
                         .padding(.horizontal, 40)
 
-                        NavigationLink(destination: SignUpView()) {
-                            Text("Sign in")
-                                .font(.headline)
-                                .foregroundColor(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8))
-                        }
+                        //                        NavigationLink(destination: LoginView()) {
+                        //                            Text("Sign in")
+                        //                                .font(.headline)
+                        //                                .foregroundColor(
+                        //                                    Color(red: 0.4, green: 0.3, blue: 0.8))
+                        //                        }
 
                     }
 

@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct FooterNavigationView: View {
-    @State private var selectedTab = 0
+    let selectedTab: Int
+    @State private var navigateToProfile = false
+    @State private var navigateToDiscover = false
+    @State private var navigateToPractice = false
+    @State private var navigateToHome = false
+    
+    init(selectedTab: Int = 0) {
+        self.selectedTab = selectedTab
+    }
     
     var body: some View {
         VStack(spacing: 0) {
-            // Home indicator line
-            Rectangle()
-                .frame(width: 134, height: 5)
-                .cornerRadius(2.5)
-                .foregroundColor(.black)
-                .padding(.top, 8)
-                .padding(.bottom, 20)
-            
             HStack {
                 // Home
                 VStack(spacing: 4) {
@@ -32,7 +32,9 @@ struct FooterNavigationView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .onTapGesture {
-                    selectedTab = 0
+                    if selectedTab != 0 {
+                        navigateToHome = true
+                    }
                 }
                 
                 // Discover
@@ -46,7 +48,9 @@ struct FooterNavigationView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .onTapGesture {
-                    selectedTab = 1
+                    if selectedTab != 1 {
+                        navigateToDiscover = true
+                    }
                 }
                 
                 // Practice
@@ -60,7 +64,9 @@ struct FooterNavigationView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .onTapGesture {
-                    selectedTab = 2
+                    if selectedTab != 2 {
+                        navigateToPractice = true
+                    }
                 }
                 
                 // Profile
@@ -74,12 +80,23 @@ struct FooterNavigationView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .onTapGesture {
-                    selectedTab = 3
+                    if selectedTab != 3 {
+                        navigateToProfile = true
+                    }
                 }
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 34) // Safe area bottom padding
         }
         .background(Color.white)
+        // Hidden NavigationLinks
+        .background(
+            Group {
+                NavigationLink(destination: DashboardView(), isActive: $navigateToHome) { EmptyView() }
+//                NavigationLink(destination: DiscoverView(), isActive: $navigateToDiscover) { EmptyView() }
+//                NavigationLink(destination: PracticeView(), isActive: $navigateToPractice) { EmptyView() }
+                NavigationLink(destination: UserProfileView(), isActive: $navigateToProfile) { EmptyView() }
+            }
+        )
     }
 }

@@ -11,6 +11,7 @@ struct User: Identifiable, Codable {
     let id: String
     let fullname: String
     let email: String
+    let userType: String
     
     var initials: String {
         let formatter = PersonNameComponentsFormatter()
@@ -26,6 +27,7 @@ extension User {
     static var MOCK_USER = User(
         id: UUID().uuidString,
         fullname: "Kobe Bryant",
-        email: "test@gmail.com"
+        email: "test@gmail.com",
+        userType: "student" 
     )
 }

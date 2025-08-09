@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct SignUpView: View {
-    @State private var name: String = ""
+    let userType: String
+    
     @State private var email: String = ""
     @State private var fullname: String = ""
     @State private var password: String = ""
@@ -36,10 +37,10 @@ struct SignUpView: View {
                     .padding(.bottom, 40)
                     .padding(.top, 20)
 
-                    // Form fields
+                //feilds
                     VStack(spacing: 24) {
                         InputView(
-                            text: $name,
+                            text: $fullname,
                             title: "Name",
                             placeholder: "Your name"
                         )
@@ -67,11 +68,11 @@ struct SignUpView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 32)
 
-                    // Register button
+                // register btn
                     VStack(spacing: 16) {
                         Button(action: {
                             Task{
-                                try await viewModel.createUser(withEmail: email, password: password, fullname: fullname)
+                                try await viewModel.createUser(withEmail: email, password: password, fullname: fullname, userType: userType)
                             }
                         }) {
                             Text("Register")
@@ -81,15 +82,16 @@ struct SignUpView: View {
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
                                 .background(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8)
+                                    formIsValid ? Color(red: 0.4, green: 0.3, blue: 0.8) : Color.gray
                                 )
                                 .cornerRadius(25)
                         }
+                        .disabled(!formIsValid)
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 24)
-
-                    // Sign In link
+                    
+                    // login link
                     HStack {
                         Spacer()
                         NavigationLink(destination: LoginView()) {
@@ -103,6 +105,11 @@ struct SignUpView: View {
                                     .fontWeight(.medium)
                             }
                             .font(.subheadline)
+                        }
+                        .alert("Error", isPresented: $viewModel.showAlert) {
+                            Button("OK", role: .cancel) { }
+                        } message: {
+                            Text(viewModel.alertMessage ?? "Something went wrong")
                         }
                         Spacer()
                     }                    .padding(.horizontal, 24)
@@ -163,8 +170,29 @@ struct SignUpView: View {
     }
 }
 
+//form validation
+extension SignUpView: AuthenticationFormProtocol {
+    var formIsValid: Bool {
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedFullname = fullname.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !trimmedEmail.isEmpty,
+              !trimmedFullname.isEmpty,
+              !password.isEmpty else {
+            return false
+        }
+        
+        guard password.count > 6,
+              confirmPassword == password else {
+            return false
+        }
+        return trimmedEmail.contains("@") && trimmedEmail.contains(".")
+    }
+}
+
+
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpView()
+        SignUpView(userType: "student")
     }
 }

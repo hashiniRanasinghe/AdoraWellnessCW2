@@ -98,9 +98,9 @@ struct OnboardingScreen2: View {
                             }
                             .padding(.horizontal, 40)
 
-                            Button(action: {
-                                // Handle instructor path
-                            }) {
+                            NavigationLink(
+                                destination: SignUpView(userType: "instructor")
+                            ) {
                                 Text("Continue as Instructor")
                                     .font(.headline)
                                     .foregroundColor(.white)
@@ -111,6 +111,7 @@ struct OnboardingScreen2: View {
                                     )
                                     .cornerRadius(28)
                             }
+
                             .padding(.horizontal, 40)
                         }
 
@@ -174,9 +175,9 @@ struct OnboardingScreen2: View {
                             }
                             .padding(.horizontal, 40)
 
-                            Button(action: {
-                                // Handle student path
-                            }) {
+                            NavigationLink(
+                                destination: SignUpView(userType: "student")
+                            ) {
                                 Text("Continue as Student")
                                     .font(.headline)
                                     .foregroundColor(.white)
@@ -186,13 +187,14 @@ struct OnboardingScreen2: View {
                                         Color(red: 0.4, green: 0.3, blue: 0.8)
                                     )
                                     .cornerRadius(28)
-                            }
-                            .padding(.horizontal, 40)
+                            }.padding(.horizontal, 40)
                         }
 
                         Spacer().frame(height: 50)
                     }
                 }
+                .navigationBarBackButtonHidden(true)
+
             }
         }
     }
