@@ -10,6 +10,7 @@ import SwiftUI
 struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
+    @EnvironmentObject var viewModel: AuthViewModel
 
     var body: some View {
         NavigationStack {
@@ -67,18 +68,32 @@ struct LoginView: View {
                     // btns section
                     VStack(spacing: 16) {
                         Button(action: {
-                            // Handle login
+                            Task {
+                                try await viewModel.signIn(
+                                    withEmail: email, password: password)
+                            }
                         }) {
-                            Text("Login")
+                            Text("LogIn")
                                 .font(.headline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
                                 .background(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8)
+                                    formIsValid
+                                        ? Color(red: 0.4, green: 0.3, blue: 0.8)
+                                        : Color.gray
                                 )
                                 .cornerRadius(25)
+                        }
+                        .disabled(!formIsValid).alert(
+                            "Error", isPresented: $viewModel.showAlert
+                        ) {
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text(
+                                viewModel.alertMessage ?? "Something went wrong"
+                            )
                         }
 
                         Button(action: {
@@ -101,9 +116,7 @@ struct LoginView: View {
 
                     HStack {
                         Spacer()
-                        Button(action: {
-                            // Handle sign up navigation
-                        }) {
+                        NavigationLink(destination: OnboardingScreen2()) {
                             HStack(spacing: 2) {
                                 Text("Don't have an account?")
                                     .foregroundColor(.secondary)
@@ -196,7 +209,16 @@ struct LoginView: View {
             }
             .background(Color.white)
         }
-        .navigationBarHidden(true)
+    }
+}
+
+//form validation
+extension LoginView: AuthenticationFormProtocol {
+    var formIsValid: Bool {
+        return !email.isEmpty
+            && email.contains("@")
+            && !password.isEmpty
+            && password.count >= 6
     }
 }
 
@@ -205,3 +227,5 @@ struct LoginView_Previews: PreviewProvider {
         LoginView()
     }
 }
+
+//https://adorawellnessioscw2.firebaseapp.com/__/auth/handler
