@@ -132,9 +132,15 @@ struct LoginView: View {
                                 }
                             }) {
                                 HStack(spacing: 12) {
-                                    Image(systemName: "globe")
-                                        .foregroundColor(.black)
-                                        .font(.title3)
+                                    if let googleIcon = UIImage(
+                                        named: "googleIcon")
+                                    {
+                                        Image(uiImage: googleIcon)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 22, height: 22)
+
+                                    }
                                     Text("Sign in with Google")
                                         .foregroundColor(.black)
                                         .font(.headline)
