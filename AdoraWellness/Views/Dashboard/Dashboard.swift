@@ -22,6 +22,18 @@ struct DashboardView: View {
                ScrollView {
                    VStack(alignment: .leading, spacing: 0) {
                        // Header section
+                       
+                       NavigationLink(destination: StudentProfileSetupView().environmentObject(viewModel)) {
+                           Text("StudentProfileSetupView")
+                               .font(.headline)
+                               .fontWeight(.semibold)
+                               .foregroundColor(.white)
+                               .frame(maxWidth: .infinity)
+                               .frame(height: 50)
+                               .background(Color(red: 0.4, green: 0.3, blue: 0.8))
+                               .cornerRadius(25)
+                       }
+                       
                        Spacer()
                        Spacer()
                        VStack(alignment: .leading, spacing: 0) {
