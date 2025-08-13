@@ -23,7 +23,7 @@ struct DashboardView: View {
                    VStack(alignment: .leading, spacing: 0) {
                        // Header section
                        
-                       NavigationLink(destination: StudentProfileSetupView().environmentObject(viewModel)) {
+                       NavigationLink(destination: InstructorProfileSetupView().environmentObject(viewModel)) {
                            Text("StudentProfileSetupView")
                                .font(.headline)
                                .fontWeight(.semibold)

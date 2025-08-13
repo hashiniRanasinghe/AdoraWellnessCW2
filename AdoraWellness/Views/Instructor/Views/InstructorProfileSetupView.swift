@@ -1,8 +1,15 @@
+//
+//  InstructorProfileSetupView.swift
+//  AdoraWellness
+//
+//  Created by Hashini Ranasinghe on 2025-08-13.
+//
+
 import FirebaseAuth
 import SwiftUI
 
-struct StudentProfileSetupView: View {
-    @StateObject private var viewModel = StudentViewModel()
+struct InstructorProfileSetupView: View {
+    @StateObject private var viewModel = InstructorViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -11,12 +18,25 @@ struct StudentProfileSetupView: View {
     @State private var lastName: String = ""
     @State private var phoneNumber: String = ""
     @State private var dateOfBirth = Date()
-    @State private var selectedGender = Student.Gender.preferNotToSay
 
     //physical info
-    @State private var weight: String = ""
-    @State private var height: String = ""
-    @State private var selectedFitnessLevel = Student.FitnessLevel.beginner
+    @State private var address: String = ""
+    @State private var city: String = ""
+    @State private var country: String = ""
+
+    //professional info
+    @State private var certifications: String = ""
+    @State private var experience: Int = 0
+    @State private var hourlyRate: String = ""
+    @State private var selectedSpecialities: Set<Instructor.Speciality> = []
+    @State private var bio: String = ""
+
+    //experience and fees
+    private let experienceOptions = Array(0...30)
+    private let countries = [
+        "Sri Lanka", "United States", "United Kingdom", "Canada", "Australia",
+        "India", "Singapore",
+    ]
 
     var body: some View {
         ScrollView {
@@ -27,8 +47,10 @@ struct StudentProfileSetupView: View {
 
                 VStack(spacing: 28) {
                     basicInfoSection
-                    physicalInfoSection
-                    fitnessLevelSection
+                    addressSection
+                    professionalInfoSection
+                    specialitiesSection
+                    bioSection
                 }
                 .padding(.horizontal, 24)
 
@@ -61,7 +83,7 @@ struct StudentProfileSetupView: View {
                         .foregroundColor(.primary)
                 }
 
-                Text("Let's start\nunderstanding you")
+                Text("Share your expertise\nwith our community")
                     .font(.system(size: 28, weight: .bold))
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
@@ -73,7 +95,7 @@ struct StudentProfileSetupView: View {
             .padding(.top, 20)
             .padding(.bottom, 16)
 
-            Text("Help us personalize your fitness journey")
+            Text("Help us understand your professional background")
                 .font(.system(size: 16))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -81,9 +103,10 @@ struct StudentProfileSetupView: View {
         }
     }
 
+
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 20) {
-            //name feilds
+            //name
             HStack(spacing: 12) {
                 InputView(
                     text: $firstName,
@@ -98,11 +121,11 @@ struct StudentProfileSetupView: View {
                 )
             }
 
-            //phone no
+            //phone
             InputView(
                 text: $phoneNumber,
                 title: "Phone Number",
-                placeholder: "Enter phone number"
+                placeholder: "e.g. 0772537892"
             )
             .keyboardType(.phonePad)
 
@@ -120,80 +143,97 @@ struct StudentProfileSetupView: View {
                 )
                 .datePickerStyle(CompactDatePickerStyle())
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .tint(Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.2))
+                .tint(Color(red: 0.4, green: 0.3, blue: 0.8))
                 .padding(.vertical, 4)
             }
+        }
+    }
 
-            //gender
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Gender")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.primary)
+    private var addressSection: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            InputView(
+                text: $address,
+                title: "Address",
+                placeholder: "e.g. 123 Main Street, Anytown"
+            )
 
-                VStack(spacing: 12) {
-                    ForEach(Student.Gender.allCases, id: \.self) { gender in
-                        Button(action: {
-                            selectedGender = gender
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(
-                                    systemName: selectedGender == gender
-                                        ? "checkmark.circle.fill" : "circle"
-                                )
-                                .foregroundColor(
-                                    selectedGender == gender
-                                        ? Color(red: 0.4, green: 0.3, blue: 0.8)
-                                        : .gray
-                                )
-                                .font(.system(size: 20))
+            HStack(spacing: 12) {
+                InputView(
+                    text: $city,
+                    title: "City",
+                    placeholder: "City"
+                )
 
-                                Text(gender.displayName)
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.primary)
-                                    .frame(
-                                        maxWidth: .infinity, alignment: .leading
-                                    )
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Country")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.primary)
 
-                                Spacer()
+                    Menu {
+                        ForEach(countries, id: \.self) { countryOption in
+                            Button(countryOption) {
+                                country = countryOption
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(
-                                        selectedGender == gender
-                                            ? Color(
-                                                red: 0.4, green: 0.3, blue: 0.8
-                                            ).opacity(0.1) : Color(.systemGray6)
-                                    )
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(
-                                        selectedGender == gender
-                                            ? Color(
-                                                red: 0.4, green: 0.3, blue: 0.8)
-                                            : Color(.systemGray4), lineWidth: 1)
-                            )
                         }
+                    } label: {
+                        HStack {
+                            Text(country.isEmpty ? "Country" : country)
+                                .foregroundColor(
+                                    country.isEmpty ? .secondary : .primary
+                                )
+                                .font(.system(size: 16))
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 14))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(.systemGray4), lineWidth: 1)
+                        )
                     }
                 }
             }
         }
     }
 
-    private var physicalInfoSection: some View {
+    private var professionalInfoSection: some View {
         VStack(alignment: .leading, spacing: 20) {
-            HStack(spacing: 16) {
-                //weignt
+            InputView(
+                text: $certifications,
+                title: "Certifications/Reg No.",
+                placeholder: "e.g. RYT-200, RYT-500"
+            )
+
+            HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Weight (kg)")
+                    Text("Years of Experience")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
 
-                    TextField("50", text: $weight)
-                        .keyboardType(.decimalPad)
-                        .font(.system(size: 16))
+                    Menu {
+                        ForEach(experienceOptions, id: \.self) { years in
+                            Button("\(years) \(years == 1 ? "year" : "years")")
+                            {
+                                experience = years
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            Text(
+                                "\(experience) \(experience == 1 ? "year" : "years")"
+                            )
+                            .foregroundColor(.primary)
+                            .font(.system(size: 16))
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 14))
+                        }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Color(.systemGray6))
@@ -202,82 +242,113 @@ struct StudentProfileSetupView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color(.systemGray4), lineWidth: 1)
                         )
-                        .tint(.gray)
+                    }
                 }
 
-                //height
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Height (cm)")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.primary)
-
-                    TextField("168", text: $height)
-                        .keyboardType(.decimalPad)
-                        .font(.system(size: 16))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(.systemGray4), lineWidth: 1)
-                        )
-                        .tint(.gray)
-                }
+                InputView(
+                    text: $hourlyRate,
+                    title: "Hourly Rate ($)",
+                    placeholder: "0"
+                )
+                .keyboardType(.decimalPad)
             }
         }
     }
 
-    private var fitnessLevelSection: some View {
+    private var specialitiesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Fitness Level")
+            Text("Specialities")
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.primary)
 
             LazyVGrid(
                 columns: Array(
-                    repeating: GridItem(.flexible(), spacing: 12), count: 2),
+                    repeating: GridItem(.flexible(), spacing: 12), count: 3),
                 spacing: 12
             ) {
-                ForEach(Student.FitnessLevel.allCases, id: \.self) { level in
+                ForEach(Instructor.Speciality.allCases, id: \.self) {
+                    speciality in
                     Button(action: {
-                        selectedFitnessLevel = level
+                        if selectedSpecialities.contains(speciality) {
+                            selectedSpecialities.remove(speciality)
+                        } else {
+                            selectedSpecialities.insert(speciality)
+                        }
                     }) {
                         VStack(spacing: 8) {
                             Image(
-                                systemName: selectedFitnessLevel == level
+                                systemName: selectedSpecialities.contains(
+                                    speciality)
                                     ? "checkmark.circle.fill" : "circle"
                             )
                             .foregroundColor(
-                                selectedFitnessLevel == level
+                                selectedSpecialities.contains(speciality)
                                     ? Color(red: 0.4, green: 0.3, blue: 0.8)
                                     : .gray
                             )
-                            .font(.system(size: 20))
+                            .font(.system(size: 16))
 
-                            Text(level.displayName)
-                                .font(.system(size: 14, weight: .medium))
+                            Text(speciality.displayName)
+                                .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.center)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, 12)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(
-                                    selectedFitnessLevel == level
+                                    selectedSpecialities.contains(speciality)
                                         ? Color(red: 0.4, green: 0.3, blue: 0.8)
-                                            .opacity(0.1) : Color(.systemGray6))
+                                            .opacity(0.1)
+                                        : Color(.systemGray6)
+                                )
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(
-                                    selectedFitnessLevel == level
+                                    selectedSpecialities.contains(speciality)
                                         ? Color(red: 0.4, green: 0.3, blue: 0.8)
-                                        : Color(.systemGray4), lineWidth: 1)
+                                        : Color(.systemGray4),
+                                    lineWidth: 1
+                                )
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private var bioSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Bio")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.primary)
+
+            TextEditor(text: $bio)
+                .font(.system(size: 16))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color(.systemGray4), lineWidth: 1)
+                )
+                .frame(minHeight: 120)
+
+            if bio.isEmpty {
+                HStack {
+                    Text(
+                        "Tell us about your yoga journey and teaching philosophy..."
+                    )
+                    .font(.system(size: 16))
+                    .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, -108)
+                .allowsHitTesting(false)
             }
         }
     }
@@ -294,7 +365,7 @@ struct StudentProfileSetupView: View {
                         .scaleEffect(0.8)
                         .foregroundColor(.white)
                 } else {
-                    Text("Save Profile")
+                    Text("Confirmation")
                         .font(.system(size: 18, weight: .semibold))
                 }
             }
@@ -313,6 +384,8 @@ struct StudentProfileSetupView: View {
 
     private var formIsValid: Bool {
         return !firstName.isEmpty && !lastName.isEmpty && !phoneNumber.isEmpty
+            && !address.isEmpty && !city.isEmpty && !country.isEmpty
+            && !selectedSpecialities.isEmpty
     }
 
     private func loadUserInfo() {
@@ -336,30 +409,36 @@ struct StudentProfileSetupView: View {
             return
         }
 
-        let student = Student(
+        let specialitiesArray = selectedSpecialities.map { $0.rawValue }
+
+        let instructor = Instructor(
             id: currentUser.uid,
             firstName: firstName,
             lastName: lastName,
             email: currentUser.email ?? "",
             phoneNumber: phoneNumber,
             dateOfBirth: dateOfBirth,
-            gender: selectedGender,
-            weight: Double(weight) ?? 0,
-            height: Double(height) ?? 0,
-            fitnessLevel: selectedFitnessLevel
+            address: address,
+            city: city,
+            country: country,
+            specialities: specialitiesArray,
+            certifications: certifications,
+            experience: experience,
+            hourlyRate: Double(hourlyRate) ?? 0.0,
+            bio: bio
         )
 
-        await viewModel.saveStudentProfile(student)
+        await viewModel.saveInstructorProfile(instructor)
 
         if viewModel.isSuccess {
-            print("Profile saved successfully")
+            print("Instructor profile saved successfully")
         }
     }
 }
 
-struct StudentProfileSetupView_Preview: PreviewProvider {
+struct InstructorProfileSetupView_Preview: PreviewProvider {
     static var previews: some View {
-        StudentProfileSetupView()
+        InstructorProfileSetupView()
             .environmentObject(AuthViewModel())
     }
 }
