@@ -13,22 +13,28 @@ struct FooterNavigationView: View {
     @State private var navigateToDiscover = false
     @State private var navigateToPractice = false
     @State private var navigateToHome = false
-    
+
     init(selectedTab: Int = 0) {
         self.selectedTab = selectedTab
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                // Home
+                //home
                 VStack(spacing: 4) {
                     Image(systemName: selectedTab == 0 ? "house.fill" : "house")
                         .font(.title2)
-                        .foregroundColor(selectedTab == 0 ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
+                        .foregroundColor(
+                            selectedTab == 0
+                                ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray
+                        )
                     Text("Home")
                         .font(.caption)
-                        .foregroundColor(selectedTab == 0 ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
+                        .foregroundColor(
+                            selectedTab == 0
+                                ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray
+                        )
                 }
                 .frame(maxWidth: .infinity)
                 .onTapGesture {
@@ -36,15 +42,23 @@ struct FooterNavigationView: View {
                         navigateToHome = true
                     }
                 }
-                
-                // Discover
+
+                //discover
                 VStack(spacing: 4) {
-                    Image(systemName: selectedTab == 1 ? "doc.text.fill" : "doc.text")
-                        .font(.title2)
-                        .foregroundColor(selectedTab == 1 ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
+                    Image(
+                        systemName: selectedTab == 1
+                            ? "doc.text.fill" : "doc.text"
+                    )
+                    .font(.title2)
+                    .foregroundColor(
+                        selectedTab == 1
+                            ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
                     Text("Discover")
                         .font(.caption)
-                        .foregroundColor(selectedTab == 1 ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
+                        .foregroundColor(
+                            selectedTab == 1
+                                ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray
+                        )
                 }
                 .frame(maxWidth: .infinity)
                 .onTapGesture {
@@ -52,15 +66,23 @@ struct FooterNavigationView: View {
                         navigateToDiscover = true
                     }
                 }
-                
-                // Practice
+
+                //practice
                 VStack(spacing: 4) {
-                    Image(systemName: selectedTab == 2 ? "figure.yoga" : "figure.yoga")
-                        .font(.title2)
-                        .foregroundColor(selectedTab == 2 ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
+                    Image(
+                        systemName: selectedTab == 2
+                            ? "figure.yoga" : "figure.yoga"
+                    )
+                    .font(.title2)
+                    .foregroundColor(
+                        selectedTab == 2
+                            ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
                     Text("Practice")
                         .font(.caption)
-                        .foregroundColor(selectedTab == 2 ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
+                        .foregroundColor(
+                            selectedTab == 2
+                                ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray
+                        )
                 }
                 .frame(maxWidth: .infinity)
                 .onTapGesture {
@@ -68,15 +90,22 @@ struct FooterNavigationView: View {
                         navigateToPractice = true
                     }
                 }
-                
-                // Profile
+
+                //profile
                 VStack(spacing: 4) {
-                    Image(systemName: selectedTab == 3 ? "person.fill" : "person")
-                        .font(.title2)
-                        .foregroundColor(selectedTab == 3 ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
+                    Image(
+                        systemName: selectedTab == 3 ? "person.fill" : "person"
+                    )
+                    .font(.title2)
+                    .foregroundColor(
+                        selectedTab == 3
+                            ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
                     Text("Profile")
                         .font(.caption)
-                        .foregroundColor(selectedTab == 3 ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
+                        .foregroundColor(
+                            selectedTab == 3
+                                ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray
+                        )
                 }
                 .frame(maxWidth: .infinity)
                 .onTapGesture {
@@ -86,16 +115,22 @@ struct FooterNavigationView: View {
                 }
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 34) // Safe area bottom padding
+            .padding(.bottom, 34)
         }
         .background(Color.white)
-        // Hidden NavigationLinks
         .background(
             Group {
-                NavigationLink(destination: DashboardView(), isActive: $navigateToHome) { EmptyView() }
-//                NavigationLink(destination: DiscoverView(), isActive: $navigateToDiscover) { EmptyView() }
-//                NavigationLink(destination: PracticeView(), isActive: $navigateToPractice) { EmptyView() }
-                NavigationLink(destination: UserProfileView(), isActive: $navigateToProfile) { EmptyView() }
+                NavigationLink(
+                    destination: DashboardView(), isActive: $navigateToHome
+                ) { EmptyView() }
+                NavigationLink(
+                    destination: FindInstructorsView(),
+                    isActive: $navigateToDiscover
+                ) { EmptyView() }
+                //                NavigationLink(destination: PracticeView(), isActive: $navigateToPractice) { EmptyView() }
+                NavigationLink(
+                    destination: UserProfileView(), isActive: $navigateToProfile
+                ) { EmptyView() }
             }
         )
     }
