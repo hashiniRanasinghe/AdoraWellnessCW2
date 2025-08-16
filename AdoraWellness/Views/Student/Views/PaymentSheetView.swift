@@ -144,6 +144,7 @@ struct PaymentSheetView: View {
                                         )
                                         .textFieldStyle(PlainTextFieldStyle())
                                         .keyboardType(.numberPad)
+                                        .tint(.gray)
                                         .onChange(of: cardNumber) {
                                             oldValue, newValue in
                                             cardNumber = formatCardNumber(
@@ -174,6 +175,7 @@ struct PaymentSheetView: View {
                                                 PlainTextFieldStyle()
                                             )
                                             .keyboardType(.numberPad)
+                                            .tint(.gray)
                                             .onChange(of: expiryDate) {
                                                 _, newValue in
                                                 expiryDate = formatExpiryDate(
@@ -194,6 +196,7 @@ struct PaymentSheetView: View {
                                                     PlainTextFieldStyle()
                                                 )
                                                 .keyboardType(.numberPad)
+                                                .tint(.gray)
                                                 .onChange(of: cvv) {
                                                     _, newValue in
                                                     if newValue.count > 3 {
@@ -257,15 +260,25 @@ struct PaymentSheetView: View {
             }
             .background(Color.white)
             .ignoresSafeArea(.all, edges: .bottom)
+            //open success screen
+            .fullScreenCover(
+                isPresented: $paymentSuccessful
+            ) {
+                PaymentSuccessView(
+                    session: session,
+                    instructor: instructor,
+                    isPresented: $isPresented
+                )
+            }
         }
         .navigationBarHidden(true)
-        .alert("Payment Successful", isPresented: $paymentSuccessful) {
-            Button("OK") {
-                isPresented = false
-            }
-        } message: {
-            Text("Your session has been booked successfully!")
-        }
+        //        .alert("Payment Successful", isPresented: $paymentSuccessful) {
+        //            Button("OK") {
+        //                isPresented = false
+        //            }
+        //        } message: {
+        //            Text("Your session has been booked successfully!")
+        //        }
     }
 
     private func handlePayment() {
