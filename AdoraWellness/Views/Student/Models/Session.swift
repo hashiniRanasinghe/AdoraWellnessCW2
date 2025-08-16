@@ -19,6 +19,7 @@ struct Session: Identifiable, Codable {
     let sessionType: String
     let date: Date
     let createdAt: Date
+    let level: String
 
     init(
         id: String = UUID().uuidString,
@@ -31,7 +32,8 @@ struct Session: Identifiable, Codable {
         price: Double,
         sessionType: String,
         date: Date,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        level: String
     ) {
         self.id = id
         self.instructorId = instructorId
@@ -44,5 +46,6 @@ struct Session: Identifiable, Codable {
         self.sessionType = sessionType
         self.date = date
         self.createdAt = createdAt
+        self.level = level
     }
 }

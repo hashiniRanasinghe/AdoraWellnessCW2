@@ -10,7 +10,11 @@ import SwiftUI
 struct InstructorDetailsView: View {
     let instructor: Instructor
     @StateObject private var viewModel = SessionViewModel()
-    @State private var sessions: [Session] = []
+    @State private var allSessions: [Session] = []
+    @State private var filteredSessions: [Session] = []
+    @State private var selectedDate: Date? = nil
+    @State private var showDatePicker = false
+    @State private var isDateFilterActive = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -95,47 +99,96 @@ struct InstructorDetailsView: View {
                         .padding(.bottom, 32)
 
                         VStack(alignment: .leading, spacing: 20) {
-                            Text("Date and time")
+                            Text("Filter by Date")
                                 .font(.system(size: 20, weight: .semibold))
                                 .foregroundColor(.primary)
 
                             //date time selector
-                            HStack(spacing: 16) {
-                                Image(systemName: "calendar")
-                                    .font(.title2)
-                                    .foregroundColor(.primary)
-                                    .frame(width: 24, height: 24)
+                            Button(action: {
+                                showDatePicker.toggle()
+                            }) {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "calendar")
+                                        .font(.title2)
+                                        .foregroundColor(.primary)
+                                        .frame(width: 24, height: 24)
 
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Date & time")
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(
+                                            isDateFilterActive
+                                                ? "Selected Date"
+                                                : "Select Date (Optional)"
+                                        )
                                         .font(
                                             .system(size: 16, weight: .medium)
                                         )
                                         .foregroundColor(.primary)
 
-                                    Text("Choose date and time")
+                                        Text(
+                                            isDateFilterActive
+                                                ? formatSelectedDate(
+                                                    selectedDate ?? Date())
+                                                : "Tap to filter sessions by date"
+                                        )
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.secondary)
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: "chevron.right")
                                         .font(.system(size: 14))
                                         .foregroundColor(.secondary)
                                 }
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.secondary)
                             }
                             .padding(16)
                             .background(Color(.systemGray6))
                             .cornerRadius(12)
+                            .sheet(isPresented: $showDatePicker) {
+                                DatePickerSheet(
+                                    selectedDate: Binding(
+                                        get: { selectedDate ?? Date() },
+                                        set: { selectedDate = $0 }
+                                    ),
+                                    onDateSelected: {
+                                        isDateFilterActive = true
+                                        filterSessionsByDate()
+                                    },
+                                    onClearFilter: {
+                                        selectedDate = nil
+                                        isDateFilterActive = false
+                                        filterSessionsByDate()
+                                    },
+                                    isFilterActive: isDateFilterActive
+                                )
+                            }
                         }
                         .padding(.horizontal, 24)
                         .padding(.bottom, 32)
 
                         //available sessions
                         VStack(alignment: .leading, spacing: 20) {
-                            Text("Available Times")
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.primary)
+                            HStack {
+                                Text("Available Times")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.primary)
+
+                                Spacer()
+
+                                if isDateFilterActive {
+                                    Text(
+                                        "(\(filteredSessions.count) sessions on \(Utils.formatDate(selectedDate ?? Date())))"
+                                    )
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.secondary)
+                                } else {
+                                    Text(
+                                        "(\(filteredSessions.count) total sessions)"
+                                    )
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.secondary)
+                                }
+                            }
 
                             if viewModel.isLoading {
                                 VStack(spacing: 12) {
@@ -147,7 +200,7 @@ struct InstructorDetailsView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 40)
-                            } else if sessions.isEmpty {
+                            } else if filteredSessions.isEmpty {
                                 VStack(spacing: 12) {
                                     Image(
                                         systemName:
@@ -155,15 +208,32 @@ struct InstructorDetailsView: View {
                                     )
                                     .font(.system(size: 40))
                                     .foregroundColor(.secondary)
-                                    Text("No sessions available")
+
+                                    if isDateFilterActive {
+                                        Text(
+                                            "No sessions available for selected date"
+                                        )
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
+                                        Text("Try selecting a different date")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    } else {
+                                        Text("No sessions available")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        Text(
+                                            "Check back later for new sessions"
+                                        )
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    }
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 40)
                             } else {
                                 VStack(spacing: 16) {
-                                    ForEach(sessions) { session in
+                                    ForEach(filteredSessions) { session in
                                         SessionCard(
                                             session: session,
                                             instructor: instructor)
@@ -187,8 +257,27 @@ struct InstructorDetailsView: View {
     }
 
     private func loadSessions() async {
-        sessions = await viewModel.fetchSessionsByInstructor(
+        allSessions = await viewModel.fetchSessionsByInstructor(
             instructorId: instructor.id)
+        filterSessionsByDate()
+    }
+
+    private func filterSessionsByDate() {
+        if isDateFilterActive, let selectedDate = selectedDate {
+            let calendar = Calendar.current
+            filteredSessions = allSessions.filter { session in
+                calendar.isDate(session.date, inSameDayAs: selectedDate)
+            }
+        } else {
+            //bu defult show all the sessions
+            filteredSessions = allSessions
+        }
+    }
+
+    private func formatSelectedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .full
+        return formatter.string(from: date)
     }
 
     //if the bio is empty
@@ -197,6 +286,82 @@ struct InstructorDetailsView: View {
             "\(instructor.firstName) was born and raised with a passion for wellness and fitness. With \(instructor.experience) years of experience in \(instructor.specialities.joined(separator: ", ")), \(instructor.firstName) brings expertise and dedication to every session."
     }
 
+}
+
+struct DatePickerSheet: View {
+    @Binding var selectedDate: Date
+    let onDateSelected: () -> Void
+    let onClearFilter: () -> Void
+    let isFilterActive: Bool
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                DatePicker(
+                    "Select Date",
+                    selection: $selectedDate,
+                    in: Date()...,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(CompactDatePickerStyle())
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .tint(Color(red: 0.4, green: 0.3, blue: 0.8))
+                .padding(.vertical, 4)
+                .padding(.horizontal, 20)
+
+                VStack(spacing: 12) {
+                    Button(action: {
+                        onDateSelected()
+                        dismiss()
+                    }) {
+                        Text("Apply Date Filter")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color(red: 0.4, green: 0.3, blue: 0.8))
+                            .cornerRadius(12)
+                    }
+
+                    if isFilterActive {
+                        Button(action: {
+                            onClearFilter()
+                            dismiss()
+                        }) {
+                            Text("Clear Filter - Show All Sessions")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(
+                                    Color(red: 0.4, green: 0.3, blue: 0.8)
+                                )
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(
+                                    Color(red: 0.4, green: 0.3, blue: 0.8)
+                                        .opacity(0.1)
+                                )
+                                .cornerRadius(12)
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+
+                Spacer()
+            }
+            .navigationTitle("Filter Sessions")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .foregroundColor(
+                        (Color(red: 0.4, green: 0.3, blue: 0.8)))
+                }
+            }
+        }
+    }
 }
 
 struct SessionCard: View {

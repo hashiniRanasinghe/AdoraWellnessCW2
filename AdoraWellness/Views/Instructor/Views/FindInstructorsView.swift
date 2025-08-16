@@ -204,7 +204,7 @@ struct InstructorListCard: View {
                 NavigationLink(
                     destination: InstructorDetailsView(instructor: instructor)
                 ) {
-                    Text("Book Now")
+                    Text("More Details..")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
