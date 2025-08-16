@@ -70,6 +70,7 @@ class SessionViewModel: ObservableObject {
 
         let description = data["description"] as? String ?? ""
         let sessionType = data["sessionType"] as? String ?? "Online"
+        let level = data["level"] as? String ?? "Beginner"
 
         let date: Date
         if let timestamp = data["date"] as? Timestamp {
@@ -96,7 +97,8 @@ class SessionViewModel: ObservableObject {
             price: price,
             sessionType: sessionType,
             date: date,
-            createdAt: createdAt
+            createdAt: createdAt,
+            level: level
         )
     }
 }

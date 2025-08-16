@@ -78,7 +78,7 @@ struct SessionDetailsView: View {
                         }
                         .padding(.horizontal, 24)
 
-                        //Summary
+                        //summary
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Summary")
                                 .font(.system(size: 20, weight: .semibold))
@@ -102,6 +102,10 @@ struct SessionDetailsView: View {
                                 SummaryRow(
                                     title: "Duration",
                                     value: "\(session.durationMinutes) minutes")
+                                SummaryRow(
+                                    title: "Level",
+                                    value: (session.level))
+
                             }
                             .padding(20)
                             .background(Color(.systemGray6))
@@ -175,7 +179,8 @@ struct SessionDetailsView_Previews: PreviewProvider {
                 price: 35.0,
                 sessionType: "Online",
                 date: Date(),
-                createdAt: Date()
+                createdAt: Date(),
+                level: "1"
             ),
             instructor: Instructor(
                 id: "1",

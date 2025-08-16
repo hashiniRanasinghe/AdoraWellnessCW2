@@ -53,7 +53,7 @@ struct PaymentSheetView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 32) {
-                        // session details
+                        //session data
                         VStack(alignment: .leading, spacing: 16) {
                             HStack {
                                 Text(
@@ -76,7 +76,7 @@ struct PaymentSheetView: View {
                         }
                         .padding(.horizontal, 24)
 
-                        //summary
+                        //session sum
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Summary")
                                 .font(.system(size: 20, weight: .semibold))
@@ -104,7 +104,7 @@ struct PaymentSheetView: View {
                         }
                         .padding(.horizontal, 24)
 
-                        //payment detials
+                        //payment
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Payment Details")
                                 .font(.system(size: 20, weight: .semibold))
@@ -128,7 +128,7 @@ struct PaymentSheetView: View {
                                 .background(Color(.systemGray6))
                                 .cornerRadius(8)
 
-                                //card feilds
+                                //card section
                                 VStack(alignment: .leading, spacing: 16) {
                                     Text("Credit card details")
                                         .font(
@@ -136,7 +136,7 @@ struct PaymentSheetView: View {
                                         )
                                         .foregroundColor(.primary)
 
-                                    //card no
+                                    //card feild
                                     HStack {
                                         TextField(
                                             "0000 0000 0000 0000",
@@ -144,97 +144,89 @@ struct PaymentSheetView: View {
                                         )
                                         .textFieldStyle(PlainTextFieldStyle())
                                         .keyboardType(.numberPad)
-                                        .onChange(of: cardNumber) { newValue in
+                                        .onChange(of: cardNumber) {
+                                            oldValue, newValue in
                                             cardNumber = formatCardNumber(
                                                 newValue)
                                         }
 
                                         Spacer()
 
-                                        //card icons
+                                        //card type
                                         HStack(spacing: 8) {
                                             Image(systemName: "creditcard.fill")
-                                                .foregroundColor(.blue)
+                                                .foregroundColor(.gray)
                                                 .font(.system(size: 16))
 
-                                            Image(systemName: "creditcard.fill")
-                                                .foregroundColor(.red)
-                                                .font(.system(size: 16))
+                                        }
+                                    }
+                                    .padding(16)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
 
-                                            Image(systemName: "creditcard.fill")
-                                                .foregroundColor(.green)
-                                                .font(.system(size: 16))
+                                    //exp and cvc
+                                    HStack(spacing: 16) {
+                                        HStack {
+                                            TextField(
+                                                "MM / YYYY", text: $expiryDate
+                                            )
+                                            .textFieldStyle(
+                                                PlainTextFieldStyle()
+                                            )
+                                            .keyboardType(.numberPad)
+                                            .onChange(of: expiryDate) {
+                                                _, newValue in
+                                                expiryDate = formatExpiryDate(
+                                                    newValue)
+                                            }
 
+                                            Image(systemName: "calendar")
+                                                .foregroundColor(.secondary)
+                                                .font(.system(size: 16))
                                         }
                                         .padding(16)
                                         .background(Color(.systemGray6))
                                         .cornerRadius(8)
 
-                                        //exp n cvc
-                                        HStack(spacing: 16) {
-                                            HStack {
-                                                TextField(
-                                                    "MM / YYYY",
-                                                    text: $expiryDate
-                                                )
+                                        HStack {
+                                            TextField("CVC", text: $cvv)
                                                 .textFieldStyle(
                                                     PlainTextFieldStyle()
                                                 )
                                                 .keyboardType(.numberPad)
-                                                .onChange(of: expiryDate) {
-                                                    newValue in
-                                                    expiryDate =
-                                                        formatExpiryDate(
-                                                            newValue)
+                                                .onChange(of: cvv) {
+                                                    _, newValue in
+                                                    if newValue.count > 3 {
+                                                        cvv = String(
+                                                            newValue.prefix(3))
+                                                    }
                                                 }
 
-                                                Image(systemName: "calendar")
-                                                    .foregroundColor(.secondary)
-                                                    .font(.system(size: 16))
-                                            }
-                                            .padding(16)
-                                            .background(Color(.systemGray6))
-                                            .cornerRadius(8)
-
-                                            HStack {
-                                                TextField("CVC", text: $cvv)
-                                                    .textFieldStyle(
-                                                        PlainTextFieldStyle()
-                                                    )
-                                                    .keyboardType(.numberPad)
-                                                    .onChange(of: cvv) {
-                                                        newValue in
-                                                        if newValue.count > 3 {
-                                                            cvv = String(
-                                                                newValue.prefix(
-                                                                    3))
-                                                        }
-                                                    }
-
-                                                Image(systemName: "shield.fill")
-                                                    .foregroundColor(.secondary)
-                                                    .font(.system(size: 16))
-                                            }
-                                            .padding(16)
-                                            .background(Color(.systemGray6))
-                                            .cornerRadius(8)
+                                            Image(systemName: "shield.fill")
+                                                .foregroundColor(.secondary)
+                                                .font(.system(size: 16))
                                         }
+                                        .padding(16)
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(8)
                                     }
-                                    .padding(20)
-                                    .background(Color.white)
-                                    .cornerRadius(12)
-                                    .shadow(
-                                        color: Color.black.opacity(0.05),
-                                        radius: 4, x: 0, y: 2)
                                 }
+                                .padding(20)
+                                .background(Color.white)
+                                .cornerRadius(12)
+                                .shadow(
+                                    color: Color.black.opacity(0.05), radius: 4,
+                                    x: 0, y: 2)
                             }
-                            .padding(.horizontal, 24)
-
-                            Spacer(minLength: 120)
                         }
-                    }
+                        .padding(.horizontal, 24)
 
-                    //pay btn
+                        Spacer(minLength: 120)
+                    }
+                }
+
+                //pay btn
+                VStack(spacing: 0) {
                     Button(action: {
                         handlePayment()
                     }) {
@@ -254,18 +246,13 @@ struct PaymentSheetView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(
-                            (isFormValid() && !isProcessing)
-                                ? Color(red: 0.4, green: 0.3, blue: 0.8)
-                                :  // purple active
-                                Color.gray  // gray disabled
-                        )
+                        .background(Color(red: 0.4, green: 0.3, blue: 0.8))
                         .cornerRadius(24)
                     }
                     .disabled(isProcessing || !isFormValid())
+                    .opacity(isFormValid() && !isProcessing ? 1.0 : 0.6)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 34)
-
                 }
             }
             .background(Color.white)
@@ -292,7 +279,7 @@ struct PaymentSheetView: View {
         let context = LAContext()
         var error: NSError?
 
-        //face id and touch id
+        //check for face id or touch id
         if context.canEvaluatePolicy(
             .deviceOwnerAuthenticationWithBiometrics, error: &error)
         {
@@ -304,18 +291,19 @@ struct PaymentSheetView: View {
             ) { success, authenticationError in
                 DispatchQueue.main.async {
                     if success {
-                        //successful
+                        //faceid or touch id scusscess
                         processPayment()
                     } else {
-                        // failed
+                        //faceid or touch id failed
                         isProcessing = false
-                        //passcode as fallback
+                        //fallback - use pass code
                         authenticateWithPasscode()
                     }
                 }
             }
         } else {
-            //no faceid, touch id - use password
+            // no faceid or touch id - use passcode
+            print("no face id or touch id")
             authenticateWithPasscode()
         }
     }
@@ -332,6 +320,7 @@ struct PaymentSheetView: View {
                     processPayment()
                 } else {
                     isProcessing = false
+                    //authentication faild
                     print(
                         "Authentication failed: \(error?.localizedDescription ?? "Unknown error")"
                     )
@@ -347,7 +336,6 @@ struct PaymentSheetView: View {
         }
     }
 
-    //validations
     private func isFormValid() -> Bool {
         return !cardNumber.isEmpty && !expiryDate.isEmpty && !cvv.isEmpty
             && cardNumber.replacingOccurrences(of: " ", with: "").count >= 16
@@ -380,7 +368,6 @@ struct PaymentSheetView: View {
         }
         return limitedDate
     }
-
 }
 
 struct PaymentSheetView_Previews: PreviewProvider {
@@ -398,7 +385,8 @@ struct PaymentSheetView_Previews: PreviewProvider {
                 price: 87.10,
                 sessionType: "Online",
                 date: Date(),
-                createdAt: Date()
+                createdAt: Date(),
+                level: "1"
             ),
             instructor: Instructor(
                 id: "1",
