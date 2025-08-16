@@ -72,7 +72,6 @@ class InstructorViewModel: ObservableObject {
 
             currentInstructor = updatedInstructor
             isSuccess = true
-            print("DEBUG: Instructor profile saved successfully")
 
         } catch {
             print(
@@ -100,7 +99,6 @@ class InstructorViewModel: ObservableObject {
 
             if document.exists, let data = document.data() {
                 currentInstructor = try parseInstructorData(data)
-                print("DEBUG: Instructor profile fetched successfully")
             } else {
                 print("DEBUG: No instructor profile found")
                 currentInstructor = nil

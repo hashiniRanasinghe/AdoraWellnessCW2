@@ -58,7 +58,6 @@ class StudentViewModel: ObservableObject {
 
             currentStudent = updatedStudent
             isSuccess = true
-            print("DEBUG: Student profile saved successfully")
 
         } catch {
             print(
@@ -86,9 +85,7 @@ class StudentViewModel: ObservableObject {
 
             if document.exists, let data = document.data() {
                 currentStudent = try parseStudentData(data)
-                print("DEBUG: Student profile fetched successfully")
             } else {
-                print("DEBUG: No student profile found")
                 currentStudent = nil
             }
 

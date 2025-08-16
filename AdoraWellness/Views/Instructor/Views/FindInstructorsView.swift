@@ -25,18 +25,19 @@ struct FindInstructorsView: View {
             }
         }
     }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
-                            Button(action: {
-                            }) {
-                                Image(systemName: "arrow.left")
-                                    .font(.title2)
-                                    .foregroundColor(.primary)
-                            }
+                            //                            Button(action: {
+                            //                            }) {
+                            //                                Image(systemName: "arrow.left")
+                            //                                    .font(.title2)
+                            //                                    .foregroundColor(.primary)
+                            //                            }
 
                             Spacer()
 
@@ -96,7 +97,6 @@ struct FindInstructorsView: View {
                         .padding(.bottom, 32)
 
                         //instructors list
-                        //instructors list
                         if viewModel.isLoading {
                             VStack(spacing: 16) {
                                 ProgressView()
@@ -149,10 +149,10 @@ struct FindInstructorsView: View {
 
 struct InstructorListCard: View {
     let instructor: Instructor
+    @State private var navigateToDetails = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-
             HStack(spacing: 16) {
                 //profile pic with initials
                 Text(instructor.initials)
@@ -181,7 +181,6 @@ struct InstructorListCard: View {
                         //specialities
                         HStack(spacing: 8) {
                             ForEach(
-                                //instructor.specialities, id: \.self
                                 instructor.specialities.prefix(2), id: \.self
                             ) { speciality in
                                 HStack(spacing: 2) {
@@ -202,8 +201,9 @@ struct InstructorListCard: View {
 
             //book now and fees
             HStack {
-                Button(action: {
-                }) {
+                NavigationLink(
+                    destination: InstructorDetailsView(instructor: instructor)
+                ) {
                     Text("Book Now")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
@@ -224,7 +224,6 @@ struct InstructorListCard: View {
         }
         .padding(20)
         .background(Color(.systemBackground))
-        // .background(Color(.systemGray6))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
