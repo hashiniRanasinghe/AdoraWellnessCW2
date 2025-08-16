@@ -208,8 +208,6 @@ class AuthViewModel: ObservableObject {
                 .collection("users")
                 .document(user.id)
                 .setData(userData)
-
-            print("DEBUG: User document created/updated successfully")
         } catch {
             print(
                 "DEBUG: Error creating/updating user: \(error.localizedDescription)"
