@@ -1,27 +1,28 @@
 //
-//  FindInstructorsView.swift
+//  LessonsView.swift
 //  AdoraWellness
 //
-//  Created by Hashini Ranasinghe on 2025-08-13.
+//  Created by Hashini Ranasinghe on 2025-08-17.
 //
 
 import SwiftUI
 
-struct FindInstructorsView: View {
-    @StateObject private var viewModel = InstructorViewModel()
-    @State private var instructors: [Instructor] = []
+struct LessonsView: View {
+    @StateObject private var viewModel = LessonsViewModel()
+    @State private var lessons: [Lesson] = []
     @State private var selectedFilter = "All"
 
-    private let filterOptions = ["All", "Yoga", "Pilates", "Meditation"]
+    private let filterOptions = [
+        "All", "Yoga", "Pilates", "Meditation", "Beginner",
+    ]
 
-    var filteredInstructors: [Instructor] {
+    var filteredLessons: [Lesson] {
         if selectedFilter == "All" {
-            return instructors
+            return lessons
         } else {
-            return instructors.filter { instructor in
-                instructor.specialities.contains { speciality in
-                    speciality.lowercased() == selectedFilter.lowercased()
-                }
+            return lessons.filter { lesson in
+                lesson.category.lowercased() == selectedFilter.lowercased()
+                    || lesson.level.lowercased() == selectedFilter.lowercased()
             }
         }
     }
@@ -32,23 +33,17 @@ struct FindInstructorsView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
-                            //                            Button(action: {
-                            //                            }) {
-                            //                                Image(systemName: "arrow.left")
-                            //                                    .font(.title2)
-                            //                                    .foregroundColor(.primary)
-                            //                            }
-
                             Spacer()
 
-                            Text("Find Instructors")
+                            Text("Lessons")
                                 .font(.title3)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primary)
 
                             Spacer()
-                            //search
+
                             //                            Button(action: {
+                            //                                //search option
                             //                            }) {
                             //                                Image(systemName: "magnifyingglass")
                             //                                    .font(.title2)
@@ -96,23 +91,23 @@ struct FindInstructorsView: View {
                         }
                         .padding(.bottom, 32)
 
-                        //instructors list
+                        //lessons
                         if viewModel.isLoading {
                             VStack(spacing: 16) {
                                 ProgressView()
                                     .scaleEffect(1.2)
-                                Text("Loading instructors...")
+                                Text("Loading lessons...")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.top, 100)
-                        } else if filteredInstructors.isEmpty {
+                        } else if filteredLessons.isEmpty {
                             VStack(spacing: 16) {
-                                Image(systemName: "person.slash")
+                                Image(systemName: "play.slash")
                                     .font(.system(size: 48))
                                     .foregroundColor(.secondary)
-                                Text("No Results Found")
+                                Text("No Lessons Found")
                                     .font(.title3)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -121,8 +116,8 @@ struct FindInstructorsView: View {
                             .padding(.top, 100)
                         } else {
                             VStack(spacing: 16) {
-                                ForEach(filteredInstructors) { instructor in
-                                    InstructorListCard(instructor: instructor)
+                                ForEach(filteredLessons) { lesson in
+                                    LessonCard(lesson: lesson)
                                         .padding(.horizontal, 24)
                                 }
                             }
@@ -131,80 +126,72 @@ struct FindInstructorsView: View {
                     }
                 }
 
-                FooterNavigationView(selectedTab: 1)
+                FooterNavigationView(selectedTab: 2)
             }
             .background(Color.white)
             .ignoresSafeArea(.all, edges: .bottom)
         }
         .navigationBarHidden(true)
         .task {
-            await loadInstructors()
+            await loadLessons()
         }
     }
 
-    private func loadInstructors() async {
-        instructors = await viewModel.fetchAllInstructors()
+    private func loadLessons() async {
+        lessons = await viewModel.fetchAllLessons()
     }
 }
 
-struct InstructorListCard: View {
-    let instructor: Instructor
-    @State private var navigateToDetails = false
+struct LessonCard: View {
+    let lesson: Lesson
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
-                //profile pic with initials
-                Text(instructor.initials)
+                //icon
+                Image(systemName: lesson.iconName)
                     .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
                     .frame(width: 60, height: 60)
-                    .background(Color(.systemGray3))
+                    .background(
+                        Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
+                    )
                     .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(instructor.fullName)
+                    Text(lesson.title)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.primary)
 
-                    Text("Certified Yoga Instructor")
+                    Text(lesson.subtitle)
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
-
-                    HStack(spacing: 16) {
-                        Text(
-                            "\(instructor.experience) \(instructor.experience == 1 ? "year" : "years")"
-                        )
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-
-                        //specialities
-                        HStack(spacing: 8) {
-                            ForEach(
-                                instructor.specialities.prefix(2), id: \.self
-                            ) { speciality in
-                                HStack(spacing: 2) {
-                                    Circle()
-                                        .fill(Color.secondary)
-                                        .frame(width: 4, height: 4)
-                                    Text(speciality.capitalized)
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
-                    }
+                        .lineLimit(1)
                 }
 
                 Spacer()
+
+                VStack(alignment: .trailing, spacing: 8) {
+                    Text("\(lesson.duration) min")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.primary)
+
+                    Button(action: {
+                        print("Added to favorites")
+                    }) {
+                        Image(systemName: "heart")
+                            .font(.system(size: 20))
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
 
-            //book now and fees
-            HStack {
-                NavigationLink(
-                    destination: InstructorDetailsView(instructor: instructor)
-                ) {
-                    Text("More Details..")
+            //action btns
+            HStack(spacing: 12) {
+                Button(action: {
+                    print("Starting lesson: \(lesson.title) on own")
+                }) {
+                    Text("Start on Own")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
@@ -213,13 +200,27 @@ struct InstructorListCard: View {
                         .cornerRadius(20)
                 }
 
-                Spacer()
+                Button(action: {
+                    print("Starting lesson: \(lesson.title) with guidance")
+                }) {
+                    Text("Start with Guidance")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 10)
+                        .background(
+                            Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
+                        )
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(
+                                    Color(red: 0.4, green: 0.3, blue: 0.8),
+                                    lineWidth: 1)
+                        )
+                }
 
-                Text(
-                    "From $\(String(format: "%.0f", instructor.hourlyRate))/session"
-                )
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.primary)
+                Spacer()
             }
         }
         .padding(20)
@@ -229,17 +230,8 @@ struct InstructorListCard: View {
     }
 }
 
-//get initials from name
-extension Instructor {
-    var initials: String {
-        let names = fullName.components(separatedBy: " ")
-        let initials = names.compactMap { $0.first }.map { String($0) }
-        return initials.joined()
-    }
-}
-
-struct FindInstructorsView_Previews: PreviewProvider {
+struct LessonsView_Previews: PreviewProvider {
     static var previews: some View {
-        FindInstructorsView()
+        LessonsView()
     }
 }
