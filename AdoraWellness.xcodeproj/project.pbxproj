@@ -11,6 +11,8 @@
 		530040302E50BDF800BB4167 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5300402E2E50BDF800BB4167 /* EventKit.framework */; };
 		5397B6942E477894002DDCAF /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 5397B6932E477894002DDCAF /* GoogleSignIn */; };
 		5397B6962E477894002DDCAF /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5397B6952E477894002DDCAF /* GoogleSignInSwift */; };
+		53D65FC62E52122000BFCE39 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D65FC52E52122000BFCE39 /* CoreData.framework */; };
+		53D65FD12E52141100BFCE39 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 53D65FCF2E52141100BFCE39 /* DataModel.xcdatamodeld */; };
 		53E27F662E4450C500E90879 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F652E4450C500E90879 /* FirebaseAuth */; };
 		53E27F682E4450C500E90879 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F672E4450C500E90879 /* FirebaseFirestore */; };
 		53E27F6A2E4450C500E90879 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F692E4450C500E90879 /* FirebaseStorage */; };
@@ -39,6 +41,8 @@
 		53298D622E42138D00B30820 /* AdoraWellness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdoraWellness.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53298D722E42139600B30820 /* AdoraWellnessTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdoraWellnessTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		53298D7C2E42139600B30820 /* AdoraWellnessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdoraWellnessUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		53D65FC52E52122000BFCE39 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		53D65FD02E52141100BFCE39 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -78,6 +82,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5300402F2E50BDF800BB4167 /* EventKitUI.framework in Frameworks */,
+				53D65FC62E52122000BFCE39 /* CoreData.framework in Frameworks */,
 				530040302E50BDF800BB4167 /* EventKit.framework in Frameworks */,
 				5397B6962E477894002DDCAF /* GoogleSignInSwift in Frameworks */,
 				53E27F662E4450C500E90879 /* FirebaseAuth in Frameworks */,
@@ -107,6 +112,7 @@
 		5300402C2E50BDF700BB4167 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				53D65FC52E52122000BFCE39 /* CoreData.framework */,
 				5300402E2E50BDF800BB4167 /* EventKit.framework */,
 				5300402D2E50BDF800BB4167 /* EventKitUI.framework */,
 			);
@@ -116,6 +122,7 @@
 		53298D592E42138D00B30820 = {
 			isa = PBXGroup;
 			children = (
+				53D65FCF2E52141100BFCE39 /* DataModel.xcdatamodeld */,
 				53298D642E42138D00B30820 /* AdoraWellness */,
 				53298D752E42139600B30820 /* AdoraWellnessTests */,
 				53298D7F2E42139600B30820 /* AdoraWellnessUITests */,
@@ -287,6 +294,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53D65FD12E52141100BFCE39 /* DataModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,6 +674,19 @@
 			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		53D65FCF2E52141100BFCE39 /* DataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				53D65FD02E52141100BFCE39 /* DataModel.xcdatamodel */,
+			);
+			currentVersion = 53D65FD02E52141100BFCE39 /* DataModel.xcdatamodel */;
+			path = DataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 53298D5A2E42138D00B30820 /* Project object */;
 }

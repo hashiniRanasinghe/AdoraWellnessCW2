@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LessonsView: View {
     @StateObject private var viewModel = LessonsViewModel()
+    @StateObject private var favoritesManager = FavoritesManager()
     @State private var lessons: [Lesson] = []
     @State private var selectedFilter = "All"
 
@@ -42,13 +43,13 @@ struct LessonsView: View {
 
                             Spacer()
 
-                            //                            Button(action: {
-                            //                                //search option
-                            //                            }) {
-                            //                                Image(systemName: "magnifyingglass")
-                            //                                    .font(.title2)
-                            //                                    .foregroundColor(.primary)
-                            //                            }
+                            // nav to fav list
+                            NavigationLink(destination: FavoritesView()) {
+                                Image(systemName: "heart.fill")
+                                    .font(.title2)
+                                    .foregroundColor(
+                                        Color(red: 0.4, green: 0.3, blue: 0.8))
+                            }
                         }
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
@@ -118,6 +119,7 @@ struct LessonsView: View {
                             VStack(spacing: 16) {
                                 ForEach(filteredLessons) { lesson in
                                     LessonCard(lesson: lesson)
+                                        .environmentObject(favoritesManager)
                                         .padding(.horizontal, 24)
                                 }
                             }
@@ -144,6 +146,7 @@ struct LessonsView: View {
 
 struct LessonCard: View {
     let lesson: Lesson
+    @EnvironmentObject var favoritesManager: FavoritesManager
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -176,12 +179,20 @@ struct LessonCard: View {
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
 
+                    //icon and fav fun
                     Button(action: {
-                        print("Added to favorites")
+                        favoritesManager.toggleFavorite(lesson)
                     }) {
-                        Image(systemName: "heart")
-                            .font(.system(size: 20))
-                            .foregroundColor(.secondary)
+                        //show filled/unfilled based on favorite status
+                        Image(
+                            systemName: favoritesManager.isFavorite(lesson)
+                                ? "heart.fill" : "heart"
+                        )
+                        .font(.system(size: 20))
+                        .foregroundColor(
+                            favoritesManager.isFavorite(lesson)
+                                ? Color(red: 0.4, green: 0.3, blue: 0.8)
+                                : .secondary)
                     }
                 }
             }
@@ -229,7 +240,6 @@ struct LessonCard: View {
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
-
 struct LessonsView_Previews: PreviewProvider {
     static var previews: some View {
         LessonsView()
