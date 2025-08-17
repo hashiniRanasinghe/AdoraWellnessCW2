@@ -127,7 +127,7 @@ struct FooterNavigationView: View {
                     destination: FindInstructorsView(),
                     isActive: $navigateToDiscover
                 ) { EmptyView() }
-                //                NavigationLink(destination: PracticeView(), isActive: $navigateToPractice) { EmptyView() }
+                           NavigationLink(destination: LessonsView(), isActive: $navigateToPractice) { EmptyView() }
                 NavigationLink(
                     destination: UserProfileView(), isActive: $navigateToProfile
                 ) { EmptyView() }

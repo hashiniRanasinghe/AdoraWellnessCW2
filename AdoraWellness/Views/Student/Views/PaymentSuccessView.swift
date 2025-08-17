@@ -8,6 +8,7 @@
 import EventKit
 import EventKitUI
 import SwiftUI
+import UserNotifications
 
 struct PaymentSuccessView: View {
     let session: Session
@@ -78,14 +79,14 @@ struct PaymentSuccessView: View {
                 //buttons
                 VStack(spacing: 16) {
                     Spacer()
-                    Button("Add to Reminder") {
-                        isPresented = false
+                    Button("Add to Calendar") {
+                        addToCalendar()
                     }
                     .primaryButtonStyle()
                     .frame(maxWidth: 350)
 
-                    Button("Add to Calendar") {
-                        addToCalendar()
+                    Button("Add to Reminder") {
+                        addToReminders()
                     }
                     .secondaryButtonStyle()
                     .frame(maxWidth: 350)
@@ -119,12 +120,85 @@ struct PaymentSuccessView: View {
 
             do {
                 try eventStore.save(event, span: .thisEvent)
-                print("Event saved to calendar!")
+                print("Event saved")
+
+                // Add this before your notification code
+                UNUserNotificationCenter.current().requestAuthorization(
+                    options: [.alert, .sound, .badge]) { granted, error in
+                        if granted {
+                            print("✅ Notification permission granted")
+                        } else {
+                            print("❌ Notification permission denied")
+                        }
+                    }
+
+                //local notificatiom
+                let content = UNMutableNotificationContent()
+                content.title = "Added to Calendar"
+                content.body = "Your yoga session was successfully saved!"
+                content.sound = .default
+
+                //trigger after 1 second
+                let trigger = UNTimeIntervalNotificationTrigger(
+                    timeInterval: 1, repeats: false)
+                let request = UNNotificationRequest(
+                    identifier: UUID().uuidString, content: content,
+                    trigger: trigger)
+
+                UNUserNotificationCenter.current().add(request) { error in
+                    if let error = error {
+                        print("Failed to show notification: \(error)")
+                    } else {
+                        print("Notification scheduled")
+                    }
+                }
+
             } catch {
                 print("Failed to save event: \(error)")
             }
         }
     }
+
+    private func addToReminders() {
+        let eventStore = EKEventStore()
+
+        // request access
+        eventStore.requestFullAccessToReminders { granted, error in
+            guard granted else {
+                print("Reminders access denied")
+                return
+            }
+
+            let reminder = EKReminder(eventStore: eventStore)
+            reminder.title = "Yoga Session: \(session.title)"
+            reminder.notes =
+                "Yoga session with \(instructor.firstName) \(instructor.lastName)"
+
+            //due date to session start time
+            reminder.dueDateComponents = Calendar.current.dateComponents(
+                [.year, .month, .day, .hour, .minute],
+                from: session.date
+            )
+
+            //set priority  5 = medium
+            reminder.priority = 5
+
+            //use default reminders list
+            reminder.calendar = eventStore.defaultCalendarForNewReminders()
+
+            //alarm 15 mins before
+            let alarm = EKAlarm(relativeOffset: -15 * 60)  // 15 mins
+            reminder.addAlarm(alarm)
+
+            do {
+                try eventStore.save(reminder, commit: true)
+                print("Reminder saved successfully!")
+            } catch {
+                print("Failed to save reminder: \(error)")
+            }
+        }
+    }
+
 }
 
 struct PaymentSuccessView_Previews: PreviewProvider {
