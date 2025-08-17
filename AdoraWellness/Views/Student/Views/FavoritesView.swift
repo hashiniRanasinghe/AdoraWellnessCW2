@@ -19,93 +19,92 @@ struct FavoritesView: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.title2)
-                            .foregroundColor(.primary)
-                    }
 
-                    Spacer()
-
-                    Text("Favourites")
-                        .font(.title3)
-                        .fontWeight(.bold)
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.title2)
                         .foregroundColor(.primary)
-
-                    Spacer()
-
-                    //                    Button(action: {
-                    //                        //search
-                    //                    }) {
-                    //                        Image(systemName: "magnifyingglass")
-                    //                            .font(.title2)
-                    //                            .foregroundColor(.primary)
-                    //                    }
-
-                    //                    Button(action: {
-                    //                    }) {
-                    //                        Image(systemName: "heart.fill")
-                    //                            .font(.title2)
-                    //                            .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
-                    //                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 20)
-                .padding(.bottom, 32)
-
-                //content
-                ScrollView {
-                    VStack(spacing: 16) {
-                        if isLoading {
-                            VStack(spacing: 16) {
-                                ProgressView()
-                                    .scaleEffect(1.2)
-                                Text("Loading favorites...")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 100)
-                        } else if favoriteLessons.isEmpty {
-                            VStack(spacing: 16) {
-                                Image(systemName: "heart.slash")
-                                    .font(.system(size: 48))
-                                    .foregroundColor(.secondary)
-                                Text("No Favourite Lessons")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                Text(
-                                    "Add lessons to favourites to see them here"
-                                )
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 100)
-                        } else {
-                            ForEach(favoriteLessons) { lesson in
-                                FavoriteLessonCard(lesson: lesson)
-                                    .environmentObject(favoritesManager)
-                                    .padding(.horizontal, 24)
-                            }
-                        }
-                    }
-                    .padding(.bottom, 100)
                 }
 
                 Spacer()
+
+                Text("Favourites")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                //                    Button(action: {
+                //                        //search
+                //                    }) {
+                //                        Image(systemName: "magnifyingglass")
+                //                            .font(.title2)
+                //                            .foregroundColor(.primary)
+                //                    }
+
+                //                    Button(action: {
+                //                    }) {
+                //                        Image(systemName: "heart.fill")
+                //                            .font(.title2)
+                //                            .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
+                //                    }
             }
-            .background(Color.white)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarHidden(true)
+            .padding(.horizontal, 24)
+            .padding(.top, 20)
+            .padding(.bottom, 32)
+
+            //content
+            ScrollView {
+                VStack(spacing: 16) {
+                    if isLoading {
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .scaleEffect(1.2)
+                            Text("Loading favorites...")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 100)
+                    } else if favoriteLessons.isEmpty {
+                        VStack(spacing: 16) {
+                            Image(systemName: "heart.slash")
+                                .font(.system(size: 48))
+                                .foregroundColor(.secondary)
+                            Text("No Favourite Lessons")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                            Text(
+                                "Add lessons to favourites to see them here"
+                            )
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 100)
+                    } else {
+                        ForEach(favoriteLessons) { lesson in
+                            FavoriteLessonCard(lesson: lesson)
+                                .environmentObject(favoritesManager)
+                                .padding(.horizontal, 24)
+                        }
+                    }
+                }
+                .padding(.bottom, 100)
+            }
+
+            Spacer()
         }
+        .background(Color.white)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
         .task {
             await loadLessons()
         }
