@@ -29,8 +29,12 @@ class SessionViewModel: ObservableObject {
             var sessions: [Session] = []
 
             for document in querySnapshot.documents {
-                if let session = try? parseSessionData(document.data()) {
+                if let session = try? parseSessionData(
+                    document.data(), documentId: document.documentID)
+                {
+
                     sessions.append(session)
+
                 }
             }
 
@@ -50,9 +54,61 @@ class SessionViewModel: ObservableObject {
             return []
         }
     }
+    // check if student is already registered for a session
+    func isStudentRegistered(sessionId: String, studentId: String) async -> Bool
+    {
+        do {
+            let document = try await db.collection("sessions").document(
+                sessionId
+            ).getDocument()
+
+            if let data = document.data(),
+                let registeredStudents = data["registeredStudents"] as? [String]
+            {
+                return registeredStudents.contains(studentId)
+            }
+
+            return false
+
+        } catch {
+            print(
+                "DEBUG: Failed to check student registration: \(error.localizedDescription)"
+            )
+            return false
+        }
+    }
+    // register student for a session
+    func registerStudentForSession(sessionId: String, studentId: String) async
+        -> Bool
+    {
+        do {
+            let sessionRef = db.collection("sessions").document(sessionId)
+
+            // FieldValue.arrayUnion to add the student ID to the registeredStudents array
+            //create the array if it doesn't exist, or add to it
+            try await sessionRef.updateData([
+                "registeredStudents": FieldValue.arrayUnion([studentId])
+            ])
+
+            print(
+                "DEBUG: Successfully registered student \(studentId) for session \(sessionId)"
+            )
+            return true
+
+        } catch {
+            print(
+                "DEBUG: Failed to register student: \(error.localizedDescription)"
+            )
+            alertMessage = "Failed to book session. Please try again."
+            showAlert = true
+            return false
+        }
+    }
 
     // parse session data from db
-    private func parseSessionData(_ data: [String: Any]) throws -> Session {
+    private func parseSessionData(_ data: [String: Any], documentId: String)
+        throws -> Session
+    {
         guard
             let instructorId = data["instructorId"] as? String,
             let title = data["title"] as? String,
@@ -85,9 +141,10 @@ class SessionViewModel: ObservableObject {
         } else {
             createdAt = Date()
         }
+        let registeredStudents = data["registeredStudents"] as? [String] ?? []
 
         return Session(
-            id: UUID().uuidString,
+            id: documentId,
             instructorId: instructorId,
             title: title,
             description: description,
@@ -98,7 +155,8 @@ class SessionViewModel: ObservableObject {
             sessionType: sessionType,
             date: date,
             createdAt: createdAt,
-            level: level
+            level: level,
+            registeredStudents: registeredStudents
         )
     }
 }

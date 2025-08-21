@@ -11,6 +11,8 @@ import SwiftUI
 struct PaymentSheetView: View {
     let session: Session
     let instructor: Instructor
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @StateObject private var sessionViewModel = SessionViewModel()
     @Binding var isPresented: Bool
     @State private var cardNumber = ""
     @State private var expiryDate = ""
@@ -18,6 +20,8 @@ struct PaymentSheetView: View {
     @State private var showingBiometricAlert = false
     @State private var paymentSuccessful = false
     @State private var isProcessing = false
+    @State private var alertMessage: String = ""
+    @State private var showAlert: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -343,9 +347,37 @@ struct PaymentSheetView: View {
     }
 
     private func processPayment() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            isProcessing = false
-            paymentSuccessful = true
+        Task {
+            try? await Task.sleep(nanoseconds: 2_000_000_000)  //2s
+
+            //get the user id from the user object
+            guard let currentUserId = authViewModel.currentUser?.id else {
+                DispatchQueue.main.async {
+                    self.isProcessing = false
+                    self.alertMessage =
+                        "Unable to identify user. Please try again."
+                }
+                return
+            }
+            print("Registering student:", currentUserId, "for session:", session.id)
+
+            //register the student for the session
+            let success = await sessionViewModel.registerStudentForSession(
+                sessionId: session.id,
+                studentId: currentUserId
+            )
+
+            DispatchQueue.main.async {
+                self.isProcessing = false
+
+                if success {
+                    self.paymentSuccessful = true
+                } else {
+                    self.alertMessage =
+                        "Payment processed but failed to book session. Please contact support."
+                    self.showAlert = true
+                }
+            }
         }
     }
 

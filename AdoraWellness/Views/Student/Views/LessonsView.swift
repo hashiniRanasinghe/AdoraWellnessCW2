@@ -179,28 +179,13 @@ struct LessonCard: View {
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
 
-                    //icon and fav fun
-                    Button(action: {
-                        favoritesManager.toggleFavorite(lesson)
-                    }) {
-                        //show filled/unfilled based on favorite status
-                        Image(
-                            systemName: favoritesManager.isFavorite(lesson)
-                                ? "heart.fill" : "heart"
-                        )
-                        .font(.system(size: 20))
-                        .foregroundColor(
-                            favoritesManager.isFavorite(lesson)
-                                ? Color(red: 0.4, green: 0.3, blue: 0.8)
-                                : .secondary)
-                    }
                 }
             }
 
             //action btns
             HStack(spacing: 12) {
                 Button(action: {
-                    print("Starting lesson: \(lesson.title) on own")
+//                    print("Starting lesson: \(lesson.title) on own")
                 }) {
                     Text("Start on Own")
                         .font(.system(size: 14, weight: .semibold))
