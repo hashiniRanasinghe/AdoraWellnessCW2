@@ -57,7 +57,26 @@ struct SplashScreen: View {
                     UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
                 }
         } else if viewModel.userSession != nil {
-            DashboardView()
+            //dashboard based on user role
+            if let currentUser = viewModel.currentUser {
+                if currentUser.userType == .student {
+                    RoleGuard(allowedRole: .student) {
+                        DashboardView()
+                            .environmentObject(viewModel)
+                    }
+                } else if currentUser.userType == .instructor {
+                    RoleGuard(allowedRole: .instructor) {
+                        Dashboard2()
+                            .environmentObject(viewModel)
+                    }
+                }
+            } else {
+                //fallback while user data is loading
+                VStack {
+                    ProgressView()
+                    Text("Loading user data...")
+                }
+            }
         } else {
             LoginView()
         }

@@ -7,12 +7,17 @@
 
 import Foundation
 
+enum UserType: String, Codable {
+    case student
+    case instructor
+}
+
 struct User: Identifiable, Codable {
     let id: String
     let fullname: String
     let email: String
-    let userType: String
-    
+    let userType: UserType
+
     var initials: String {
         let formatter = PersonNameComponentsFormatter()
         if let components = formatter.personNameComponents(from: fullname) {
@@ -28,6 +33,6 @@ extension User {
         id: UUID().uuidString,
         fullname: "Kobe Bryant",
         email: "test@gmail.com",
-        userType: "student" 
+        userType: UserType(rawValue: "student") ?? .student
     )
 }

@@ -79,7 +79,9 @@ struct OnboardingScreen1: View {
                 }
             }
             .fullScreenCover(isPresented: $showNextScreen) {
-                OnboardingScreen2()
+                NavigationStack {
+                    OnboardingScreen2()
+                }
             }
         }
     }

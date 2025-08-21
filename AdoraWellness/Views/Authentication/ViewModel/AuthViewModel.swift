@@ -56,16 +56,18 @@ class AuthViewModel: ObservableObject {
             let result = try await Auth.auth().createUser(
                 withEmail: email, password: password)
             self.userSession = result.user
+            let userTypeEnum =
+                UserType(rawValue: userType.lowercased()) ?? .student
 
             let user = User(
                 id: result.user.uid, fullname: fullname, email: email,
-                userType: userType)
+                userType: userTypeEnum)
 
             let userData: [String: Any] = [
                 "id": user.id,
                 "fullname": user.fullname,
                 "email": user.email,
-                "userType": userType,
+                "userType": user.userType.rawValue,
             ]
 
             try await Firestore.firestore()
@@ -193,7 +195,7 @@ class AuthViewModel: ObservableObject {
             id: firebaseUser.uid,
             fullname: firebaseUser.displayName ?? "Unknown User",
             email: firebaseUser.email ?? "",
-            userType: "student"
+            userType: UserType(rawValue: "student") ?? .student
         )
 
         let userData: [String: Any] = [

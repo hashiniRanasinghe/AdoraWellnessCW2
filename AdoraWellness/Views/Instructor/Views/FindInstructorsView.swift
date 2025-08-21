@@ -131,7 +131,8 @@ struct FindInstructorsView: View {
                     }
                 }
 
-                FooterNavigationView(selectedTab: 1)
+                FooterNavigationView(selectedTab: 1, userRole: .student)
+
             }
             .background(Color.white)
             .ignoresSafeArea(.all, edges: .bottom)

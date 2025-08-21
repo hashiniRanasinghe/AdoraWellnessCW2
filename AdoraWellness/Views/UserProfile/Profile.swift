@@ -44,6 +44,10 @@ struct UserProfileView: View {
                                         Text(user.email)
                                             .font(.subheadline)
                                             .foregroundColor(.secondary)
+
+                                        Text(user.userType.rawValue.capitalized)
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
                                     }
                                 }
                                 .padding(.horizontal, 24)
@@ -53,7 +57,7 @@ struct UserProfileView: View {
                                 VStack(spacing: 16) {
                                     //edit profile bts
                                     Button(action: {
-                                        // Handle edit profile
+                                        //handle edit profile
                                     }) {
                                         HStack(spacing: 12) {
                                             Image(
@@ -150,8 +154,8 @@ struct UserProfileView: View {
                         }
                     }
 
-                    FooterNavigationView(selectedTab: 3)
-
+                    FooterNavigationView(
+                        selectedTab: 3, userRole: user.userType)
                 }
                 .background(Color.white)
                 .navigationBarBackButtonHidden(true)

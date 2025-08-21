@@ -128,7 +128,8 @@ struct LessonsView: View {
                     }
                 }
 
-                FooterNavigationView(selectedTab: 2)
+                FooterNavigationView(selectedTab: 2, userRole: .student)
+
             }
             .background(Color.white)
             .ignoresSafeArea(.all, edges: .bottom)
@@ -185,7 +186,7 @@ struct LessonCard: View {
             //action btns
             HStack(spacing: 12) {
                 Button(action: {
-//                    print("Starting lesson: \(lesson.title) on own")
+                    //                    print("Starting lesson: \(lesson.title) on own")
                 }) {
                     Text("Start on Own")
                         .font(.system(size: 14, weight: .semibold))
