@@ -1,14 +1,14 @@
 //
-//  Dashboard.swift
+//  Dashboard2.swift
 //  AdoraWellness
 //
-//  Created by Hashini Ranasinghe on 2025-08-08.
+//  Created by Hashini Ranasinghe on 2025-08-21.
 //
 
 
 import SwiftUI
 
-struct DashboardView: View {
+struct Dashboard2: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @StateObject private var sessionViewModel = SessionViewModel()
     @StateObject private var instructorViewModel = InstructorViewModel()
@@ -22,7 +22,7 @@ struct DashboardView: View {
     @State private var isLoading = true
 
     var body: some View {
-        RoleGuard(allowedRole: .student) {
+        RoleGuard(allowedRole: .instructor) {
             dashboardContent
         }
         .environmentObject(viewModel)
@@ -38,25 +38,23 @@ struct DashboardView: View {
                             // Header section
                             headerSection(user: user)
 
-                            recommendedLesson()
-
-                            // Section 1: Random Session
-                            randomSessionSection()
-
-                            // Section 2: Top 3 Instructors
-                            instructorsSection()
-
-                            // Section 3: Booked Sessions or Book a Session
-                            bookedSessionsSection()
-
-                            // Section 4: User Stats (Height, Weight, BMI)
-                            userStatsSection()
-                            
-//                            profileSetupSection()
+//                            recommendedLesson()
+//
+//                            // Section 1: Random Session
+//                            randomSessionSection()
+//
+//                            // Section 2: Top 3 Instructors
+//                            instructorsSection()
+//
+//                            // Section 3: Booked Sessions or Book a Session
+//                            bookedSessionsSection()
+//
+//                            // Section 4: User Stats (Height, Weight, BMI)
+//                            userStatsSection()
                         }
                     }
 
-                    FooterNavigationView(selectedTab: 0, userRole: .student)
+                    FooterNavigationView(selectedTab: 0, userRole: .instructor)
                 }
                 .background(Color.white)
                 .ignoresSafeArea(.all, edges: .bottom)
@@ -586,65 +584,7 @@ struct DashboardView: View {
         }
         .padding(.bottom, 100)  // Space for footer
     }
-    // MARK: - Profile Setup Section
 
-       private var profileSetupSection: some View {
-
-           VStack(spacing: 12) {
-
-               Text("Complete Your Profile")
-
-                   .font(.headline)
-
-                   .fontWeight(.semibold)
-
-                   .foregroundColor(.primary)
-
-               
-
-               Text("Set up your profile to get personalized recommendations")
-
-                   .font(.subheadline)
-
-                   .foregroundColor(.secondary)
-
-                   .multilineTextAlignment(.center)
-
-               
-
-               NavigationLink(destination: Text("Profile Setup").navigationBarTitleDisplayMode(.inline)) {
-
-                   Text("Set Up Profile")
-
-                       .font(.headline)
-
-                       .fontWeight(.semibold)
-
-                       .foregroundColor(.white)
-
-                       .frame(maxWidth: .infinity)
-
-                       .frame(height: 50)
-
-                       .background(Color(red: 0.4, green: 0.3, blue: 0.8))
-
-                       .cornerRadius(25)
-
-               }
-
-           }
-
-           .padding(20)
-
-           .background(Color.white)
-
-           .cornerRadius(16)
-
-           .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
-
-           .padding(.horizontal, 24)
-
-       }
     // MARK: - Helper Functions
     private func loadDashboardData() async {
         isLoading = true
@@ -707,50 +647,5 @@ struct DashboardView: View {
             return weight / (heightInMeters * heightInMeters)
         }
         return 0
-    }
-}
-
-//mini instructor card
-struct InstructorMiniCard: View {
-    let instructor: Instructor
-
-    var body: some View {
-        NavigationLink(
-            destination: InstructorDetailsView(instructor: instructor)
-        ) {
-            VStack(spacing: 12) {
-                Text(instructor.initials)
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(width: 50, height: 50)
-                    .background(Color(.systemGray3))
-                    .clipShape(Circle())
-
-                VStack(spacing: 4) {
-                    Text(instructor.fullName)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-
-                    Text(instructor.specialities.first ?? "Instructor")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-
-                }
-            }
-            .frame(width: 120)
-            .padding(16)
-            .background(Color(.systemGray6))
-            .cornerRadius(12)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
-
-struct DashboardView_Previews: PreviewProvider {
-    static var previews: some View {
-        DashboardView()
-            .environmentObject(AuthViewModel())
     }
 }

@@ -198,3 +198,4 @@ struct LoginView_Previews: PreviewProvider {
 
 //https://adorawellnessioscw2.firebaseapp.com/__/auth/handler
 //bf3Y5nraJ3x9yte - password of the ranasinghehashinih@gmail.com
+

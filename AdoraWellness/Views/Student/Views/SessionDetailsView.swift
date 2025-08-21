@@ -16,6 +16,7 @@ struct SessionDetailsView: View {
     @State private var isFavorite = false
 
     var body: some View {
+        
         NavigationStack {
             VStack(spacing: 0) {
                 ScrollView {
@@ -121,6 +122,7 @@ struct SessionDetailsView: View {
                 VStack(spacing: 0) {
                     Button(action: {
                         showPaymentSheet = true
+                        
                     }) {
                         Text("Confirmation")
                             .font(.system(size: 18, weight: .semibold))

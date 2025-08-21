@@ -5,7 +5,7 @@
 //  Created by Hashini Ranasinghe on 2025-08-16.
 //
 
-import SwiftUI
+import Foundation
 
 struct Session: Identifiable, Codable {
     let id: String
@@ -20,20 +20,13 @@ struct Session: Identifiable, Codable {
     let date: Date
     let createdAt: Date
     let level: String
+    let registeredStudents: [String]  //array of enrolled student IDs
 
     init(
-        id: String = UUID().uuidString,
-        instructorId: String,
-        title: String,
-        description: String,
-        startTime: String,
-        endTime: String,
-        durationMinutes: Int,
-        price: Double,
-        sessionType: String,
-        date: Date,
-        createdAt: Date = Date(),
-        level: String
+        id: String, instructorId: String, title: String, description: String,
+        startTime: String, endTime: String, durationMinutes: Int, price: Double,
+        sessionType: String, date: Date, createdAt: Date, level: String,
+        registeredStudents: [String] = []
     ) {
         self.id = id
         self.instructorId = instructorId
@@ -47,5 +40,6 @@ struct Session: Identifiable, Codable {
         self.date = date
         self.createdAt = createdAt
         self.level = level
+        self.registeredStudents = registeredStudents
     }
 }
