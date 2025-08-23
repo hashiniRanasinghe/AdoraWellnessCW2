@@ -16,7 +16,7 @@ struct SessionDetailsView: View {
     @State private var isFavorite = false
 
     var body: some View {
-        
+
         NavigationStack {
             VStack(spacing: 0) {
                 ScrollView {
@@ -122,7 +122,7 @@ struct SessionDetailsView: View {
                 VStack(spacing: 0) {
                     Button(action: {
                         showPaymentSheet = true
-                        
+
                     }) {
                         Text("Confirmation")
                             .font(.system(size: 18, weight: .semibold))
@@ -163,46 +163,5 @@ struct SummaryRow: View {
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.primary)
         }
-    }
-}
-
-struct SessionDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SessionDetailsView(
-            session: Session(
-                id: "1",
-                instructorId: "1",
-                title: "Morning Flow",
-                description:
-                    "Gentle, slow-paced with basic postures Vinyasa - Flow-style linking breath with movement Ashtanga - Athletic, fast-paced with set sequences Yin",
-                startTime: "09:00",
-                endTime: "10:00",
-                durationMinutes: 60,
-                price: 35.0,
-                sessionType: "Online",
-                date: Date(),
-                createdAt: Date(),
-                level: "1"
-            ),
-            instructor: Instructor(
-                id: "1",
-                firstName: "Adam",
-                lastName: "Dalva",
-                email: "adam@example.com",
-                phoneNumber: "123-456-7890",
-                dateOfBirth: Date(),
-                address: "123 Main St",
-                city: "New York",
-                country: "United States",
-                latitude: 40.7128,
-                longitude: -74.0060,
-                specialities: ["Yoga", "Pilates"],
-                certifications: "Certified Yoga Instructor",
-                experience: 5,
-                hourlyRate: 35.0,
-                bio: "Experienced yoga instructor with a passion for wellness.",
-                isActive: true
-            )
-        )
     }
 }

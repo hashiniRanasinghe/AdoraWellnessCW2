@@ -678,7 +678,7 @@ struct DashboardView: View {
         //filter by user havnt booked and sessions hasnt started
         let availableSessions = allSessions.filter { session in
             //sessions hasnt started
-            let sessionDateTime = combineDateAndTime(
+            let sessionDateTime = Utils.combineDateAndTime(
                 date: session.date, timeString: session.startTime)
             let isFuture = sessionDateTime > Date()
 
@@ -711,7 +711,7 @@ struct DashboardView: View {
             let isRegistered = session.registeredStudents.contains(
                 currentUserId)
 
-            let sessionDateTime = combineDateAndTime(
+            let sessionDateTime = Utils.combineDateAndTime(
                 date: session.date, timeString: session.startTime)
             let isUpcoming =
                 sessionDateTime >= Calendar.current.startOfDay(for: Date())
@@ -721,9 +721,9 @@ struct DashboardView: View {
 
         //show closest sessions first
         enrolledSessions = userSessions.sorted { session1, session2 in
-            let date1 = combineDateAndTime(
+            let date1 = Utils.combineDateAndTime(
                 date: session1.date, timeString: session1.startTime)
-            let date2 = combineDateAndTime(
+            let date2 = Utils.combineDateAndTime(
                 date: session2.date, timeString: session2.startTime)
             return date1 < date2
         }
@@ -733,24 +733,7 @@ struct DashboardView: View {
     private func getInstructorById(_ instructorId: String) -> Instructor? {
         return instructors.first { $0.id == instructorId }
     }
-
-    // combine session date with start time
-    private func combineDateAndTime(date: Date, timeString: String) -> Date {
-        let calendar = Calendar.current
-        let timeComponents = timeString.split(separator: ":").compactMap {
-            Int($0)
-        }
-
-        guard timeComponents.count >= 2 else { return date }
-
-        var dateComponents = calendar.dateComponents(
-            [.year, .month, .day], from: date)
-        dateComponents.hour = timeComponents[0]
-        dateComponents.minute = timeComponents[1]
-
-        return calendar.date(from: dateComponents) ?? date
-    }
-
+    
     // calculate bmi
     private func calculateBMI(weight: Double, height: Double) -> Double {
         if height > 0 {

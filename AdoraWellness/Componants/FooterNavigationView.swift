@@ -92,7 +92,7 @@ struct FooterNavigationView: View {
                         destination: Dashboard2(), isActive: $navigateToHome
                     ) { EmptyView() }
                     NavigationLink(
-                        destination: ScheduleView(),
+                        destination: InstructorScheduleView(),
                         isActive: $navigateToSchedule
                     ) { EmptyView() }
                     NavigationLink(

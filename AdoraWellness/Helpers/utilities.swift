@@ -104,4 +104,19 @@ struct Utils {
             "Gentle, slow-paced with basic postures Vinyasa - Flow-style linking breath with movement Ashtanga - Athletic, fast-paced with set sequences Yin"
     }
 
+    static func combineDateAndTime(date: Date, timeString: String) -> Date {
+        let calendar = Calendar.current
+        let timeComponents = timeString.split(separator: ":").compactMap {
+            Int($0)
+        }
+
+        guard timeComponents.count >= 2 else { return date }
+
+        var dateComponents = calendar.dateComponents(
+            [.year, .month, .day], from: date)
+        dateComponents.hour = timeComponents[0]
+        dateComponents.minute = timeComponents[1]
+
+        return calendar.date(from: dateComponents) ?? date
+    }
 }
