@@ -22,6 +22,11 @@ struct PaymentSheetView: View {
     @State private var isProcessing = false
     @State private var alertMessage: String = ""
     @State private var showAlert: Bool = false
+    @FocusState private var focusedField: Field?
+    
+    enum Field {
+        case cardNumber, expiryDate, cvv
+    }
 
     var body: some View {
         NavigationStack {
@@ -140,7 +145,7 @@ struct PaymentSheetView: View {
                                         )
                                         .foregroundColor(.primary)
 
-                                    //card feild
+                                    //card field
                                     HStack {
                                         TextField(
                                             "0000 0000 0000 0000",
@@ -148,11 +153,10 @@ struct PaymentSheetView: View {
                                         )
                                         .textFieldStyle(PlainTextFieldStyle())
                                         .keyboardType(.numberPad)
+                                        .focused($focusedField, equals: .cardNumber)
                                         .tint(.gray)
-                                        .onChange(of: cardNumber) {
-                                            oldValue, newValue in
-                                            cardNumber = formatCardNumber(
-                                                newValue)
+                                        .onChange(of: cardNumber) { oldValue, newValue in
+                                            cardNumber = formatCardNumber(newValue)
                                         }
 
                                         Spacer()
@@ -162,7 +166,6 @@ struct PaymentSheetView: View {
                                             Image(systemName: "creditcard.fill")
                                                 .foregroundColor(.gray)
                                                 .font(.system(size: 16))
-
                                         }
                                     }
                                     .padding(16)
@@ -179,11 +182,10 @@ struct PaymentSheetView: View {
                                                 PlainTextFieldStyle()
                                             )
                                             .keyboardType(.numberPad)
+                                            .focused($focusedField, equals: .expiryDate)
                                             .tint(.gray)
-                                            .onChange(of: expiryDate) {
-                                                _, newValue in
-                                                expiryDate = formatExpiryDate(
-                                                    newValue)
+                                            .onChange(of: expiryDate) { _, newValue in
+                                                expiryDate = formatExpiryDate(newValue)
                                             }
 
                                             Image(systemName: "calendar")
@@ -200,12 +202,11 @@ struct PaymentSheetView: View {
                                                     PlainTextFieldStyle()
                                                 )
                                                 .keyboardType(.numberPad)
+                                                .focused($focusedField, equals: .cvv)
                                                 .tint(.gray)
-                                                .onChange(of: cvv) {
-                                                    _, newValue in
+                                                .onChange(of: cvv) { _, newValue in
                                                     if newValue.count > 3 {
-                                                        cvv = String(
-                                                            newValue.prefix(3))
+                                                        cvv = String(newValue.prefix(3))
                                                     }
                                                 }
 
@@ -231,10 +232,14 @@ struct PaymentSheetView: View {
                         Spacer(minLength: 120)
                     }
                 }
+                .onTapGesture {
+                    focusedField = nil
+                }
 
                 //pay btn
                 VStack(spacing: 0) {
                     Button(action: {
+                        focusedField = nil // dismiss keyboard before payment
                         handlePayment()
                     }) {
                         HStack {
@@ -264,6 +269,20 @@ struct PaymentSheetView: View {
             }
             .background(Color.white)
             .ignoresSafeArea(.all, edges: .bottom)
+            // Add toolbar with Done button when keyboard is active
+            .toolbar {
+                ToolbarItem(placement: .keyboard) {
+                    if focusedField != nil {
+                        HStack {
+                            Spacer()
+                            Button("Done") {
+                                focusedField = nil
+                            }
+                            .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
+                        }
+                    }
+                }
+            }
             //open success screen
             .fullScreenCover(
                 isPresented: $paymentSuccessful
@@ -276,13 +295,6 @@ struct PaymentSheetView: View {
             }
         }
         .navigationBarHidden(true)
-        //        .alert("Payment Successful", isPresented: $paymentSuccessful) {
-        //            Button("OK") {
-        //                isPresented = false
-        //            }
-        //        } message: {
-        //            Text("Your session has been booked successfully!")
-        //        }
     }
 
     private func handlePayment() {
@@ -308,7 +320,7 @@ struct PaymentSheetView: View {
             ) { success, authenticationError in
                 DispatchQueue.main.async {
                     if success {
-                        //faceid or touch id scusscess
+                        //faceid or touch id success
                         processPayment()
                     } else {
                         //faceid or touch id failed
@@ -337,7 +349,7 @@ struct PaymentSheetView: View {
                     processPayment()
                 } else {
                     isProcessing = false
-                    //authentication faild
+                    //authentication failed
                     print(
                         "Authentication failed: \(error?.localizedDescription ?? "Unknown error")"
                     )

@@ -12,7 +12,7 @@ struct AddSessionView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var sessionViewModel = SessionViewModel()
-
+    @State private var showSuccessView = false
     @State private var title = ""
     @State private var description = ""
     @State private var selectedDate = Date()
@@ -59,12 +59,22 @@ struct AddSessionView: View {
         .navigationBarHidden(true)
         .alert("Session Status", isPresented: $showAlert) {
             Button("OK") {
-                if alertMessage.contains("successfully") {
-                    dismiss()
-                }
+                dismiss()
             }
         } message: {
             Text(alertMessage)
+        }
+        .fullScreenCover(isPresented: $showSuccessView) {
+            SessionSuccessView(
+                sessionTitle: title,
+                sessionDate: selectedDate,
+                startTime: formatTime(startTime),
+                endTime: formatTime(endTime),
+                sessionType: selectedSessionType,
+                level: selectedLevel,
+                price: Double(price) ?? 0.0,
+                isPresented: $showSuccessView
+            )
         }
     }
 
@@ -317,7 +327,11 @@ struct AddSessionView: View {
             && Double(price) != nil && endTime > startTime
             && selectedDate >= Calendar.current.startOfDay(for: Date())
     }
-
+    private func formatTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
+    }
     //save session to db
     private func saveSession() async {
         guard let instructorId = authViewModel.currentUser?.id else {
@@ -334,14 +348,12 @@ struct AddSessionView: View {
 
         isLoading = true
 
-        //format time strings
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "HH:mm"
 
         let startTimeString = timeFormatter.string(from: startTime)
         let endTimeString = timeFormatter.string(from: endTime)
 
-        //create session data
         let sessionData: [String: Any] = [
             "instructorId": instructorId,
             "title": title,
@@ -362,15 +374,14 @@ struct AddSessionView: View {
             _ = try await db.collection("sessions").addDocument(
                 data: sessionData)
 
-            alertMessage = "Session created successfully!"
-            showAlert = true
+            isLoading = false
+            showSuccessView = true
         } catch {
             alertMessage = "Failed to create session. Please try again."
             showAlert = true
             print("Error saving session: \(error.localizedDescription)")
+            isLoading = false
         }
-
-        isLoading = false
     }
 }
 

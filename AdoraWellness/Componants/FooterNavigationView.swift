@@ -66,7 +66,7 @@ struct FooterNavigationView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 34)
         }
-        .background(Color.white)
+        .background(Color.white.opacity(0.8)) //make footer transparent
         .background(
             Group {
                 //student pages
