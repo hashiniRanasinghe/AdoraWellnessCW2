@@ -17,7 +17,7 @@ struct Lesson: Identifiable, Codable {
     let category: String  // Yoga, Pilates, Meditation
     let level: String  // Beginner, Intermediate, Advanced, All Levels
     let videoURL: String
-    let thumbnailURL: String?
+    let thumbnailURL: String
     let description: String
     let iconName: String
     let instructorId: String?
@@ -85,7 +85,7 @@ struct Lesson: Identifiable, Codable {
         self.category = category
         self.level = level
         self.videoURL = videoURL
-        self.thumbnailURL = thumbnailURL
+        self.thumbnailURL = thumbnailURL ?? ""
         self.description = description
         self.iconName = Self.iconForCategory(category)
         self.instructorId = instructorId
