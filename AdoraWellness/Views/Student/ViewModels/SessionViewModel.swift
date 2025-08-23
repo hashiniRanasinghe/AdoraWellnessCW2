@@ -159,4 +159,39 @@ class SessionViewModel: ObservableObject {
             registeredStudents: registeredStudents
         )
     }
+
+    // fetch all sessions from database
+    func fetchAllSessions() async -> [Session] {
+        isLoading = true
+
+        do {
+            let querySnapshot = try await db.collection("sessions")
+                .getDocuments()
+
+            var sessions: [Session] = []
+
+            for document in querySnapshot.documents {
+                if let session = try? parseSessionData(
+                    document.data(), documentId: document.documentID)
+                {
+                    sessions.append(session)
+                }
+            }
+
+            //sort sessions by date
+            sessions.sort { $0.date < $1.date }
+
+            isLoading = false
+            return sessions
+
+        } catch {
+            print(
+                "DEBUG: Failed to fetch all sessions: \(error.localizedDescription)"
+            )
+            alertMessage = "Failed to load sessions. Please try again."
+            showAlert = true
+            isLoading = false
+            return []
+        }
+    }
 }
