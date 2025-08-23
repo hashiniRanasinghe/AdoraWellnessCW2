@@ -89,7 +89,7 @@ struct FooterNavigationView: View {
                     //instructor pages
                 } else if userRole == .instructor {
                     NavigationLink(
-                        destination: Dashboard2(), isActive: $navigateToHome
+                        destination: InstructorDashboardView(), isActive: $navigateToHome
                     ) { EmptyView() }
                     NavigationLink(
                         destination: InstructorScheduleView(),

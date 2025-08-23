@@ -66,7 +66,7 @@ struct SplashScreen: View {
                     }
                 } else if currentUser.userType == .instructor {
                     RoleGuard(allowedRole: .instructor) {
-                        Dashboard2()
+                        InstructorDashboardView()
                             .environmentObject(viewModel)
                     }
                 }
