@@ -155,7 +155,9 @@ struct UserProfileView: View {
                     }
 
                     FooterNavigationView(
-                        selectedTab: 3, userRole: user.userType)
+                        selectedTab: user.userType == .student ? 3 : 2,
+                        userRole: user.userType
+                    )
                 }
                 .background(Color.white)
                 .navigationBarBackButtonHidden(true)
@@ -176,16 +178,5 @@ struct UserProfileView: View {
                 }
             }
         }
-    }
-}
-
-struct UserProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        let mockViewModel = AuthViewModel()
-        // Set mock user for preview if your AuthViewModel supports it
-        // mockViewModel.currentUser = User.MOCK_USER
-
-        UserProfileView()
-            .environmentObject(mockViewModel)
     }
 }

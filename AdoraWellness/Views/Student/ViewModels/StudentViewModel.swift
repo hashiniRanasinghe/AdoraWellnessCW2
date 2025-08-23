@@ -2,7 +2,7 @@
 //  StudentViewModel.swift
 //  AdoraWellness
 //
-//  Created by User on 2025-08-10.
+//  Created by Hashini Ranasinghe on 2025-08-10.
 //
 
 import FirebaseAuth
