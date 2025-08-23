@@ -64,7 +64,7 @@ struct PaymentSuccessView: View {
                             HStack {
                                 Image(systemName: "arrow.left")
                                     .font(.title2)
-                                Text("Back to Home")
+                                Text("Back to Dashboard")
                                     .font(.headline)
                             }
                             .foregroundColor(.primary)

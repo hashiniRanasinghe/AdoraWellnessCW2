@@ -22,97 +22,109 @@ struct SessionSuccessView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                //img
-                VStack {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.white)
-                            .frame(height: 150)
+            ScrollView {
+                VStack(spacing: 0) {
+                    //img
+                    VStack {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.white)
+                                .frame(height: 150)
 
-                        if let logoImage = UIImage(named: "instrutorsuc.jpg") {
-                            Image(uiImage: logoImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 350, height: 350)
-                                .clipped()
-                                .cornerRadius(20)
+                            if let logoImage = UIImage(
+                                named: "instrutorsuc.jpg")
+                            {
+                                Image(uiImage: logoImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 350, height: 350)
+                                    .clipped()
+                                    .cornerRadius(20)
+                            }
                         }
+                        .padding(.horizontal, 40)
                     }
-                    .padding(.horizontal, 40)
-                }
 
-                Spacer()
+                    Spacer()
 
-                //message
-                VStack(spacing: 16) {
-                    Text("Success!")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.primary)
+                    //message
+                    VStack(spacing: 16) {
+                        Text("Success!")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.primary)
 
-                    Text("Your yoga session has been successfully created and is now available for students to book")
+                        Text(
+                            "Your yoga session has been successfully created and is now available for students to book"
+                        )
                         .font(.system(size: 16))
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
-                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 32)
-                }
 
-                //session details
-                VStack(spacing: 12) {
-                    sessionDetailRow(title: "Session", value: sessionTitle)
-                    sessionDetailRow(title: "Date", value: Utils.formatDate(sessionDate))
-                    sessionDetailRow(title: "Time", value: "\(startTime) - \(endTime)")
-                    sessionDetailRow(title: "Type", value: sessionType)
-                    sessionDetailRow(title: "Level", value: level)
-                    sessionDetailRow(title: "Price", value: "$\(String(format: "%.2f", price))")
-                }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 20)
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-                .padding(.horizontal, 24)
-                .padding(.top, 24)
+                    }
 
-                //back to home btn
-                VStack {
-                    HStack {
-                        NavigationLink(destination: InstructorDashboardView()) {
-                            HStack {
-                                Image(systemName: "arrow.left")
-                                    .font(.title2)
-                                Text("Back to Dashboard")
-                                    .font(.headline)
+                    //session details
+                    VStack(spacing: 12) {
+                        sessionDetailRow(title: "Session", value: sessionTitle)
+                        sessionDetailRow(
+                            title: "Date", value: Utils.formatDate(sessionDate))
+                        sessionDetailRow(
+                            title: "Time", value: "\(startTime) - \(endTime)")
+                        sessionDetailRow(title: "Type", value: sessionType)
+                        sessionDetailRow(
+                            title: "Price",
+                            value: "$\(String(format: "%.2f", price))")
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 20)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 24)
+
+                    //back to home btn
+                    VStack {
+                        HStack {
+                            NavigationLink(
+                                destination: InstructorDashboardView()
+                            ) {
+                                HStack {
+                                    Image(systemName: "arrow.left")
+                                        .font(.title2)
+                                    Text("Back to Dashboard")
+                                        .font(.headline)
+                                }
+                                .foregroundColor(.primary)
                             }
-                            .foregroundColor(.primary)
                         }
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .center)
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .center)
 
-                    Spacer()
+                        Spacer()
+                    }
+
+                    //buttons
+                    VStack(spacing: 16) {
+                        Spacer()
+                        Button("Add to My Calendar") {
+                            addToCalendar()
+                        }
+                        .primaryButtonStyle()
+                        .frame(maxWidth: 350)
+
+                        Button("Set Reminder") {
+                            addToReminders()
+                        }
+                        .secondaryButtonStyle()
+                        .frame(maxWidth: 350)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 34)
                 }
-
-                //buttons
-                VStack(spacing: 16) {
-                    Spacer()
-                    Button("Add to My Calendar") {
-                        addToCalendar()
-                    }
-                    .primaryButtonStyle()
-                    .frame(maxWidth: 350)
-
-                    Button("Set Reminder") {
-                        addToReminders()
-                    }
-                    .secondaryButtonStyle()
-                    .frame(maxWidth: 350)
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 34)
+                .background(Color.white)
+                .ignoresSafeArea(.all, edges: .bottom)
             }
-            .background(Color.white)
-            .ignoresSafeArea(.all, edges: .bottom)
         }
     }
 
@@ -136,13 +148,16 @@ struct SessionSuccessView: View {
 
             let event = EKEvent(eventStore: eventStore)
             event.title = "Teach: \(sessionTitle)"
-            
-            let sessionStartDateTime = Utils.combineDateAndTime(date:sessionDate, timeString: startTime)
-            let sessionEndDateTime = Utils.combineDateAndTime(date:sessionDate, timeString: endTime)
-            
+
+            let sessionStartDateTime = Utils.combineDateAndTime(
+                date: sessionDate, timeString: startTime)
+            let sessionEndDateTime = Utils.combineDateAndTime(
+                date: sessionDate, timeString: endTime)
+
             event.startDate = sessionStartDateTime
             event.endDate = sessionEndDateTime
-            event.notes = "Yoga session - \(sessionType) | Level: \(level) | Price: $\(String(format: "%.2f", price))"
+            event.notes =
+                "Yoga session - \(sessionType) | Level: \(level) | Price: $\(String(format: "%.2f", price))"
             event.calendar = eventStore.defaultCalendarForNewEvents
 
             do {
@@ -169,14 +184,14 @@ struct SessionSuccessView: View {
 
                 UNUserNotificationCenter.current().add(request) { error in
                     if let error = error {
-                        print("Failed to show notification: \(error)")
+                        print("failed to show notification: \(error)")
                     } else {
                         print("Notification scheduled")
                     }
                 }
 
             } catch {
-                print("Failed to save event: \(error)")
+                print("failed to save event: \(error)")
             }
         }
     }
@@ -192,20 +207,22 @@ struct SessionSuccessView: View {
 
             let reminder = EKReminder(eventStore: eventStore)
             reminder.title = "Teaching Session: \(sessionTitle)"
-            reminder.notes = "Prepare for yoga session - \(sessionType) | Level: \(level)"
+            reminder.notes =
+                "Prepare for yoga session - \(sessionType) | Level: \(level)"
 
-            let sessionDateTime = Utils.combineDateAndTime(date:sessionDate, timeString: startTime)
+            let sessionDateTime = Utils.combineDateAndTime(
+                date: sessionDate, timeString: startTime)
             let calendar = Calendar.current
-            
+
             var dateComponents = calendar.dateComponents(
                 [.year, .month, .day, .hour, .minute, .timeZone],
                 from: sessionDateTime
             )
-            
+
             if dateComponents.timeZone == nil {
                 dateComponents.timeZone = TimeZone.current
             }
-            
+
             reminder.dueDateComponents = dateComponents
             reminder.priority = 5
             reminder.calendar = eventStore.defaultCalendarForNewReminders()
@@ -216,9 +233,9 @@ struct SessionSuccessView: View {
 
             do {
                 try eventStore.save(reminder, commit: true)
-                print("Teaching reminder saved successfully!")
+                print("reminder saved")
             } catch {
-                print("Failed to save reminder: \(error)")
+                print("failed to save reminder: \(error)")
             }
         }
     }
