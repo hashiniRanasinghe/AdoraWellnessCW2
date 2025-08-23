@@ -5,7 +5,6 @@
 //  Created by Hashini Ranasinghe on 2025-08-08.
 //
 
-
 import SwiftUI
 
 struct DashboardView: View {
@@ -18,7 +17,7 @@ struct DashboardView: View {
     @State private var randomSession: Session?
     @State private var randomLesson: Lesson?
     @State private var instructors: [Instructor] = []
-    @State private var hasBookedSessions = false
+    @State private var enrolledSessions: [Session] = []
     @State private var isLoading = true
 
     var body: some View {
@@ -35,24 +34,23 @@ struct DashboardView: View {
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
-                            // Header section
+                            //greeting section with user info
                             headerSection(user: user)
 
+                            //daily lesson recommendation
                             recommendedLesson()
 
-                            // Section 1: Random Session
+                            //session recommendation from available sessions
                             randomSessionSection()
 
-                            // Section 2: Top 3 Instructors
+                            //instructors recommendation
                             instructorsSection()
 
-                            // Section 3: Booked Sessions or Book a Session
+                            //booked sessions
                             bookedSessionsSection()
 
-                            // Section 4: User Stats (Height, Weight, BMI)
+                            //health data display
                             userStatsSection()
-                            
-//                            profileSetupSection()
                         }
                     }
 
@@ -71,121 +69,130 @@ struct DashboardView: View {
     }
 
     private func recommendedLesson() -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Header
-            HStack {
-                Text("Today's Recommendation")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
+           VStack(alignment: .leading, spacing: 16) {
+               HStack {
+                   Text("Today's Recommendation")
+                       .font(.title3)
+                       .fontWeight(.bold)
+                       .foregroundColor(.primary)
 
-                Spacer()
-            }
-            .padding(.horizontal, 24)
+                   Spacer()
+               }
+               .padding(.horizontal, 24)
 
-            // Lesson Row
-            if let lesson = randomLesson {
-                HStack(spacing: 16) {
-                    // Lesson icon
-                    ZStack {
-                        Circle()
-                            .fill(Color(.systemGray6))
-                            .frame(width: 60, height: 60)
+               // lesson card content
+               if let lesson = randomLesson {
+                   HStack(spacing: 16) {
+                       // lesson icon
+                       ZStack {
+                           Circle()
+                               .fill(Color(.systemGray6))
+                               .frame(width: 60, height: 60)
 
-                        Image(systemName: lesson.iconName)
-                            .font(.title2)
-                            .foregroundColor(
-                                Color(red: 0.4, green: 0.3, blue: 0.8))
-                    }
+                           Image(systemName: lesson.iconName)
+                               .font(.title2)
+                               .foregroundColor(
+                                   Color(red: 0.4, green: 0.3, blue: 0.8))
+                       }
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(lesson.title)
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
+                       VStack(alignment: .leading, spacing: 4) {
+                           Text(lesson.title)
+                               .font(.headline)
+                               .fontWeight(.bold)
+                               .foregroundColor(.primary)
 
-                        Text(lesson.subtitle)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                           Text(lesson.subtitle)
+                               .font(.subheadline)
+                               .foregroundColor(.secondary)
 
-                        HStack(spacing: 12) {
-                            // Duration
-                            HStack(spacing: 4) {
-                                Image(systemName: "clock")
-                                    .foregroundColor(.secondary)
-                                    .font(.caption)
-                                Text(lesson.formattedDuration)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
+                           HStack(spacing: 12) {
+                               HStack(spacing: 4) {
+                                   Image(systemName: "clock")
+                                       .foregroundColor(.secondary)
+                                       .font(.caption)
+                                   Text(lesson.formattedDuration)
+                                       .font(.caption)
+                                       .foregroundColor(.secondary)
+                               }
+                           }
+                       }
 
-                    Spacer()
+                       Spacer()
 
-                    VStack(alignment: .trailing, spacing: 4) {
-                        if lesson.calories > 0 {
-                            Text("\(lesson.calories) cal")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8))
-                        }
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 32)
-            } else {
-                // Loading or empty state
-                HStack(spacing: 16) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(.systemGray6))
-                            .frame(width: 60, height: 60)
+                       VStack(alignment: .trailing, spacing: 4) {
+                           // play btn
+                           Button(action: {
+                               print("Playing - TO DOOO \(lesson.title)")
+                               // start playing the lesson
+                           }) {
+                               Image(systemName: "play.circle.fill")
+                                   .font(.title)
+                                   .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
+                           }
+                           
+                           if lesson.calories > 0 {
+                               Text("\(lesson.calories) cal")
+                                   .font(.subheadline)
+                                   .fontWeight(.medium)
+                                   .foregroundColor(
+                                       Color(red: 0.4, green: 0.3, blue: 0.8))
+                           }
+                       }
+                   }
+                   .padding(.horizontal, 24)
+                   .padding(.bottom, 32)
+               } else {
+                   // show loading or no lessons available
+                   HStack(spacing: 16) {
+                       ZStack {
+                           Circle()
+                               .fill(Color(.systemGray6))
+                               .frame(width: 60, height: 60)
 
-                        if isLoading {
-                            ProgressView()
-                                .scaleEffect(0.6)
-                        } else {
-                            Image(systemName: "figure.yoga")
-                                .font(.title2)
-                                .foregroundColor(.secondary)
-                        }
-                    }
+                           if isLoading {
+                               ProgressView()
+                                   .scaleEffect(0.6)
+                           } else {
+                               Image(systemName: "figure.yoga")
+                                   .font(.title2)
+                                   .foregroundColor(.secondary)
+                           }
+                       }
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        if isLoading {
-                            Text("Loading recommendation...")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .foregroundColor(.secondary)
-                        } else {
-                            Text("No lessons available")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .foregroundColor(.secondary)
-                        }
+                       VStack(alignment: .leading, spacing: 4) {
+                           if isLoading {
+                               Text("Loading recommendation...")
+                                   .font(.headline)
+                                   .fontWeight(.bold)
+                                   .foregroundColor(.secondary)
+                           } else {
+                               Text("No lessons available")
+                                   .font(.headline)
+                                   .fontWeight(.bold)
+                                   .foregroundColor(.secondary)
+                           }
 
-                        Text("Check back later")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
+                           Text("Check back later")
+                               .font(.subheadline)
+                               .foregroundColor(.secondary)
+                       }
 
-                    Spacer()
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 32)
-            }
-        }
-    }
+                       Spacer()
+                   }
+                   .padding(.horizontal, 24)
+                   .padding(.bottom, 32)
+               }
+           }
+       }
 
-    // MARK: - Header Section
+
+    //greeting section with user info
     @ViewBuilder
     private func headerSection(user: User) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 HStack(spacing: 12) {
-                    // Profile image
+                    //initials img
                     Text(user.initials)
                         .font(.title)
                         .fontWeight(.semibold)
@@ -210,13 +217,13 @@ struct DashboardView: View {
 
                 Spacer()
 
-                Button(action: {
-                    // Handle notification
-                }) {
-                    Image(systemName: "bell")
-                        .font(.title2)
-                        .foregroundColor(.primary)
-                }
+//                Button(action: {
+//                    //bell action
+//                }) {
+//                    Image(systemName: "bell")
+//                        .font(.title2)
+//                        .foregroundColor(.primary)
+//                }
             }
             .padding(.horizontal, 24)
             .padding(.top, 20)
@@ -224,7 +231,7 @@ struct DashboardView: View {
         }
     }
 
-    //session recommendation section
+    //daily lesson recommendation user hasn t booked yet
     @ViewBuilder
     private func randomSessionSection() -> some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -261,6 +268,18 @@ struct DashboardView: View {
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }
+
+                                HStack(spacing: 4) {
+                                    Image(systemName: "calendar")
+                                        .foregroundColor(.secondary)
+                                        .font(.caption)
+                                    Text(
+                                        Utils.formatDate(
+                                            session.date, format: "MMM d")
+                                    )
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                }
                             }
                         }
 
@@ -286,17 +305,48 @@ struct DashboardView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    Button(action: {
-                        // Handle book session
-                    }) {
-                        Text("Book This Session")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(Color(red: 0.4, green: 0.3, blue: 0.8))
-                            .cornerRadius(25)
+                    HStack(spacing: 8) {
+                        Text("\(session.startTime) - \(session.endTime)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+
+                        Text("\(session.registeredStudents.count) enrolled")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    //book session btn
+                    if let instructor = getInstructorById(session.instructorId)
+                    {
+                        NavigationLink(
+                            destination: SessionDetailsView(
+                                session: session, instructor: instructor)
+                        ) {
+                            Text("Book This Session")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                                .background(
+                                    Color(red: 0.4, green: 0.3, blue: 0.8)
+                                )
+                                .cornerRadius(25)
+                        }
+                    } else {
+                        Button(action: {}) {
+                            Text("Loading...")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                                .background(Color.gray)
+                                .cornerRadius(25)
+                        }
+                        .disabled(true)
                     }
                 }
                 .padding(20)
@@ -304,7 +354,7 @@ struct DashboardView: View {
                 .cornerRadius(16)
                 .padding(.horizontal, 24)
             } else {
-                // Loading or empty state
+                //empty when no sessions
                 VStack(spacing: 12) {
                     if isLoading {
                         ProgressView()
@@ -328,7 +378,7 @@ struct DashboardView: View {
         .padding(.bottom, 32)
     }
 
-    // Instructors section
+    //instructors recommendation
     @ViewBuilder
     private func instructorsSection() -> some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -382,7 +432,7 @@ struct DashboardView: View {
         .padding(.bottom, 32)
     }
 
-    // MARK: - Booked Sessions Section
+    //booked sessions by user
     @ViewBuilder
     private func bookedSessionsSection() -> some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -392,42 +442,33 @@ struct DashboardView: View {
                 .foregroundColor(.primary)
                 .padding(.horizontal, 24)
 
-            if hasBookedSessions {
-                // Show booked sessions (placeholder for now)
-                VStack(spacing: 12) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Upcoming Session")
-                                .font(.headline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-
-                            Text("Morning Yoga - Today at 8:00 AM")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+            if !enrolledSessions.isEmpty {
+                ScrollView {
+                    LazyVStack(spacing: 12) {
+                        //first 3 enrolled sessions
+                        ForEach(enrolledSessions.prefix(3)) { session in
+                            EnrolledSessionCard(session: session)
                         }
 
-                        Spacer()
-
-                        Button(action: {
-                            // Handle join session
-                        }) {
-                            Text("Join")
+                        //view all  for if user has 3+ sessions
+                        if enrolledSessions.count > 3 {
+                            NavigationLink(destination: Text("All Sessions")) {
+                                Text(
+                                    "View All Sessions (\(enrolledSessions.count))"
+                                )
                                 .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(Color.green)
-                                .cornerRadius(16)
+                                .fontWeight(.medium)
+                                .foregroundColor(
+                                    Color(red: 0.4, green: 0.3, blue: 0.8))
+                            }
+                            .padding(.top, 8)
                         }
                     }
+                    .padding(.horizontal, 24)
                 }
-                .padding(20)
-                .background(Color(.systemGray6))
-                .cornerRadius(16)
-                .padding(.horizontal, 24)
+                .frame(maxHeight: 200)
             } else {
+                //user hasn t booked any sessions
                 VStack(spacing: 16) {
                     Image(systemName: "calendar.badge.plus")
                         .font(.system(size: 32))
@@ -465,7 +506,7 @@ struct DashboardView: View {
         .padding(.bottom, 32)
     }
 
-    // MARK: - User Stats Section
+    //health data
     @ViewBuilder
     private func userStatsSection() -> some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -477,7 +518,7 @@ struct DashboardView: View {
 
             if let student = studentViewModel.currentStudent {
                 HStack(spacing: 16) {
-                    // Height
+                    //height
                     VStack(spacing: 8) {
                         Image(systemName: "ruler")
                             .font(.title2)
@@ -498,7 +539,7 @@ struct DashboardView: View {
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
 
-                    // Weight
+                    //weight
                     VStack(spacing: 8) {
                         Image(systemName: "scalemass")
                             .font(.title2)
@@ -519,7 +560,7 @@ struct DashboardView: View {
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
 
-                    // BMI
+                    //calculate bmi card
                     VStack(spacing: 8) {
                         Image(systemName: "heart.text.square")
                             .font(.title2)
@@ -548,6 +589,7 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal, 24)
             } else {
+                //user profile isn't complete
                 VStack(spacing: 12) {
                     Image(systemName: "person.crop.circle.badge.questionmark")
                         .font(.title)
@@ -584,97 +626,38 @@ struct DashboardView: View {
                 .padding(.horizontal, 24)
             }
         }
-        .padding(.bottom, 100)  // Space for footer
+        .padding(.bottom, 100)
     }
-    // MARK: - Profile Setup Section
 
-       private var profileSetupSection: some View {
-
-           VStack(spacing: 12) {
-
-               Text("Complete Your Profile")
-
-                   .font(.headline)
-
-                   .fontWeight(.semibold)
-
-                   .foregroundColor(.primary)
-
-               
-
-               Text("Set up your profile to get personalized recommendations")
-
-                   .font(.subheadline)
-
-                   .foregroundColor(.secondary)
-
-                   .multilineTextAlignment(.center)
-
-               
-
-               NavigationLink(destination: Text("Profile Setup").navigationBarTitleDisplayMode(.inline)) {
-
-                   Text("Set Up Profile")
-
-                       .font(.headline)
-
-                       .fontWeight(.semibold)
-
-                       .foregroundColor(.white)
-
-                       .frame(maxWidth: .infinity)
-
-                       .frame(height: 50)
-
-                       .background(Color(red: 0.4, green: 0.3, blue: 0.8))
-
-                       .cornerRadius(25)
-
-               }
-
-           }
-
-           .padding(20)
-
-           .background(Color.white)
-
-           .cornerRadius(16)
-
-           .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
-
-           .padding(.horizontal, 24)
-
-       }
-    // MARK: - Helper Functions
+    //load all dashboard items
     private func loadDashboardData() async {
         isLoading = true
 
-        // Load student profile
+        //get user profile info
         await studentViewModel.fetchStudentProfile()
 
-        // Load random lesson from database
+        //get random lesson
         await loadRandomLesson()
 
-        // Load random session (simulate getting random session from available sessions)
-        randomSession = createSampleSession()
+        //user s enrolled sessions
+        await loadEnrolledSessions()
 
-        // Load top 3 instructors
+        //random session user hasnt booked yet
+        await loadRandomSession()
+
+        //instructors
         let allInstructors = await instructorViewModel.fetchAllInstructors()
         instructors = Array(allInstructors.prefix(3))
-
-        // Check for booked sessions (placeholder logic)
-        hasBookedSessions = false
 
         isLoading = false
     }
 
+    //get random lesson
     private func loadRandomLesson() async {
         let allLessons = await lessonsViewModel.fetchAllLessons()
-
-        // Filter active lessons only
         let activeLessons = allLessons.filter { $0.isActive }
 
-        // Select a random lesson
+        // pick one randomly
         if !activeLessons.isEmpty {
             randomLesson = activeLessons.randomElement()
         } else {
@@ -682,35 +665,180 @@ struct DashboardView: View {
         }
     }
 
-    private func createSampleSession() -> Session {
-        return Session(
-            id: "sample-session",
-            instructorId: "instructor-1",
-            title: "Morning Energy Flow",
-            description:
-                "Start your day with this energizing yoga sequence designed to awaken your body and mind.",
-            startTime: "08:00",
-            endTime: "09:00",
-            durationMinutes: 60,
-            price: 25.0,
-            sessionType: "Online",
-            date: Date(),
-            createdAt: Date(),
-            level: "Beginner",
-            registeredStudents: []
-        )
+    //random session user hasnt booked yet
+    private func loadRandomSession() async {
+        guard let currentUserId = viewModel.currentUser?.id else {
+            randomSession = nil
+            return
+        }
+
+        //all available sessions in db
+        let allSessions = await sessionViewModel.fetchAllSessions()
+
+        //filter by user havnt booked and sessions hasnt started
+        let availableSessions = allSessions.filter { session in
+            //sessions hasnt started
+            let sessionDateTime = combineDateAndTime(
+                date: session.date, timeString: session.startTime)
+            let isFuture = sessionDateTime > Date()
+
+            //user havnt booke
+            let notAlreadyBooked = !session.registeredStudents.contains(
+                currentUserId)
+
+            return isFuture && notAlreadyBooked
+        }
+
+        //random session
+        if !availableSessions.isEmpty {
+            randomSession = availableSessions.randomElement()
+        } else {
+            randomSession = nil
+        }
     }
 
+    //user enrolled active sessions
+    private func loadEnrolledSessions() async {
+        guard let currentUserId = viewModel.currentUser?.id else {
+            enrolledSessions = []
+            return
+        }
+
+        //fetch all
+        let allSessions = await sessionViewModel.fetchAllSessions()
+
+        let userSessions = allSessions.filter { session in
+            let isRegistered = session.registeredStudents.contains(
+                currentUserId)
+
+            let sessionDateTime = combineDateAndTime(
+                date: session.date, timeString: session.startTime)
+            let isUpcoming =
+                sessionDateTime >= Calendar.current.startOfDay(for: Date())
+
+            return isRegistered && isUpcoming
+        }
+
+        //show closest sessions first
+        enrolledSessions = userSessions.sorted { session1, session2 in
+            let date1 = combineDateAndTime(
+                date: session1.date, timeString: session1.startTime)
+            let date2 = combineDateAndTime(
+                date: session2.date, timeString: session2.startTime)
+            return date1 < date2
+        }
+    }
+
+    //instructor info
+    private func getInstructorById(_ instructorId: String) -> Instructor? {
+        return instructors.first { $0.id == instructorId }
+    }
+
+    // combine session date with start time
+    private func combineDateAndTime(date: Date, timeString: String) -> Date {
+        let calendar = Calendar.current
+        let timeComponents = timeString.split(separator: ":").compactMap {
+            Int($0)
+        }
+
+        guard timeComponents.count >= 2 else { return date }
+
+        var dateComponents = calendar.dateComponents(
+            [.year, .month, .day], from: date)
+        dateComponents.hour = timeComponents[0]
+        dateComponents.minute = timeComponents[1]
+
+        return calendar.date(from: dateComponents) ?? date
+    }
+
+    // calculate bmi
     private func calculateBMI(weight: Double, height: Double) -> Double {
         if height > 0 {
-            let heightInMeters = height / 100  // Convert cm to meters
+            let heightInMeters = height / 100  //cm to m
             return weight / (heightInMeters * heightInMeters)
         }
         return 0
     }
 }
 
-//mini instructor card
+//user enrolled sessions card
+struct EnrolledSessionCard: View {
+    let session: Session
+
+    var body: some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(session.title)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+
+                HStack(spacing: 16) {
+                    //session date info
+                    HStack(spacing: 4) {
+                        Image(systemName: "calendar")
+                            .foregroundColor(.secondary)
+                            .font(.caption)
+                        Text(Utils.formatDate(session.date, format: "MMM d"))
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+
+                    //time info
+                    HStack(spacing: 4) {
+                        Image(systemName: "clock")
+                            .foregroundColor(.secondary)
+                            .font(.caption)
+                        Text("\(session.startTime) - \(session.endTime)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+
+            Spacer()
+
+            // action button or session details on the right
+            VStack(alignment: .trailing, spacing: 4) {
+                if isSessionToday(session) {
+                    Button(action: {
+                        //
+                    }) {
+                        Text("Join")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.green)
+                            .cornerRadius(16)
+                    }
+                } else {
+                    Text(session.sessionType)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text("$\(String(format: "%.0f", session.price))")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
+            }
+        }
+        .padding(16)
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+
+    // check if the session today
+    private func isSessionToday(_ session: Session) -> Bool {
+        let calendar = Calendar.current
+        return calendar.isDateInToday(session.date)
+    }
+
+}
+
+//instructor card
 struct InstructorMiniCard: View {
     let instructor: Instructor
 
@@ -719,6 +847,7 @@ struct InstructorMiniCard: View {
             destination: InstructorDetailsView(instructor: instructor)
         ) {
             VStack(spacing: 12) {
+                //instructor profile img
                 Text(instructor.initials)
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.white)

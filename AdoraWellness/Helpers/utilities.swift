@@ -75,9 +75,9 @@ struct Utils {
     static func formatTimeRange(startTime: String, endTime: String) -> String {
         return "\(formatTime(startTime)) - \(formatTime(endTime))"
     }
-    static func formatDate(_ date: Date) -> String {
+    static func formatDate(_ date: Date, format: String? = nil) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d, yyyy"
+        formatter.dateFormat = format ?? "MMM d, yyyy"
         return formatter.string(from: date)
     }
 
@@ -100,9 +100,8 @@ struct Utils {
         }
     }
     static func getDefaultDescription() -> String {
-        return "Gentle, slow-paced with basic postures Vinyasa - Flow-style linking breath with movement Ashtanga - Athletic, fast-paced with set sequences Yin"
+        return
+            "Gentle, slow-paced with basic postures Vinyasa - Flow-style linking breath with movement Ashtanga - Athletic, fast-paced with set sequences Yin"
     }
-    
-
 
 }
