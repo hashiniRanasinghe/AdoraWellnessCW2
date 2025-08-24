@@ -155,13 +155,8 @@ struct InstructorListCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
-                //profile pic with initials
-                Text(instructor.initials)
-                    .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(width: 60, height: 60)
-                    .background(Color(.systemGray3))
-                    .clipShape(Circle())
+                //avatar pic with initials
+                AvatarView(initials: instructor.initials, size: 60)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(instructor.fullName)

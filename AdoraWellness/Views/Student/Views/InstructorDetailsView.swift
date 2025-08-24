@@ -57,12 +57,8 @@ struct InstructorDetailsView: View {
                                 Spacer()
 
                                 //img
-                                Text(instructor.initials)
-                                    .font(.system(size: 32, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .frame(width: 100, height: 100)
-                                    .background(Color(.systemGray3))
-                                    .clipShape(Circle())
+                                AvatarView(
+                                    initials: instructor.initials, size: 100)
 
                                 Spacer()
                             }

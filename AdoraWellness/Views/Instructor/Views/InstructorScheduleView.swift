@@ -14,15 +14,17 @@ struct InstructorScheduleView: View {
     @State private var selectedFilter = "All"
     @State private var showingAddSession = false
     @State private var sessionIcons: [String: String] = [:]
+    @State private var selectedSession: Session?
+    @State private var showingSessionDetails = false
 
     private let filterOptions = [
-        "All", "Today", "This Week", "History"
+        "All", "Today", "This Week", "History",
     ]
-    
+
     var filteredSessions: [Session] {
         let now = Date()
         let calendar = Calendar.current
-        
+
         switch selectedFilter {
         case "Today":
             return sessions.filter { session in
@@ -30,20 +32,24 @@ struct InstructorScheduleView: View {
             }
         case "This Week":
             return sessions.filter { session in
-                let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: now)?.start ?? now
-                let endOfWeek = calendar.dateInterval(of: .weekOfYear, for: now)?.end ?? now
+                let startOfWeek =
+                    calendar.dateInterval(of: .weekOfYear, for: now)?.start
+                    ?? now
+                let endOfWeek =
+                    calendar.dateInterval(of: .weekOfYear, for: now)?.end ?? now
                 return session.date >= startOfWeek && session.date <= endOfWeek
             }
         case "History":
             return sessions.filter { session in
-                let sessionDateTime = Utils.combineDateAndTime(date: session.date, timeString: session.endTime)
+                let sessionDateTime = Utils.combineDateAndTime(
+                    date: session.date, timeString: session.endTime)
                 return sessionDateTime < now
             }.sorted { $0.date > $1.date }
         default:
             return sessions.sorted { $0.date < $1.date }
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -51,14 +57,14 @@ struct InstructorScheduleView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
                             Spacer()
-                            
+
                             Text("Schedule")
                                 .font(.title3)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primary)
-                            
+
                             Spacer()
-                            
+
                             //add new session
                             Button(action: {
                                 showingAddSession = true
@@ -71,7 +77,7 @@ struct InstructorScheduleView: View {
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
                         .padding(.bottom, 32)
-                        
+
                         //filter tabs
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 32) {
@@ -85,22 +91,22 @@ struct InstructorScheduleView: View {
                                                 .fontWeight(.medium)
                                                 .foregroundColor(
                                                     selectedFilter == filter
-                                                    ? .primary : .secondary
+                                                        ? .primary : .secondary
                                                 )
-                                            
+
                                             Rectangle()
                                                 .fill(
                                                     selectedFilter == filter
-                                                    ? Color(
-                                                        red: 0.4,
-                                                        green: 0.3,
-                                                        blue: 0.8)
-                                                    : Color.clear
+                                                        ? Color(
+                                                            red: 0.4,
+                                                            green: 0.3,
+                                                            blue: 0.8)
+                                                        : Color.clear
                                                 )
                                                 .frame(height: 2)
                                                 .frame(
                                                     width: filter.count > 6
-                                                    ? 80 : 60)
+                                                        ? 80 : 60)
                                         }
                                     }
                                 }
@@ -108,7 +114,7 @@ struct InstructorScheduleView: View {
                             .padding(.horizontal, 24)
                         }
                         .padding(.bottom, 32)
-                        
+
                         //sessions list
                         if sessionViewModel.isLoading {
                             VStack(spacing: 16) {
@@ -141,7 +147,11 @@ struct InstructorScheduleView: View {
                                 ForEach(filteredSessions) { session in
                                     InstructorSessionCard(
                                         session: session,
-                                        iconName: sessionIcons[session.id]
+                                        iconName: sessionIcons[session.id],
+                                        onViewTapped: {
+                                            selectedSession = session
+                                            showingSessionDetails = true
+                                        }
                                     )
                                     .padding(.horizontal, 24)
                                 }
@@ -150,30 +160,37 @@ struct InstructorScheduleView: View {
                         }
                     }
                 }
-                
+
                 FooterNavigationView(selectedTab: 1, userRole: .instructor)
             }
             .background(Color.white)
             .ignoresSafeArea(.all, edges: .bottom)
         }
         .navigationBarHidden(true)
-        .sheet(isPresented: $showingAddSession, onDismiss: {
-            Task {
-                await loadSessions()
+        .sheet(
+            isPresented: $showingAddSession,
+            onDismiss: {
+                Task {
+                    await loadSessions()
+                }
             }
-        }) {
+        ) {
             AddSessionView()
                 .environmentObject(authViewModel)
+        }
+        .fullScreenCover(item: $selectedSession) { session in
+            InstructorSessionDetailsView(session: session)
         }
         .task {
             await loadSessions()
         }
     }
-    
+
     //load sessions instructor
     private func loadSessions() async {
         guard let instructorId = authViewModel.currentUser?.id else { return }
-        sessions = await sessionViewModel.fetchSessionsByInstructor(instructorId: instructorId)
+        sessions = await sessionViewModel.fetchSessionsByInstructor(
+            instructorId: instructorId)
         assignIcons(to: sessions)
     }
 
@@ -186,9 +203,9 @@ struct InstructorScheduleView: View {
             "heart.fill",
             "figure.strengthtraining.traditional",
             "figure.flexibility",
-            "figure.walk"
+            "figure.walk",
         ]
-        
+
         let shuffledIcons = availableIcons.shuffled()
         for (index, session) in sessions.enumerated() {
             let iconIndex = index % shuffledIcons.count
@@ -201,6 +218,7 @@ struct InstructorScheduleView: View {
 struct InstructorSessionCard: View {
     let session: Session
     let iconName: String?
+    let onViewTapped: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -215,31 +233,31 @@ struct InstructorSessionCard: View {
                         .clipShape(Circle())
 
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(session.title)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.primary)
-                    
+
                     Text("\(session.registeredStudents.count) Students")
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
-                
+
                 Spacer()
-                
+
                 VStack(alignment: .trailing, spacing: 8) {
                     Text("\(session.durationMinutes) min")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
-                    
+
                     Text(Utils.formatDate(session.date, format: "MMM d"))
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             HStack(spacing: 16) {
                 HStack(spacing: 4) {
                     Image(systemName: "clock")
@@ -249,7 +267,7 @@ struct InstructorSessionCard: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 HStack(spacing: 4) {
                     Image(systemName: "dollarsign.circle")
                         .foregroundColor(.secondary)
@@ -258,7 +276,7 @@ struct InstructorSessionCard: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")
                         .foregroundColor(.orange)
@@ -268,13 +286,10 @@ struct InstructorSessionCard: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             //action button
             HStack(spacing: 12) {
-                Button(action: {
-                    // view session details or start session
-                    print("Viewing session: \(session.title)")
-                }) {
+                Button(action: onViewTapped) {
                     Text("View")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
@@ -283,16 +298,18 @@ struct InstructorSessionCard: View {
                         .background(Color(red: 0.4, green: 0.3, blue: 0.8))
                         .cornerRadius(20)
                 }
-                
+
                 Spacer()
-                
+
                 //session type
                 Text(session.sessionType)
                     .font(.caption)
                     .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
-                    .background(Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1))
+                    .background(
+                        Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
+                    )
                     .cornerRadius(12)
             }
         }

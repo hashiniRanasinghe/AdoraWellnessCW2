@@ -41,7 +41,7 @@ class AuthViewModel: ObservableObject {
             self.userSession = result.user
             await fetchUser()
         } catch {
-            print("DEBUG: \(error.localizedDescription)")
+            print("error: \(error.localizedDescription)")
             self.alertMessage = Utils.userFriendlyErrorMessage(from: error)
             self.showAlert = true
         }
@@ -78,7 +78,7 @@ class AuthViewModel: ObservableObject {
             await fetchUser()
         } catch {
             print(
-                "DEBUG: Failed to create user with error \(error.localizedDescription)"
+                "error - Failed to create user with error \(error.localizedDescription)"
             )
             self.alertMessage = Utils.userFriendlyErrorMessage(from: error)
             self.showAlert = true
@@ -96,7 +96,7 @@ class AuthViewModel: ObservableObject {
             self.currentUser = nil
         } catch {
             print(
-                "DEBUG: Failed to sign out with error \(error.localizedDescription)"
+                "error - Failed to sign out with error \(error.localizedDescription)"
             )
         }
     }
@@ -104,7 +104,7 @@ class AuthViewModel: ObservableObject {
     //delete acc
     func deleteAccount() async {
         guard let user = Auth.auth().currentUser else {
-            print("DEBUG: No user is currently logged in.")
+            print("Error: No user is currently logged in.")
             return
         }
 
@@ -121,10 +121,10 @@ class AuthViewModel: ObservableObject {
             //clear the user session
             self.userSession = nil
             self.currentUser = nil
-            print("DEBUG: User account deleted successfully.")
+            print("user account deleted successfully.")
         } catch {
             print(
-                "DEBUG: Failed to delete user account: \(error.localizedDescription)"
+                "feild to delete- \(error.localizedDescription)"
             )
             self.alertMessage = Utils.userFriendlyErrorMessage(from: error)
             self.showAlert = true
@@ -181,7 +181,7 @@ class AuthViewModel: ObservableObject {
 
         } catch {
             print(
-                "DEBUG: Google Sign In failed with error: \(error.localizedDescription)"
+                "Google Sign In failed: \(error.localizedDescription)"
             )
             self.alertMessage = "Google Sign In failed. Please try again."
             self.showAlert = true
@@ -212,7 +212,7 @@ class AuthViewModel: ObservableObject {
                 .setData(userData)
         } catch {
             print(
-                "DEBUG: Error creating/updating user: \(error.localizedDescription)"
+                "error creating/updating user: \(error.localizedDescription)"
             )
         }
     }
