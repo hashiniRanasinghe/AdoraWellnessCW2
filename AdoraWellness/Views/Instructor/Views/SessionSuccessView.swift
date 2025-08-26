@@ -19,6 +19,7 @@ struct SessionSuccessView: View {
     let level: String
     let price: Double
     @Binding var isPresented: Bool
+    @State var isEventAdded: Bool = false
 
     var body: some View {
         NavigationView {
@@ -112,12 +113,14 @@ struct SessionSuccessView: View {
                         }
                         .primaryButtonStyle()
                         .frame(maxWidth: 350)
+                        .disabled(isEventAdded)
 
                         Button("Set Reminder") {
                             addToReminders()
                         }
                         .secondaryButtonStyle()
                         .frame(maxWidth: 350)
+                        .disabled(isEventAdded)
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 34)
@@ -163,6 +166,7 @@ struct SessionSuccessView: View {
             do {
                 try eventStore.save(event, span: .thisEvent)
                 print("Session event saved to calendar")
+                isEventAdded = true
 
                 UNUserNotificationCenter.current().requestAuthorization(
                     options: [.alert, .sound, .badge]) { granted, error in
@@ -234,6 +238,7 @@ struct SessionSuccessView: View {
             do {
                 try eventStore.save(reminder, commit: true)
                 print("reminder saved")
+                isEventAdded = true
             } catch {
                 print("failed to save reminder: \(error)")
             }

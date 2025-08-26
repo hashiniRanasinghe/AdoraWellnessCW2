@@ -369,6 +369,7 @@ struct InstructorDashboardView: View {
             total + (session.price * Double(session.registeredStudents.count))
         }
     }
+
 }
 
 //month session card

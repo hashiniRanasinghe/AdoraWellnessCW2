@@ -50,35 +50,55 @@ struct SplashScreen: View {
         let isFirstLaunch = !UserDefaults.standard.bool(
             forKey: "hasLaunchedBefore")
 
-        //check if the app is freshly downloaded
         if isFirstLaunch {
+            //1st launch -> Onboarding
             OnboardingScreen1()
                 .onAppear {
                     UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
                 }
-        } else if viewModel.userSession != nil {
-            //dashboard based on user role
+
+        } else if viewModel.showAccountCreatedScreen {
+            //registration  -> profile setup
             if let currentUser = viewModel.currentUser {
                 if currentUser.userType == .student {
-                    RoleGuard(allowedRole: .student) {
-                        DashboardView()
-                            .environmentObject(viewModel)
-                    }
+                    StudentProfileSetupView()
+                        .environmentObject(viewModel)
                 } else if currentUser.userType == .instructor {
-                    RoleGuard(allowedRole: .instructor) {
-                        InstructorDashboardView()
-                            .environmentObject(viewModel)
-                    }
+                    InstructorProfileSetupView()
+                        .environmentObject(viewModel)
                 }
             } else {
-                //fallback while user data is loading
+                //fetching current user
                 VStack {
                     ProgressView()
-                    Text("Loading user data...")
+                    Text("Loading account...")
                 }
             }
-        } else {
+
+        } else if viewModel.userSession == nil {
+            //no user session  -> login
             LoginView()
+
+        } else if let currentUser = viewModel.currentUser {
+            //logged in -> dashboard
+            if currentUser.userType == .student {
+                RoleGuard(allowedRole: .student) {
+                    DashboardView()
+                        .environmentObject(viewModel)
+                }
+            } else if currentUser.userType == .instructor {
+                RoleGuard(allowedRole: .instructor) {
+                    InstructorDashboardView()
+                        .environmentObject(viewModel)
+                }
+            }
+
+        } else {
+            //user data is loading
+            VStack {
+                ProgressView()
+                Text("Loading...")
+            }
         }
     }
 }

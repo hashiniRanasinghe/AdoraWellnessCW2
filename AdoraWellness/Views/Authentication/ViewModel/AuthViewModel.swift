@@ -25,6 +25,7 @@ class AuthViewModel: ObservableObject {
     @Published var showAlert = false
     @Published var isError = false
     @Published var isSuccess = false
+    @Published var showAccountCreatedScreen = false
 
     init() {
         self.userSession = Auth.auth().currentUser
@@ -76,6 +77,10 @@ class AuthViewModel: ObservableObject {
                 .setData(userData)
 
             await fetchUser()
+            DispatchQueue.main.async {
+                self.showAccountCreatedScreen = true
+            }
+
         } catch {
             print(
                 "error - Failed to create user with error \(error.localizedDescription)"

@@ -447,6 +447,7 @@ struct InstructorDetailsView_Previews: PreviewProvider {
                 phoneNumber: "123-456-7890",
                 dateOfBirth: Date(),
                 address: "123 Main St",
+                studioName: "s1",
                 city: "New York",
                 country: "United States",
                 latitude: 40.7128,

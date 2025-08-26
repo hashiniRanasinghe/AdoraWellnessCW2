@@ -12,6 +12,7 @@ struct InstructorProfileSetupView: View {
     @StateObject private var viewModel = InstructorViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var navigateToDashboard = false
 
     //basic info
     @State private var firstName: String = ""
@@ -21,6 +22,7 @@ struct InstructorProfileSetupView: View {
 
     //physical info
     @State private var address: String = ""
+    @State private var studioName: String = ""
     @State private var city: String = ""
     @State private var country: String = ""
 
@@ -62,6 +64,11 @@ struct InstructorProfileSetupView: View {
         }
         .background(Color(.systemBackground))
         .navigationBarHidden(true)
+        .navigationDestination(isPresented: $navigateToDashboard) {
+            InstructorDashboardView()
+                .environmentObject(authViewModel)
+                .navigationBarBackButtonHidden(true)
+        }
         .alert("Profile Setup", isPresented: $viewModel.showAlert) {
             Button("OK") {}
         } message: {
@@ -69,6 +76,19 @@ struct InstructorProfileSetupView: View {
         }
         .onAppear {
             loadUserInfo()
+        }
+        .onChange(of: viewModel.isSuccess) {
+            if viewModel.isSuccess {
+                print("Instructor profile saved successfully")
+
+                //account created flag
+                authViewModel.showAccountCreatedScreen = false
+
+                //dashboard nav
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    navigateToDashboard = true
+                }
+            }
         }
     }
 
@@ -102,7 +122,6 @@ struct InstructorProfileSetupView: View {
                 .padding(.horizontal, 32)
         }
     }
-
 
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -151,6 +170,11 @@ struct InstructorProfileSetupView: View {
 
     private var addressSection: some View {
         VStack(alignment: .leading, spacing: 20) {
+            InputView(
+                text: $studioName,
+                title: "Studio Name",
+                placeholder: "Studio Name"
+            )
             InputView(
                 text: $address,
                 title: "Address",
@@ -336,6 +360,7 @@ struct InstructorProfileSetupView: View {
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
                 .frame(minHeight: 120)
+                .tint(Color(.systemGray2))
 
             if bio.isEmpty {
                 HStack {
@@ -419,6 +444,7 @@ struct InstructorProfileSetupView: View {
             phoneNumber: phoneNumber,
             dateOfBirth: dateOfBirth,
             address: address,
+            studioName: studioName,
             city: city,
             country: country,
             specialities: specialitiesArray,
@@ -429,10 +455,6 @@ struct InstructorProfileSetupView: View {
         )
 
         await viewModel.saveInstructorProfile(instructor)
-
-        if viewModel.isSuccess {
-            print("Instructor profile saved successfully")
-        }
     }
 }
 

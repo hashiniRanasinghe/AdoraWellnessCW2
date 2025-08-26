@@ -5,6 +5,7 @@ struct StudentProfileSetupView: View {
     @StateObject private var viewModel = StudentViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var navigateToDashboard = false
 
     //basic info
     @State private var firstName: String = ""
@@ -40,6 +41,11 @@ struct StudentProfileSetupView: View {
         }
         .background(Color(.systemBackground))
         .navigationBarHidden(true)
+        .navigationDestination(isPresented: $navigateToDashboard) {
+            DashboardView()
+                .environmentObject(authViewModel)
+                .navigationBarBackButtonHidden(true)
+        }
         .alert("Profile Setup", isPresented: $viewModel.showAlert) {
             Button("OK") {}
         } message: {
@@ -47,6 +53,18 @@ struct StudentProfileSetupView: View {
         }
         .onAppear {
             loadUserInfo()
+        }
+        .onChange(of: viewModel.isSuccess) {
+            if viewModel.isSuccess {
+                print("Instructor profile saved successfully")
+
+                //acc created flag
+                authViewModel.showAccountCreatedScreen = false
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    navigateToDashboard = true
+                }
+            }
         }
     }
 
@@ -83,7 +101,7 @@ struct StudentProfileSetupView: View {
 
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 20) {
-            //name feilds
+            //name fields
             HStack(spacing: 12) {
                 InputView(
                     text: $firstName,
@@ -102,7 +120,7 @@ struct StudentProfileSetupView: View {
             InputView(
                 text: $phoneNumber,
                 title: "Phone Number",
-                placeholder: "Enter phone number"
+                placeholder: "e.g. 0772537892"
             )
             .keyboardType(.phonePad)
 
@@ -120,7 +138,7 @@ struct StudentProfileSetupView: View {
                 )
                 .datePickerStyle(CompactDatePickerStyle())
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .tint(Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.2))
+                .tint(Color(red: 0.4, green: 0.3, blue: 0.8))
                 .padding(.vertical, 4)
             }
 
@@ -185,7 +203,7 @@ struct StudentProfileSetupView: View {
     private var physicalInfoSection: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
-                //weignt
+                //weight
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Weight (kg)")
                         .font(.system(size: 16, weight: .medium))
@@ -350,10 +368,6 @@ struct StudentProfileSetupView: View {
         )
 
         await viewModel.saveStudentProfile(student)
-
-        if viewModel.isSuccess {
-            print("Profile saved successfully")
-        }
     }
 }
 

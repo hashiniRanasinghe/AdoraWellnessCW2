@@ -17,6 +17,7 @@ struct Instructor: Identifiable, Codable {
     var phoneNumber: String
     var dateOfBirth: Date
     var address: String
+    var studioName: String
     var city: String
     var country: String
     var latitude: Double?
@@ -68,6 +69,7 @@ struct Instructor: Identifiable, Codable {
         phoneNumber: String = "",
         dateOfBirth: Date = Date(),
         address: String = "",
+        studioName: String = "",
         city: String = "",
         country: String = "",
         latitude: Double? = nil,
@@ -86,6 +88,7 @@ struct Instructor: Identifiable, Codable {
         self.phoneNumber = phoneNumber
         self.dateOfBirth = dateOfBirth
         self.address = address
+        self.studioName = studioName
         self.city = city
         self.country = country
         self.latitude = latitude

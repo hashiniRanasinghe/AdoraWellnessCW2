@@ -439,23 +439,9 @@ struct DashboardView: View {
             if !enrolledSessions.isEmpty {
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        //first 3 enrolled sessions
-                        ForEach(enrolledSessions.prefix(3)) { session in
+                        //all enrolled sessions
+                        ForEach(enrolledSessions) { session in
                             EnrolledSessionCard(session: session)
-                        }
-
-                        //view all  for if user has 3+ sessions
-                        if enrolledSessions.count > 3 {
-                            NavigationLink(destination: Text("All Sessions")) {
-                                Text(
-                                    "View All Sessions (\(enrolledSessions.count))"
-                                )
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8))
-                            }
-                            .padding(.top, 8)
                         }
                     }
                     .padding(.horizontal, 24)

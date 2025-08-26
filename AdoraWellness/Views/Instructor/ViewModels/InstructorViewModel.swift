@@ -52,6 +52,7 @@ class InstructorViewModel: ObservableObject {
                 "phoneNumber": updatedInstructor.phoneNumber,
                 "dateOfBirth": Timestamp(date: updatedInstructor.dateOfBirth),
                 "address": updatedInstructor.address,
+                "studioName": updatedInstructor.studioName,
                 "city": updatedInstructor.city,
                 "country": updatedInstructor.country,
                 "latitude": updatedInstructor.latitude ?? 0.0,
@@ -215,6 +216,7 @@ class InstructorViewModel: ObservableObject {
 
         let phoneNumber = data["phoneNumber"] as? String ?? ""
         let address = data["address"] as? String ?? ""
+        let studioName = data["studioName"] as? String ?? ""
         let city = data["city"] as? String ?? ""
         let country = data["country"] as? String ?? ""
         let latitude = data["latitude"] as? Double
@@ -241,6 +243,7 @@ class InstructorViewModel: ObservableObject {
             phoneNumber: phoneNumber,
             dateOfBirth: dateOfBirth,
             address: address,
+            studioName: studioName,
             city: city,
             country: country,
             latitude: latitude,

@@ -14,6 +14,7 @@ struct PaymentSuccessView: View {
     let session: Session
     let instructor: Instructor
     @Binding var isPresented: Bool
+    @State var isEventAdded: Bool = false
 
     var body: some View {
         NavigationView {
@@ -82,14 +83,16 @@ struct PaymentSuccessView: View {
                     Button("Add to Calendar") {
                         addToCalendar()
                     }
+                    .disabled(isEventAdded)
                     .primaryButtonStyle()
                     .frame(maxWidth: 350)
 
-                    Button("Add to Reminder") {
+                    Button("Set Reminder") {
                         addToReminders()
                     }
                     .secondaryButtonStyle()
                     .frame(maxWidth: 350)
+                    .disabled(isEventAdded)
 
                 }
                 .padding(.horizontal, 24)
@@ -120,7 +123,7 @@ struct PaymentSuccessView: View {
 
             do {
                 try eventStore.save(event, span: .thisEvent)
-                
+
                 print("Event saved - calendar date: \(session.date)")
 
                 UNUserNotificationCenter.current().requestAuthorization(
@@ -137,6 +140,7 @@ struct PaymentSuccessView: View {
                 content.title = "Added to Calendar"
                 content.body = "Your yoga session was successfully saved!"
                 content.sound = .default
+                isEventAdded = true
 
                 //trigger after 1 second
                 let trigger = UNTimeIntervalNotificationTrigger(
@@ -175,16 +179,16 @@ struct PaymentSuccessView: View {
                 "Yoga session with \(instructor.firstName) \(instructor.lastName)"
 
             let calendar = Calendar.current
-            
+
             var dateComponents = calendar.dateComponents(
                 [.year, .month, .day, .hour, .minute, .timeZone],
                 from: session.date
             )
-            
+
             if dateComponents.timeZone == nil {
                 dateComponents.timeZone = TimeZone.current
             }
-            
+
             reminder.dueDateComponents = dateComponents
 
             //set priority  5 = medium
@@ -200,7 +204,8 @@ struct PaymentSuccessView: View {
             do {
                 try eventStore.save(reminder, commit: true)
                 print("Reminder saved for: \(session.date)")
-                
+                isEventAdded = true
+
             } catch {
                 print("Failed to save reminder: \(error)")
             }
