@@ -39,13 +39,12 @@ struct InstructorDashboardView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             //section 1 - header
                             headerSection(user: user)
-                            
+
                             //section 2 - weekly info
                             weeklyInfoSection()
-                            
+
                             //section 3 - this month sessions
                             thisMonthsSessionsSection()
-
 
                         }
                     }
@@ -70,14 +69,7 @@ struct InstructorDashboardView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 HStack(spacing: 12) {
-                    Text(user.initials)
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(width: 62, height: 62)
-                        .background(Color(.systemGray3))
-                        .clipShape(Circle())
-
+                    AvatarView(initials: user.initials, size: 62)
                     VStack(alignment: .leading, spacing: 4) {
                         Text(
                             "Welcome back, \(user.fullname.components(separatedBy: " ").first ?? "")"
@@ -200,7 +192,7 @@ struct InstructorDashboardView: View {
             }
             .padding(.horizontal, 24)
 
-           VStack(spacing: 20) {
+            VStack(spacing: 20) {
                 // row 1 - classes and revenue
                 HStack(spacing: 20) {
                     //classes stats
@@ -377,6 +369,7 @@ struct InstructorDashboardView: View {
             total + (session.price * Double(session.registeredStudents.count))
         }
     }
+
 }
 
 //month session card

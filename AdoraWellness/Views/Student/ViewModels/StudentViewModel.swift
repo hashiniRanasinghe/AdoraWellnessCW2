@@ -44,6 +44,10 @@ class StudentViewModel: ObservableObject {
                 "weight": updatedStudent.weight,
                 "height": updatedStudent.height,
                 "fitnessLevel": updatedStudent.fitnessLevel.rawValue,
+                "healthConditions": updatedStudent.healthConditions,
+                "fitnessGoals": updatedStudent.fitnessGoals,
+                "emergencyContactName": updatedStudent.emergencyContactName,
+                "emergencyContactPhone": updatedStudent.emergencyContactPhone,
                 "profileImageURL": updatedStudent.profileImageURL ?? "",
                 "membershipStartDate": Timestamp(
                     date: updatedStudent.membershipStartDate),
@@ -61,7 +65,7 @@ class StudentViewModel: ObservableObject {
 
         } catch {
             print(
-                "DEBUG: Failed to save student profile: \(error.localizedDescription)"
+                "error - Failed to save student profile: \(error.localizedDescription)"
             )
             alertMessage = "Failed to save profile. Please try again."
             showAlert = true
@@ -91,13 +95,48 @@ class StudentViewModel: ObservableObject {
 
         } catch {
             print(
-                "DEBUG: Failed to fetch student profile: \(error.localizedDescription)"
+                "error - Failed to fetch student profile: \(error.localizedDescription)"
             )
             alertMessage = "Failed to load profile. Please try again."
             showAlert = true
         }
 
         isLoading = false
+    }
+
+    //fetch student by ID for instructor views
+    func fetchStudentById(studentId: String) async -> Student? {
+        do {
+            let document = try await db.collection("students")
+                .document(studentId)
+                .getDocument()
+
+            if document.exists, let data = document.data() {
+                return try parseStudentData(data)
+            } else {
+                print("error: Student with ID \(studentId) not found")
+                return nil
+            }
+
+        } catch {
+            print(
+                "error - Failed to fetch student by ID: \(error.localizedDescription)"
+            )
+            return nil
+        }
+    }
+
+    //fetch multiple students by IDs
+    func fetchStudentsByIds(studentIds: [String]) async -> [Student] {
+        var students: [Student] = []
+
+        for studentId in studentIds {
+            if let student = await fetchStudentById(studentId: studentId) {
+                students.append(student)
+            }
+        }
+
+        return students
     }
 
     //update student
@@ -121,11 +160,11 @@ class StudentViewModel: ObservableObject {
                 .delete()
 
             currentStudent = nil
-            print("DEBUG: Student profile deleted successfully")
+            print("Student profile deleted successfully")
 
         } catch {
             print(
-                "DEBUG: Failed to delete student profile: \(error.localizedDescription)"
+                "error - Failed to delete student profile: \(error.localizedDescription)"
             )
             alertMessage = "Failed to delete profile. Please try again."
             showAlert = true
@@ -168,6 +207,11 @@ class StudentViewModel: ObservableObject {
         let fitnessLevel =
             Student.FitnessLevel(rawValue: fitnessLevelString) ?? .beginner
 
+        let healthConditions = data["healthConditions"] as? String ?? ""
+        let fitnessGoals = data["fitnessGoals"] as? [String] ?? []
+        let emergencyContactName = data["emergencyContactName"] as? String ?? ""
+        let emergencyContactPhone =
+            data["emergencyContactPhone"] as? String ?? ""
         let profileImageURL = data["profileImageURL"] as? String
 
         let membershipStartDate: Date
@@ -190,6 +234,10 @@ class StudentViewModel: ObservableObject {
             weight: weight,
             height: height,
             fitnessLevel: fitnessLevel,
+            healthConditions: healthConditions,
+            fitnessGoals: fitnessGoals,
+            emergencyContactName: emergencyContactName,
+            emergencyContactPhone: emergencyContactPhone,
             profileImageURL: profileImageURL,
             membershipStartDate: membershipStartDate,
             isActive: isActive

@@ -25,15 +25,8 @@ struct UserProfileView: View {
                             VStack(spacing: 32) {
                                 //profile
                                 VStack(spacing: 20) {
-                                    Text(user.initials)
-                                        .font(
-                                            .system(size: 48, weight: .semibold)
-                                        )
-                                        .foregroundColor(.white)
-                                        .frame(width: 120, height: 120)
-                                        .background(Color(.systemGray3))
-                                        .clipShape(Circle())
-
+                                    AvatarView(
+                                        initials: user.initials, size: 120)
                                     //user info
                                     VStack(spacing: 8) {
                                         Text(user.fullname)

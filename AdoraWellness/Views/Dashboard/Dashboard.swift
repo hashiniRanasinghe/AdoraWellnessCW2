@@ -69,122 +69,122 @@ struct DashboardView: View {
     }
 
     private func recommendedLesson() -> some View {
-           VStack(alignment: .leading, spacing: 16) {
-               HStack {
-                   Text("Today's Recommendation")
-                       .font(.title3)
-                       .fontWeight(.bold)
-                       .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Today's Recommendation")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
 
-                   Spacer()
-               }
-               .padding(.horizontal, 24)
+                Spacer()
+            }
+            .padding(.horizontal, 24)
 
-               // lesson card content
-               if let lesson = randomLesson {
-                   HStack(spacing: 16) {
-                       // lesson icon
-                       ZStack {
-                           Circle()
-                               .fill(Color(.systemGray6))
-                               .frame(width: 60, height: 60)
+            // lesson card content
+            if let lesson = randomLesson {
+                HStack(spacing: 16) {
+                    // lesson icon
+                    ZStack {
+                        Circle()
+                            .fill(Color(.systemGray6))
+                            .frame(width: 60, height: 60)
 
-                           Image(systemName: lesson.iconName)
-                               .font(.title2)
-                               .foregroundColor(
-                                   Color(red: 0.4, green: 0.3, blue: 0.8))
-                       }
+                        Image(systemName: lesson.iconName)
+                            .font(.title2)
+                            .foregroundColor(
+                                Color(red: 0.4, green: 0.3, blue: 0.8))
+                    }
 
-                       VStack(alignment: .leading, spacing: 4) {
-                           Text(lesson.title)
-                               .font(.headline)
-                               .fontWeight(.bold)
-                               .foregroundColor(.primary)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(lesson.title)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
 
-                           Text(lesson.subtitle)
-                               .font(.subheadline)
-                               .foregroundColor(.secondary)
+                        Text(lesson.subtitle)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
 
-                           HStack(spacing: 12) {
-                               HStack(spacing: 4) {
-                                   Image(systemName: "clock")
-                                       .foregroundColor(.secondary)
-                                       .font(.caption)
-                                   Text(lesson.formattedDuration)
-                                       .font(.caption)
-                                       .foregroundColor(.secondary)
-                               }
-                           }
-                       }
+                        HStack(spacing: 12) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "clock")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                                Text(lesson.formattedDuration)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
 
-                       Spacer()
+                    Spacer()
 
-                       VStack(alignment: .trailing, spacing: 4) {
-                           // play btn
-                           Button(action: {
-                               print("Playing - TO DOOO \(lesson.title)")
-                               // start playing the lesson
-                           }) {
-                               Image(systemName: "play.circle.fill")
-                                   .font(.title)
-                                   .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
-                           }
-                           
-                           if lesson.calories > 0 {
-                               Text("\(lesson.calories) cal")
-                                   .font(.subheadline)
-                                   .fontWeight(.medium)
-                                   .foregroundColor(
-                                       Color(red: 0.4, green: 0.3, blue: 0.8))
-                           }
-                       }
-                   }
-                   .padding(.horizontal, 24)
-                   .padding(.bottom, 32)
-               } else {
-                   // show loading or no lessons available
-                   HStack(spacing: 16) {
-                       ZStack {
-                           Circle()
-                               .fill(Color(.systemGray6))
-                               .frame(width: 60, height: 60)
+                    VStack(alignment: .trailing, spacing: 4) {
+                        // play btn
+                        Button(action: {
+                            print("Playing - TO DOOO \(lesson.title)")
+                            // start playing the lesson
+                        }) {
+                            Image(systemName: "play.circle.fill")
+                                .font(.title)
+                                .foregroundColor(
+                                    Color(red: 0.4, green: 0.3, blue: 0.8))
+                        }
 
-                           if isLoading {
-                               ProgressView()
-                                   .scaleEffect(0.6)
-                           } else {
-                               Image(systemName: "figure.yoga")
-                                   .font(.title2)
-                                   .foregroundColor(.secondary)
-                           }
-                       }
+                        if lesson.calories > 0 {
+                            Text("\(lesson.calories) cal")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(
+                                    Color(red: 0.4, green: 0.3, blue: 0.8))
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
+            } else {
+                // show loading or no lessons available
+                HStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(Color(.systemGray6))
+                            .frame(width: 60, height: 60)
 
-                       VStack(alignment: .leading, spacing: 4) {
-                           if isLoading {
-                               Text("Loading recommendation...")
-                                   .font(.headline)
-                                   .fontWeight(.bold)
-                                   .foregroundColor(.secondary)
-                           } else {
-                               Text("No lessons available")
-                                   .font(.headline)
-                                   .fontWeight(.bold)
-                                   .foregroundColor(.secondary)
-                           }
+                        if isLoading {
+                            ProgressView()
+                                .scaleEffect(0.6)
+                        } else {
+                            Image(systemName: "figure.yoga")
+                                .font(.title2)
+                                .foregroundColor(.secondary)
+                        }
+                    }
 
-                           Text("Check back later")
-                               .font(.subheadline)
-                               .foregroundColor(.secondary)
-                       }
+                    VStack(alignment: .leading, spacing: 4) {
+                        if isLoading {
+                            Text("Loading recommendation...")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text("No lessons available")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.secondary)
+                        }
 
-                       Spacer()
-                   }
-                   .padding(.horizontal, 24)
-                   .padding(.bottom, 32)
-               }
-           }
-       }
+                        Text("Check back later")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
 
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
+            }
+        }
+    }
 
     //greeting section with user info
     @ViewBuilder
@@ -193,13 +193,7 @@ struct DashboardView: View {
             HStack {
                 HStack(spacing: 12) {
                     //initials img
-                    Text(user.initials)
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(width: 62, height: 62)
-                        .background(Color(.systemGray3))
-                        .clipShape(Circle())
+                    AvatarView(initials: user.initials, size: 62).font(.title)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(
@@ -217,13 +211,13 @@ struct DashboardView: View {
 
                 Spacer()
 
-//                Button(action: {
-//                    //bell action
-//                }) {
-//                    Image(systemName: "bell")
-//                        .font(.title2)
-//                        .foregroundColor(.primary)
-//                }
+                //                Button(action: {
+                //                    //bell action
+                //                }) {
+                //                    Image(systemName: "bell")
+                //                        .font(.title2)
+                //                        .foregroundColor(.primary)
+                //                }
             }
             .padding(.horizontal, 24)
             .padding(.top, 20)
@@ -445,23 +439,9 @@ struct DashboardView: View {
             if !enrolledSessions.isEmpty {
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        //first 3 enrolled sessions
-                        ForEach(enrolledSessions.prefix(3)) { session in
+                        //all enrolled sessions
+                        ForEach(enrolledSessions) { session in
                             EnrolledSessionCard(session: session)
-                        }
-
-                        //view all  for if user has 3+ sessions
-                        if enrolledSessions.count > 3 {
-                            NavigationLink(destination: Text("All Sessions")) {
-                                Text(
-                                    "View All Sessions (\(enrolledSessions.count))"
-                                )
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8))
-                            }
-                            .padding(.top, 8)
                         }
                     }
                     .padding(.horizontal, 24)
@@ -733,7 +713,7 @@ struct DashboardView: View {
     private func getInstructorById(_ instructorId: String) -> Instructor? {
         return instructors.first { $0.id == instructorId }
     }
-    
+
     // calculate bmi
     private func calculateBMI(weight: Double, height: Double) -> Double {
         if height > 0 {

@@ -46,7 +46,7 @@ class SessionViewModel: ObservableObject {
 
         } catch {
             print(
-                "DEBUG: Failed to fetch sessions: \(error.localizedDescription)"
+                "error - Failed to fetch sessions: \(error.localizedDescription)"
             )
             alertMessage = "Failed to load sessions. Please try again."
             showAlert = true
@@ -72,7 +72,7 @@ class SessionViewModel: ObservableObject {
 
         } catch {
             print(
-                "DEBUG: Failed to check student registration: \(error.localizedDescription)"
+                "error - Failed to check student registration: \(error.localizedDescription)"
             )
             return false
         }
@@ -91,13 +91,13 @@ class SessionViewModel: ObservableObject {
             ])
 
             print(
-                "DEBUG: Successfully registered student \(studentId) for session \(sessionId)"
+                "successfully registered student \(studentId) for session \(sessionId)"
             )
             return true
 
         } catch {
             print(
-                "DEBUG: Failed to register student: \(error.localizedDescription)"
+                "error - Failed to register student: \(error.localizedDescription)"
             )
             alertMessage = "Failed to book session. Please try again."
             showAlert = true
@@ -186,7 +186,7 @@ class SessionViewModel: ObservableObject {
 
         } catch {
             print(
-                "DEBUG: Failed to fetch all sessions: \(error.localizedDescription)"
+                "error - Failed to fetch all sessions: \(error.localizedDescription)"
             )
             alertMessage = "Failed to load sessions. Please try again."
             showAlert = true

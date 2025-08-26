@@ -27,7 +27,6 @@ struct Lesson: Identifiable, Codable {
     let difficulty: Int  // 1-5
     let isActive: Bool
     let viewCount: Int
-    let favoriteCount: Int
     @ServerTimestamp var createdAt: Date?
     @ServerTimestamp var updatedAt: Date?
 
@@ -50,7 +49,6 @@ struct Lesson: Identifiable, Codable {
         case difficulty
         case isActive
         case viewCount
-        case favoriteCount
         case createdAt
         case updatedAt
     }
@@ -73,7 +71,6 @@ struct Lesson: Identifiable, Codable {
         difficulty: Int = 1,
         isActive: Bool = true,
         viewCount: Int = 0,
-        favoriteCount: Int = 0,
         createdAt: Date? = nil,
         updatedAt: Date? = nil
     ) {
@@ -95,7 +92,6 @@ struct Lesson: Identifiable, Codable {
         self.difficulty = difficulty
         self.isActive = isActive
         self.viewCount = viewCount
-        self.favoriteCount = favoriteCount
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }

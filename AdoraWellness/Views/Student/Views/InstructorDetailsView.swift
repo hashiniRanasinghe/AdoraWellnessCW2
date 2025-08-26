@@ -57,12 +57,8 @@ struct InstructorDetailsView: View {
                                 Spacer()
 
                                 //img
-                                Text(instructor.initials)
-                                    .font(.system(size: 32, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .frame(width: 100, height: 100)
-                                    .background(Color(.systemGray3))
-                                    .clipShape(Circle())
+                                AvatarView(
+                                    initials: instructor.initials, size: 100)
 
                                 Spacer()
                             }
@@ -451,6 +447,7 @@ struct InstructorDetailsView_Previews: PreviewProvider {
                 phoneNumber: "123-456-7890",
                 dateOfBirth: Date(),
                 address: "123 Main St",
+                studioName: "s1",
                 city: "New York",
                 country: "United States",
                 latitude: 40.7128,

@@ -52,6 +52,7 @@ class InstructorViewModel: ObservableObject {
                 "phoneNumber": updatedInstructor.phoneNumber,
                 "dateOfBirth": Timestamp(date: updatedInstructor.dateOfBirth),
                 "address": updatedInstructor.address,
+                "studioName": updatedInstructor.studioName,
                 "city": updatedInstructor.city,
                 "country": updatedInstructor.country,
                 "latitude": updatedInstructor.latitude ?? 0.0,
@@ -75,7 +76,7 @@ class InstructorViewModel: ObservableObject {
 
         } catch {
             print(
-                "DEBUG: Failed to save instructor profile: \(error.localizedDescription)"
+                "failed to save instructor profile: \(error.localizedDescription)"
             )
             alertMessage = "Failed to save profile. Please try again."
             showAlert = true
@@ -100,13 +101,13 @@ class InstructorViewModel: ObservableObject {
             if document.exists, let data = document.data() {
                 currentInstructor = try parseInstructorData(data)
             } else {
-                print("DEBUG: No instructor profile found")
+                print("No instructor profile found")
                 currentInstructor = nil
             }
 
         } catch {
             print(
-                "DEBUG: Failed to fetch instructor profile: \(error.localizedDescription)"
+                "Failed to fetch instructor profile: \(error.localizedDescription)"
             )
             alertMessage = "Failed to load profile. Please try again."
             showAlert = true
@@ -136,11 +137,11 @@ class InstructorViewModel: ObservableObject {
                 .delete()
 
             currentInstructor = nil
-            print("DEBUG: Instructor profile deleted successfully")
+            print("Instructor profile deleted successfully")
 
         } catch {
             print(
-                "DEBUG: Failed to delete instructor profile: \(error.localizedDescription)"
+                "Failed to delete instructor profile: \(error.localizedDescription)"
             )
             alertMessage = "Failed to delete profile. Please try again."
             showAlert = true
@@ -168,7 +169,7 @@ class InstructorViewModel: ObservableObject {
 
         } catch {
             print(
-                "DEBUG: Failed to fetch instructors: \(error.localizedDescription)"
+                "Failed to fetch instructors: \(error.localizedDescription)"
             )
             return []
         }
@@ -181,17 +182,17 @@ class InstructorViewModel: ObservableObject {
         do {
             let placemarks = try await geocoder.geocodeAddressString(address)
             guard let location = placemarks.first?.location else {
-                print("DEBUG: No location found for address: \(address)")
+                print("No location found for address: \(address)")
                 return nil
             }
 
             print(
-                "DEBUG: Geocoded address successfully: \(location.coordinate)")
+                "geocoded address successfully: \(location.coordinate)")
             return location.coordinate
 
         } catch {
             print(
-                "DEBUG: Failed to geocode address: \(error.localizedDescription)"
+                "error - Failed to geocode address: \(error.localizedDescription)"
             )
             return nil
         }
@@ -215,6 +216,7 @@ class InstructorViewModel: ObservableObject {
 
         let phoneNumber = data["phoneNumber"] as? String ?? ""
         let address = data["address"] as? String ?? ""
+        let studioName = data["studioName"] as? String ?? ""
         let city = data["city"] as? String ?? ""
         let country = data["country"] as? String ?? ""
         let latitude = data["latitude"] as? Double
@@ -241,6 +243,7 @@ class InstructorViewModel: ObservableObject {
             phoneNumber: phoneNumber,
             dateOfBirth: dateOfBirth,
             address: address,
+            studioName: studioName,
             city: city,
             country: country,
             latitude: latitude,

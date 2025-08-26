@@ -14,6 +14,7 @@ struct PaymentSuccessView: View {
     let session: Session
     let instructor: Instructor
     @Binding var isPresented: Bool
+    @State var isEventAdded: Bool = false
 
     var body: some View {
         NavigationView {
@@ -64,7 +65,7 @@ struct PaymentSuccessView: View {
                             HStack {
                                 Image(systemName: "arrow.left")
                                     .font(.title2)
-                                Text("Back to Home")
+                                Text("Back to Dashboard")
                                     .font(.headline)
                             }
                             .foregroundColor(.primary)
@@ -82,14 +83,16 @@ struct PaymentSuccessView: View {
                     Button("Add to Calendar") {
                         addToCalendar()
                     }
+                    .disabled(isEventAdded)
                     .primaryButtonStyle()
                     .frame(maxWidth: 350)
 
-                    Button("Add to Reminder") {
+                    Button("Set Reminder") {
                         addToReminders()
                     }
                     .secondaryButtonStyle()
                     .frame(maxWidth: 350)
+                    .disabled(isEventAdded)
 
                 }
                 .padding(.horizontal, 24)
@@ -120,23 +123,24 @@ struct PaymentSuccessView: View {
 
             do {
                 try eventStore.save(event, span: .thisEvent)
-                print("Event saved")
 
-                // Add this before your notification code
+                print("Event saved - calendar date: \(session.date)")
+
                 UNUserNotificationCenter.current().requestAuthorization(
                     options: [.alert, .sound, .badge]) { granted, error in
                         if granted {
-                            print("✅ Notification permission granted")
+                            print("Notification permission granted")
                         } else {
-                            print("❌ Notification permission denied")
+                            print("Notification permission denied")
                         }
                     }
 
-                //local notificatiom
+                //local notification
                 let content = UNMutableNotificationContent()
                 content.title = "Added to Calendar"
                 content.body = "Your yoga session was successfully saved!"
                 content.sound = .default
+                isEventAdded = true
 
                 //trigger after 1 second
                 let trigger = UNTimeIntervalNotificationTrigger(
@@ -174,11 +178,18 @@ struct PaymentSuccessView: View {
             reminder.notes =
                 "Yoga session with \(instructor.firstName) \(instructor.lastName)"
 
-            //due date to session start time
-            reminder.dueDateComponents = Calendar.current.dateComponents(
-                [.year, .month, .day, .hour, .minute],
+            let calendar = Calendar.current
+
+            var dateComponents = calendar.dateComponents(
+                [.year, .month, .day, .hour, .minute, .timeZone],
                 from: session.date
             )
+
+            if dateComponents.timeZone == nil {
+                dateComponents.timeZone = TimeZone.current
+            }
+
+            reminder.dueDateComponents = dateComponents
 
             //set priority  5 = medium
             reminder.priority = 5
@@ -192,54 +203,13 @@ struct PaymentSuccessView: View {
 
             do {
                 try eventStore.save(reminder, commit: true)
-                print("Reminder saved successfully!")
+                print("Reminder saved for: \(session.date)")
+                isEventAdded = true
+
             } catch {
                 print("Failed to save reminder: \(error)")
             }
         }
     }
 
-}
-
-struct PaymentSuccessView_Previews: PreviewProvider {
-    static var previews: some View {
-        PaymentSuccessView(
-            session: Session(
-                id: "session_001",
-                instructorId: "instructor_001",
-                title: "Morning Vinyasa Flow",
-                description:
-                    "An energizing 60-minute vinyasa flow perfect for starting your day. Suitable for intermediate practitioners.",
-                startTime: "09:00",
-                endTime: "10:00",
-                durationMinutes: 60,
-                price: 45.00,
-                sessionType: "Online",
-                date: Calendar.current.date(
-                    byAdding: .day, value: 1, to: Date()) ?? Date(),
-                createdAt: Date(),
-                level: "Intermediate"
-            ),
-            instructor: Instructor(
-                id: "1",
-                firstName: "Adam",
-                lastName: "Dalva",
-                email: "adam@example.com",
-                phoneNumber: "123-456-7890",
-                dateOfBirth: Date(),
-                address: "123 Main St",
-                city: "New York",
-                country: "United States",
-                latitude: 40.7128,
-                longitude: -74.0060,
-                specialities: ["Yoga", "Pilates"],
-                certifications: "Certified Yoga Instructor",
-                experience: 5,
-                hourlyRate: 35.0,
-                bio: "Experienced yoga instructor with a passion for wellness.",
-                isActive: true
-            ),
-            isPresented: .constant(true)
-        )
-    }
 }
