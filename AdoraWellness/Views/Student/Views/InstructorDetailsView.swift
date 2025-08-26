@@ -77,6 +77,47 @@ struct InstructorDetailsView: View {
                         .padding(.horizontal, 24)
                         .padding(.bottom, 32)
 
+                        //studio data
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Studio")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(.primary)
+
+                            VStack(alignment: .leading, spacing: 8) {
+                                if !instructor.studioName.isEmpty {
+                                    Text(instructor.studioName)
+                                        .font(
+                                            .system(size: 18, weight: .medium)
+                                        )
+                                        .foregroundColor(.primary)
+                                }
+
+                                if !instructor.address.isEmpty
+                                    || !instructor.city.isEmpty
+                                    || !instructor.country.isEmpty
+                                {
+                                    Text(instructor.fullAddress)
+                                        .font(.system(size: 16))
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(nil)
+                                }
+
+                                //no studio
+                                if instructor.studioName.isEmpty
+                                    && instructor.address.isEmpty
+                                    && instructor.city.isEmpty
+                                    && instructor.country.isEmpty
+                                {
+                                    Text("No studio information available")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(.secondary)
+                                        .italic()
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 32)
+
                         //about
                         VStack(alignment: .leading, spacing: 16) {
                             Text("About")
@@ -434,30 +475,4 @@ struct SessionCard: View {
         .cornerRadius(16)
     }
 
-}
-
-struct InstructorDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        InstructorDetailsView(
-            instructor: Instructor(
-                id: "1",
-                firstName: "Denith",
-                lastName: "Rasel",
-                email: "123@example.com",
-                phoneNumber: "123-456-7890",
-                dateOfBirth: Date(),
-                address: "123 Main St",
-                studioName: "s1",
-                city: "New York",
-                country: "United States",
-                latitude: 40.7128,
-                longitude: -74.0060,
-                specialities: ["Yoga", "Pilates"],
-                certifications: "Certified Yoga Instructor",
-                experience: 5,
-                hourlyRate: 35.0,
-                bio: "Experienced yoga instructor with a passion for wellness.",
-                isActive: true
-            ))
-    }
 }
