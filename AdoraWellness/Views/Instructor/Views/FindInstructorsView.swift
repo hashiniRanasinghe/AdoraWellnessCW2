@@ -4,6 +4,7 @@
 //
 //  Created by Hashini Ranasinghe on 2025-08-13.
 //
+//
 
 import SwiftUI
 
@@ -12,11 +13,13 @@ struct FindInstructorsView: View {
     @State private var instructors: [Instructor] = []
     @State private var selectedFilter = "All"
 
-    private let filterOptions = ["All", "Yoga", "Pilates", "Meditation"]
+    private let filterOptions = ["All", "Yoga", "Pilates", "Map"]
 
     var filteredInstructors: [Instructor] {
         if selectedFilter == "All" {
             return instructors
+        } else if selectedFilter == "Map" {
+            return instructors  //return all for map view
         } else {
             return instructors.filter { instructor in
                 instructor.specialities.contains { speciality in
@@ -41,10 +44,13 @@ struct FindInstructorsView: View {
 
                             Spacer()
 
-                            Text("Find Instructors")
-                                .font(.title3)
-                                .fontWeight(.bold)
-                                .foregroundColor(.primary)
+                            Text(
+                                selectedFilter == "Map"
+                                    ? "Studios Map" : "Find Instructors"
+                            )
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
 
                             Spacer()
                             //search
@@ -67,13 +73,15 @@ struct FindInstructorsView: View {
                                         selectedFilter = filter
                                     }) {
                                         VStack(spacing: 8) {
-                                            Text(filter)
-                                                .font(.headline)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(
-                                                    selectedFilter == filter
-                                                        ? .primary : .secondary
-                                                )
+                                            HStack(spacing: 4) {
+                                                Text(filter)
+                                                    .font(.headline)
+                                                    .fontWeight(.medium)
+                                            }
+                                            .foregroundColor(
+                                                selectedFilter == filter
+                                                    ? .primary : .secondary
+                                            )
 
                                             Rectangle()
                                                 .fill(
@@ -96,7 +104,7 @@ struct FindInstructorsView: View {
                         }
                         .padding(.bottom, 32)
 
-                        //instructors list
+                        //content based on selected filter
                         if viewModel.isLoading {
                             VStack(spacing: 16) {
                                 ProgressView()
@@ -107,6 +115,55 @@ struct FindInstructorsView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.top, 100)
+                        } else if selectedFilter == "Map" {
+                            //map view
+                            VStack {
+                                if instructors.isEmpty {
+                                    VStack(spacing: 16) {
+                                        Text("No Studios Available")
+                                            .font(.title3)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.primary)
+                                        Text(
+                                            "No instructor studios found to display on the map"
+                                        )
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.top, 100)
+                                } else {
+                                    StudiosMapView(instructors: instructors)
+                                        .frame(height: 500)
+                                        .cornerRadius(12)
+                                        .padding(.horizontal, 24)
+
+                                    //studios summary
+                                    let studiosCount = Set(
+                                        instructors.compactMap { instructor in
+                                            instructor.latitude != nil
+                                                && instructor.longitude != nil
+                                                && !instructor.studioName
+                                                    .isEmpty
+                                                ? instructor.studioName : nil
+                                        }
+                                    ).count
+
+                                    VStack(spacing: 8) {
+                                        Text(
+                                            "\(studiosCount) \(studiosCount == 1 ? "Studio" : "Studios") Found"
+                                        )
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.primary)
+
+                                    }
+                                    .padding(.horizontal, 24)
+                                    .padding(.top, 16)
+                                    .padding(.bottom, 50)
+                                }
+                            }
                         } else if filteredInstructors.isEmpty {
                             VStack(spacing: 16) {
                                 Image(systemName: "person.slash")
