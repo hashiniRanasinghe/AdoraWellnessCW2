@@ -2,7 +2,7 @@
 //  SplashScreen.swift
 //  AdoraWellness
 //
-//  Created by Hashini Ranasinghe on 2025-08-05.
+//  Created by Hashini Ranasinghe on 2025-08-05
 //
 
 import SwiftUI
@@ -51,14 +51,14 @@ struct SplashScreen: View {
             forKey: "hasLaunchedBefore")
 
         if isFirstLaunch {
-            //1st launch -> Onboarding
+            //1st launch -> onboarding
             OnboardingScreen1()
                 .onAppear {
                     UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
                 }
 
         } else if viewModel.showAccountCreatedScreen {
-            //registration  -> profile setup
+            //registration -> profile setup
             if let currentUser = viewModel.currentUser {
                 if currentUser.userType == .student {
                     StudentProfileSetupView()
@@ -76,8 +76,15 @@ struct SplashScreen: View {
             }
 
         } else if viewModel.userSession == nil {
-            //no user session  -> login
+            //no user session -> login
             LoginView()
+
+        } else if viewModel.currentUser == nil {
+            //user data loading
+            VStack {
+                ProgressView()
+                Text("Loading...")
+            }
 
         } else if let currentUser = viewModel.currentUser {
             //logged in -> dashboard
@@ -91,13 +98,6 @@ struct SplashScreen: View {
                     InstructorDashboardView()
                         .environmentObject(viewModel)
                 }
-            }
-
-        } else {
-            //user data is loading
-            VStack {
-                ProgressView()
-                Text("Loading...")
             }
         }
     }
