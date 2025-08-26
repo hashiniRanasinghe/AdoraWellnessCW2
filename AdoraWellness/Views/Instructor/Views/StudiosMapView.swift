@@ -33,7 +33,7 @@ struct StudiosMapView: View {
             }
         }
 
-        print("found \(filtered.count) instructors with valid location data")
+        print("found \(filtered.count) instructors")
 
         let grouped = Dictionary(grouping: filtered) { instructor in
             "\(instructor.studioName)-\(instructor.latitude ?? 0)-\(instructor.longitude ?? 0)"
@@ -47,10 +47,6 @@ struct StudiosMapView: View {
             else {
                 return nil
             }
-
-            print(
-                "creating studio location: \(firstInstructor.studioName) at \(latitude), \(longitude)"
-            )
 
             return StudioLocation(
                 id: key,
@@ -70,7 +66,7 @@ struct StudiosMapView: View {
         ZStack {
             Map(position: $position) {
                 ForEach(studioLocations) { studio in
-                    Annotation(studio.name, coordinate: studio.coordinate) {
+                    Annotation("", coordinate: studio.coordinate) {
                         StudioMapPin(studio: studio)
                     }
                 }
@@ -83,41 +79,16 @@ struct StudiosMapView: View {
     }
 
     private func updateMapRegion() {
-        print("map appeared with \(studioLocations.count) studios")
-
-        guard !studioLocations.isEmpty else {
-            print("no studios found, keeping default region")
+        guard let randomStudio = studioLocations.randomElement() else {
+            print("no studios found")
             return
         }
 
-        let coordinates = studioLocations.map { $0.coordinate }
-
-        //calculate bounds
-        let minLat = coordinates.map { $0.latitude }.min() ?? 0
-        let maxLat = coordinates.map { $0.latitude }.max() ?? 0
-        let minLng = coordinates.map { $0.longitude }.min() ?? 0
-        let maxLng = coordinates.map { $0.longitude }.max() ?? 0
-
-        //calculate center
-        let centerLat = (minLat + maxLat) / 2
-        let centerLng = (minLng + maxLng) / 2
-
-        //calculate span with padding
-        let latDelta = max(abs(maxLat - minLat) * 1.3, 0.1)
-        let lngDelta = max(abs(maxLng - minLng) * 1.3, 0.1)
-
         let newRegion = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(
-                latitude: centerLat, longitude: centerLng),
-            span: MKCoordinateSpan(
-                latitudeDelta: latDelta, longitudeDelta: lngDelta)
+            center: randomStudio.coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
         )
 
-        print(
-            "setting map region - center: (\(centerLat), \(centerLng)), span: (\(latDelta), \(lngDelta))"
-        )
-
-        //animate the region change
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             withAnimation(.easeInOut(duration: 1.0)) {
                 position = .region(newRegion)
@@ -183,13 +154,10 @@ struct PinContent: View {
 
             //instructor name
             if let instructor = studio.instructors.first {
-                Text(instructor.fullName)
-                    .font(.system(size: 8))
-                    .foregroundColor(.primary)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
-                    .background(Color.white.opacity(0.8))
-                    .cornerRadius(4)
+                Text(instructor.fullName).font(.system(size: 8))
+                    .foregroundColor(.primary).padding(.horizontal, 4).padding(
+                        .vertical, 1
+                    ).background(Color.white.opacity(0.8)).cornerRadius(4)
             }
         }
         .frame(width: 120)
