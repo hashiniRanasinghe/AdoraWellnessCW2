@@ -15,6 +15,7 @@ struct PaymentSuccessView: View {
     let instructor: Instructor
     @Binding var isPresented: Bool
     @State var isEventAdded: Bool = false
+    @State var isCalenderAdded: Bool = false
 
     var body: some View {
         NavigationView {
@@ -84,13 +85,13 @@ struct PaymentSuccessView: View {
                         addToCalendar()
                     }
                     .disabled(isEventAdded)
-                    .primaryButtonStyle()
+                    .primaryButtonStyle(enabled: !isCalenderAdded)
                     .frame(maxWidth: 350)
 
                     Button("Set Reminder") {
                         addToReminders()
                     }
-                    .secondaryButtonStyle()
+                    .secondaryButtonStyle(enabled: !isEventAdded)
                     .frame(maxWidth: 350)
                     .disabled(isEventAdded)
 
@@ -107,7 +108,7 @@ struct PaymentSuccessView: View {
     private func addToCalendar() {
         let eventStore = EKEventStore()
 
-        // request access
+        //request access
         eventStore.requestWriteOnlyAccessToEvents { granted, error in
             guard granted else { return }
 
@@ -123,28 +124,18 @@ struct PaymentSuccessView: View {
 
             do {
                 try eventStore.save(event, span: .thisEvent)
-
                 print("Event saved - calendar date: \(session.date)")
-
-                UNUserNotificationCenter.current().requestAuthorization(
-                    options: [.alert, .sound, .badge]) { granted, error in
-                        if granted {
-                            print("Notification permission granted")
-                        } else {
-                            print("Notification permission denied")
-                        }
-                    }
 
                 //local notification
                 let content = UNMutableNotificationContent()
                 content.title = "Added to Calendar"
                 content.body = "Your yoga session was successfully saved!"
                 content.sound = .default
-                isEventAdded = true
+                isCalenderAdded = true
 
-                //trigger after 1 second
+                // trigger after 5s
                 let trigger = UNTimeIntervalNotificationTrigger(
-                    timeInterval: 1, repeats: false)
+                    timeInterval: 5, repeats: false)
                 let request = UNNotificationRequest(
                     identifier: UUID().uuidString, content: content,
                     trigger: trigger)
