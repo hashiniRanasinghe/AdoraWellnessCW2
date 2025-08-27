@@ -20,6 +20,7 @@ struct SessionSuccessView: View {
     let price: Double
     @Binding var isPresented: Bool
     @State var isEventAdded: Bool = false
+    @State var isCalenderAdded: Bool = false
 
     var body: some View {
         NavigationView {
@@ -111,14 +112,14 @@ struct SessionSuccessView: View {
                         Button("Add to My Calendar") {
                             addToCalendar()
                         }
-                        .primaryButtonStyle()
+                        .primaryButtonStyle(enabled: !isCalenderAdded)
                         .frame(maxWidth: 350)
                         .disabled(isEventAdded)
 
                         Button("Set Reminder") {
                             addToReminders()
                         }
-                        .secondaryButtonStyle()
+                        .secondaryButtonStyle(enabled: !isEventAdded)
                         .frame(maxWidth: 350)
                         .disabled(isEventAdded)
                     }
@@ -146,12 +147,17 @@ struct SessionSuccessView: View {
     private func addToCalendar() {
         let eventStore = EKEventStore()
 
+        //request access to calendar
         eventStore.requestWriteOnlyAccessToEvents { granted, error in
-            guard granted else { return }
+            guard granted else {
+                print("Calendar access denied")
+                return
+            }
 
             let event = EKEvent(eventStore: eventStore)
             event.title = "Teach: \(sessionTitle)"
 
+            //combine date and time
             let sessionStartDateTime = Utils.combineDateAndTime(
                 date: sessionDate, timeString: startTime)
             let sessionEndDateTime = Utils.combineDateAndTime(
@@ -166,36 +172,32 @@ struct SessionSuccessView: View {
             do {
                 try eventStore.save(event, span: .thisEvent)
                 print("Session event saved to calendar")
-                isEventAdded = true
+                isCalenderAdded = true
 
-                UNUserNotificationCenter.current().requestAuthorization(
-                    options: [.alert, .sound, .badge]) { granted, error in
-                        if granted {
-                            print("Notification permission granted")
-                        }
-                    }
-
+                //local notification
                 let content = UNMutableNotificationContent()
                 content.title = "Added to Calendar"
                 content.body = "Your teaching session was successfully saved!"
                 content.sound = .default
 
+                //delay to ensure it triggers
                 let trigger = UNTimeIntervalNotificationTrigger(
-                    timeInterval: 1, repeats: false)
+                    timeInterval: 5, repeats: false)
                 let request = UNNotificationRequest(
-                    identifier: UUID().uuidString, content: content,
+                    identifier: UUID().uuidString,
+                    content: content,
                     trigger: trigger)
 
                 UNUserNotificationCenter.current().add(request) { error in
                     if let error = error {
-                        print("failed to show notification: \(error)")
+                        print("Failed to show notification: \(error)")
                     } else {
                         print("Notification scheduled")
                     }
                 }
 
             } catch {
-                print("failed to save event: \(error)")
+                print("Failed to save event: \(error)")
             }
         }
     }
@@ -231,8 +233,8 @@ struct SessionSuccessView: View {
             reminder.priority = 5
             reminder.calendar = eventStore.defaultCalendarForNewReminders()
 
-            // Set reminder 30 minutes before session
-            let alarm = EKAlarm(relativeOffset: -30 * 60)  // 30 mins before
+            //set reminder 30mins before session
+            let alarm = EKAlarm(relativeOffset: -30 * 60)  // 30mins before
             reminder.addAlarm(alarm)
 
             do {
