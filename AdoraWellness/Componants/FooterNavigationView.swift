@@ -16,91 +16,78 @@ struct FooterNavigationView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                //home (common for both roles)
-                footerButton(
-                    systemName: selectedTab == 0 ? "house.fill" : "house",
-                    title: "Home",
-                    isSelected: selectedTab == 0
-                ) { if selectedTab != 0 { navigateToHome = true } }
+        NavigationStack {
+            VStack(spacing: 0) {
+                HStack {
+                    //home - common for both roles
+                    footerButton(
+                        systemName: selectedTab == 0 ? "house.fill" : "house",
+                        title: "Home",
+                        isSelected: selectedTab == 0
+                    ) { if selectedTab != 0 { navigateToHome = true } }
 
+                    if userRole == .student {
+                        footerButton(
+                            systemName: selectedTab == 1
+                                ? "doc.text.fill" : "doc.text",
+                            title: "Discover",
+                            isSelected: selectedTab == 1
+                        ) { if selectedTab != 1 { navigateToDiscover = true } }
+
+                        footerButton(
+                            systemName: "figure.yoga",
+                            title: "Practice",
+                            isSelected: selectedTab == 2
+                        ) { if selectedTab != 2 { navigateToPractice = true } }
+
+                        footerButton(
+                            systemName: selectedTab == 3
+                                ? "person.fill" : "person",
+                            title: "Profile",
+                            isSelected: selectedTab == 3
+                        ) { if selectedTab != 3 { navigateToProfile = true } }
+
+                    } else if userRole == .instructor {
+                        footerButton(
+                            systemName: selectedTab == 1
+                                ? "calendar.badge.clock" : "calendar",
+                            title: "Schedule",
+                            isSelected: selectedTab == 1
+                        ) { if selectedTab != 1 { navigateToSchedule = true } }
+
+                        footerButton(
+                            systemName: selectedTab == 2
+                                ? "person.fill" : "person",
+                            title: "Profile",
+                            isSelected: selectedTab == 2
+                        ) { if selectedTab != 2 { navigateToProfile = true } }
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 34)
+            }
+            .background(Color.white.opacity(0.8))  // transparent footer
+            //nav
+            .navigationDestination(isPresented: $navigateToHome) {
                 if userRole == .student {
-                    //student
-                    footerButton(
-                        systemName: selectedTab == 1
-                            ? "doc.text.fill" : "doc.text",
-                        title: "Discover",
-                        isSelected: selectedTab == 1
-                    ) { if selectedTab != 1 { navigateToDiscover = true } }
-
-                    footerButton(
-                        systemName: selectedTab == 2
-                            ? "figure.yoga" : "figure.yoga",
-                        title: "Practice",
-                        isSelected: selectedTab == 2
-                    ) { if selectedTab != 2 { navigateToPractice = true } }
-
-                    footerButton(
-                        systemName: selectedTab == 3 ? "person.fill" : "person",
-                        title: "Profile",
-                        isSelected: selectedTab == 3
-                    ) { if selectedTab != 3 { navigateToProfile = true } }
-
-                } else if userRole == .instructor {
-                    //instructor
-                    footerButton(
-                        systemName: selectedTab == 1
-                            ? "calendar.badge.clock" : "calendar",
-                        title: "Schedule",
-                        isSelected: selectedTab == 1
-                    ) { if selectedTab != 1 { navigateToSchedule = true } }
-
-                    footerButton(
-                        systemName: selectedTab == 2 ? "person.fill" : "person",
-                        title: "Profile",
-                        isSelected: selectedTab == 2
-                    ) { if selectedTab != 2 { navigateToProfile = true } }
+                    DashboardView()
+                } else {
+                    InstructorDashboardView()
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 34)
+            .navigationDestination(isPresented: $navigateToDiscover) {
+                FindInstructorsView()
+            }
+            .navigationDestination(isPresented: $navigateToPractice) {
+                LessonsView()
+            }
+            .navigationDestination(isPresented: $navigateToProfile) {
+                UserProfileView()
+            }
+            .navigationDestination(isPresented: $navigateToSchedule) {
+                InstructorScheduleView()
+            }
         }
-        .background(Color.white.opacity(0.8)) //make footer transparent
-        .background(
-            Group {
-                //student pages
-                if userRole == .student {
-                    NavigationLink(
-                        destination: DashboardView(), isActive: $navigateToHome
-                    ) { EmptyView() }
-                    NavigationLink(
-                        destination: FindInstructorsView(),
-                        isActive: $navigateToDiscover
-                    ) { EmptyView() }
-                    NavigationLink(
-                        destination: LessonsView(),
-                        isActive: $navigateToPractice
-                    ) { EmptyView() }
-                    NavigationLink(
-                        destination: UserProfileView(),
-                        isActive: $navigateToProfile
-                    ) { EmptyView() }
-                    //instructor pages
-                } else if userRole == .instructor {
-                    NavigationLink(
-                        destination: InstructorDashboardView(), isActive: $navigateToHome
-                    ) { EmptyView() }
-                    NavigationLink(
-                        destination: InstructorScheduleView(),
-                        isActive: $navigateToSchedule
-                    ) { EmptyView() }
-                    NavigationLink(
-                        destination: UserProfileView(), isActive: $navigateToProfile
-                    ) { EmptyView() }
-                }
-            }
-        )
     }
 
     @ViewBuilder
