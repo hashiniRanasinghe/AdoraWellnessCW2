@@ -2,22 +2,32 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleGetInfoString</key>
-	<string></string>
-	<key>CFBundleSignature</key>
-	<string></string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.615298684319-qff8dd3p9ffnn6fg8g8aah9ekk92mheu</string>
-			</array>
-		</dict>
-	</array>
-	<key>notifi</key>
-	<string></string>
+    <key>CFBundleGetInfoString</key>
+    <string></string>
+    <key>CFBundleSignature</key>
+    <string></string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.615298684319-qff8dd3p9ffnn6fg8g8aah9ekk92mheu</string>
+            </array>
+        </dict>
+    </array>
+
+    <!-- Allow arbitrary loads for all domains -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+
+    <key>Exception Domains</key>
+    <dict/>
+    <key>notifi</key>
+    <string></string>
 </dict>
 </plist>

@@ -19,6 +19,9 @@ struct DashboardView: View {
     @State private var instructors: [Instructor] = []
     @State private var enrolledSessions: [Session] = []
     @State private var isLoading = true
+    @State private var showVideoPlayer = false
+
+    let lesson: Lesson? = nil
 
     var body: some View {
         RoleGuard(allowedRole: .student) {
@@ -63,9 +66,15 @@ struct DashboardView: View {
             .task {
                 await loadDashboardData()
             }
+            .sheet(isPresented: $showVideoPlayer) {
+                if let lesson = randomLesson {
+                    VideoPlayerView(lesson: lesson)
+                }
+            }
         } else {
             ProgressView("Loading…")
         }
+
     }
 
     private func recommendedLesson() -> some View {
@@ -122,7 +131,7 @@ struct DashboardView: View {
                     VStack(alignment: .trailing, spacing: 4) {
                         // play btn
                         Button(action: {
-                            print("Playing - TO DOOO \(lesson.title)")
+                            showVideoPlayer = true
                             // start playing the lesson
                         }) {
                             Image(systemName: "play.circle.fill")
@@ -840,9 +849,9 @@ struct InstructorMiniCard: View {
     }
 }
 
-struct DashboardView_Previews: PreviewProvider {
-    static var previews: some View {
-        DashboardView()
-            .environmentObject(AuthViewModel())
-    }
-}
+//struct DashboardView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        DashboardView()
+//            .environmentObject(AuthViewModel())
+//    }
+//}

@@ -148,6 +148,7 @@ struct LessonsView: View {
 struct LessonCard: View {
     let lesson: Lesson
     @EnvironmentObject var favoritesManager: FavoritesManager
+    @State private var showVideoPlayer = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -179,16 +180,17 @@ struct LessonCard: View {
                     Text("\(lesson.duration) min")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
-
                 }
             }
 
             //action btns
             HStack(spacing: 12) {
                 Button(action: {
-                    //                    print("Starting lesson: \(lesson.title) on own")
+                    //video player
+                    showVideoPlayer = true
                 }) {
-                    Text("Start on Own")
+                    Text("Start")
+                        //                    Text("Start on Own")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
@@ -197,24 +199,34 @@ struct LessonCard: View {
                         .cornerRadius(20)
                 }
 
-                Button(action: {
-                    print("Starting lesson: \(lesson.title) with guidance")
-                }) {
-                    Text("Start with Guidance")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(
-                            Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
-                        )
-                        .cornerRadius(20)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8),
-                                    lineWidth: 1)
-                        )
+                //                Button(action: {
+                //                    print("lesson: \(lesson.title) with guidance")
+                //                }) {
+                //                    Text("Start with Guidance")
+                //                        .font(.system(size: 14, weight: .semibold))
+                //                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
+                //                        .padding(.horizontal, 24)
+                //                        .padding(.vertical, 10)
+                //                        .background(
+                //                            Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
+                //                        )
+                //                        .cornerRadius(20)
+                //                        .overlay(
+                //                            RoundedRectangle(cornerRadius: 20)
+                //                                .stroke(
+                //                                    Color(red: 0.4, green: 0.3, blue: 0.8),
+                //                                    lineWidth: 1)
+                //                        )
+                //                }
+                Spacer()
+                HStack(spacing: 6) {
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(
+                            Color(red: 0.4, green: 0.3, blue: 0.8))
+                    Text(lesson.level)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.primary)
                 }
 
                 Spacer()
@@ -224,8 +236,12 @@ struct LessonCard: View {
         .background(Color(.systemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .sheet(isPresented: $showVideoPlayer) {
+            VideoPlayerView(lesson: lesson)
+        }
     }
 }
+
 struct LessonsView_Previews: PreviewProvider {
     static var previews: some View {
         LessonsView()
