@@ -10,7 +10,6 @@ import SwiftUI
 struct ResetPasswordView: View {
     @State private var email: String = ""
     @EnvironmentObject var viewModel: AuthViewModel
-    @Environment(\.presentationMode) var presentationMode
     @Environment(\.dismiss) private var dismiss
     @State private var navigateToCheckEmail = false
 
@@ -100,10 +99,12 @@ struct ResetPasswordView: View {
             }
             .background(Color.white)
 
+            //watch viewModel.isSuccess
             .onChange(of: viewModel.isSuccess) {
+                // if viewModel.isSuccess true
                 if viewModel.isSuccess {
                     navigateToCheckEmail = true
-                    viewModel.isSuccess = false
+                    viewModel.isSuccess = false  // false it for future uses
                 }
             }
             .navigationDestination(isPresented: $navigateToCheckEmail) {
@@ -111,7 +112,7 @@ struct ResetPasswordView: View {
             }
         }
         .navigationBarHidden(true)
-        .navigationBarBackButtonHidden(true) 
+        .navigationBarBackButtonHidden(true)
     }
 }
 

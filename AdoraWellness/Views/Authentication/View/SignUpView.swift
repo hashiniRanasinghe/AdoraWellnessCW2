@@ -180,8 +180,10 @@ struct SignUpView: View {
 extension SignUpView: AuthenticationFormProtocol {
     var formIsValid: Bool {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        //" test@example.com " to "test@example.com"
         let trimmedFullname = fullname.trimmingCharacters(
             in: .whitespacesAndNewlines)
+        // " MYName  " to "MYName"
 
         guard !trimmedEmail.isEmpty,
             !trimmedFullname.isEmpty,

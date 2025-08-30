@@ -10,7 +10,7 @@ import SwiftUI
 struct CheckEmailView: View {
     let email: String
     @EnvironmentObject var viewModel: AuthViewModel
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         NavigationStack {
@@ -19,7 +19,7 @@ struct CheckEmailView: View {
                 //header
                 HStack {
                     Button(action: {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }) {
                         Image(systemName: "arrow.left")
                             .font(.title2)

@@ -23,9 +23,9 @@ class AuthViewModel: ObservableObject {
     @Published var currentUser: User?
     @Published var alertMessage: String?
     @Published var showAlert = false
-    @Published var isError = false
-    @Published var isSuccess = false
-    @Published var showAccountCreatedScreen = false
+    @Published var isError = false  //to use in reset password screen
+    @Published var isSuccess = false  //to use in reset password screen
+    @Published var showAccountCreatedScreen = false  //to use in profile setup screens
 
     init() {
         self.userSession = Auth.auth().currentUser
@@ -57,20 +57,22 @@ class AuthViewModel: ObservableObject {
             let result = try await Auth.auth().createUser(
                 withEmail: email, password: password)
             self.userSession = result.user
+
+            //convert user type
             let userTypeEnum =
                 UserType(rawValue: userType.lowercased()) ?? .student
-
+            //create swift user object
             let user = User(
                 id: result.user.uid, fullname: fullname, email: email,
                 userType: userTypeEnum)
-
+            //prapare data to db
             let userData: [String: Any] = [
                 "id": user.id,
                 "fullname": user.fullname,
                 "email": user.email,
                 "userType": user.userType.rawValue,
             ]
-
+            //store data in db
             try await Firestore.firestore()
                 .collection("users")
                 .document(user.id)
@@ -96,7 +98,7 @@ class AuthViewModel: ObservableObject {
             try Auth.auth().signOut()
             GoogleSignIn.GIDSignIn.sharedInstance.signOut()
 
-            // Clear the user session
+            //clear the user session
             self.userSession = nil
             self.currentUser = nil
         } catch {
@@ -114,7 +116,7 @@ class AuthViewModel: ObservableObject {
         }
 
         do {
-            //delete the user from firestire
+            //delete the user from firestore
             try await Firestore.firestore()
                 .collection("users")
                 .document(user.uid)
@@ -138,20 +140,25 @@ class AuthViewModel: ObservableObject {
 
     //get user data
     func fetchUser() async {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard let uid = Auth.auth().currentUser?.uid else { return }  //returns nil if fails
         guard
             let snapshot = try? await Firestore.firestore()
                 .collection("users")
                 .document(uid)
                 .getDocument()
         else { return }
+        //convert the document db data into a user object
         self.currentUser = try? snapshot.data(as: User.self)
     }
 
+    //    https://firebase.google.com/docs/auth/ios/google-signin
     // always creates/updates user document in google
     func signInWithGoogle() async throws {
+        //get the active window
         guard
-            let presentingViewController = UIApplication.shared.windows.first?
+            let windowScene = UIApplication.shared.connectedScenes.first
+                as? UIWindowScene,
+            let rootViewController = windowScene.windows.first?
                 .rootViewController
         else {
             throw NSError(
@@ -159,25 +166,36 @@ class AuthViewModel: ObservableObject {
                 userInfo: [
                     NSLocalizedDescriptionKey:
                         "No presenting view controller found"
-                ])
+                ]
+            )
         }
 
         do {
-            let result = try await GoogleSignIn.GIDSignIn.sharedInstance.signIn(
-                withPresenting: presentingViewController)
+            //show the google ui
+            let result = try await GIDSignIn.sharedInstance.signIn(
+                withPresenting: rootViewController
+            )
 
+            //get the id token
             guard let idToken = result.user.idToken?.tokenString else {
                 throw NSError(
                     domain: "GoogleSignIn", code: -1,
                     userInfo: [
                         NSLocalizedDescriptionKey: "Failed to get ID token"
-                    ])
+                    ]
+                )
             }
 
+            //access token
             let accessToken = result.user.accessToken.tokenString
-            let credential = GoogleAuthProvider.credential(
-                withIDToken: idToken, accessToken: accessToken)
 
+            //build firebase credentials
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken,
+                accessToken: accessToken
+            )
+
+            //sign into firebase with Google credentials
             let authResult = try await Auth.auth().signIn(with: credential)
             self.userSession = authResult.user
 
@@ -185,9 +203,7 @@ class AuthViewModel: ObservableObject {
             await fetchUser()
 
         } catch {
-            print(
-                "Google Sign In failed: \(error.localizedDescription)"
-            )
+            print("Google Sign In failed: \(error.localizedDescription)")
             self.alertMessage = "Google Sign In failed. Please try again."
             self.showAlert = true
             throw error

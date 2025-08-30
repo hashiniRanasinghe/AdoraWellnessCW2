@@ -85,7 +85,8 @@ struct LoginView: View {
                                 )
                                 .cornerRadius(25)
                         }
-                        .disabled(!formIsValid).alert(
+                        .disabled(!formIsValid)
+                        .alert(
                             "Error", isPresented: $viewModel.showAlert
                         ) {
                             Button("OK", role: .cancel) {}
