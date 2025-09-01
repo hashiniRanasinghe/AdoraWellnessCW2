@@ -107,6 +107,7 @@ struct InstructorProfileSetupView: View {
                     .font(.system(size: 28, weight: .bold))
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
+                    //match the font size with the screen size
                     .minimumScaleFactor(0.8)
 
                 Spacer()
@@ -200,6 +201,7 @@ struct InstructorProfileSetupView: View {
                             }
                         }
                     } label: {
+                        //looks when closed
                         HStack {
                             Text(country.isEmpty ? "Country" : country)
                                 .foregroundColor(
@@ -207,6 +209,7 @@ struct InstructorProfileSetupView: View {
                                 )
                                 .font(.system(size: 16))
                             Spacer()
+                           // chevron icon
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.secondary)
                                 .font(.system(size: 14))
