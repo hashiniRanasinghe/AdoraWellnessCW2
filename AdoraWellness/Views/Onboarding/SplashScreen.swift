@@ -13,12 +13,15 @@ struct SplashScreen: View {
 
     var body: some View {
         ZStack {
+            // bg - gradient from purple tones
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.4, green: 0.3, blue: 0.8),
                     Color(red: 0.5, green: 0.4, blue: 0.9),
                 ]),
+                //start the gradient from the top-left corner
                 startPoint: .topLeading,
+                //end the gradient at the bottom-right corner
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
@@ -36,7 +39,8 @@ struct SplashScreen: View {
             }
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {  //display for 2s
+                //splash screen is done showing = true
                 isActive = true
             }
         }

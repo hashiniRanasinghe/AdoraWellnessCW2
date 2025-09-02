@@ -14,6 +14,7 @@ struct RoleGuard<Content: View>: View {
 
     var body: some View {
         Group {
+            // if the logged-in user’s userType matches the allowedRole show the relevant content
             if let user = authViewModel.currentUser {
                 if user.userType == allowedRole {
                     content()
@@ -27,9 +28,12 @@ struct RoleGuard<Content: View>: View {
                             authViewModel.signOut()
                         }) {
                             HStack(spacing: 12) {
-                                Image(systemName: "rectangle.portrait.and.arrow.right")
-                                    .font(.title3)
-                                    .foregroundColor(.orange)
+                                Image(
+                                    systemName:
+                                        "rectangle.portrait.and.arrow.right"
+                                )
+                                .font(.title3)
+                                .foregroundColor(.orange)
 
                                 Text("Sign Out")
                                     .font(.headline)
@@ -45,7 +49,9 @@ struct RoleGuard<Content: View>: View {
                             .padding(20)
                             .background(Color.white)
                             .cornerRadius(16)
-                            .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                            .shadow(
+                                color: .black.opacity(0.05), radius: 5, x: 0,
+                                y: 2)
                         }
                     }
                     .padding()
@@ -56,4 +62,3 @@ struct RoleGuard<Content: View>: View {
         }
     }
 }
-
