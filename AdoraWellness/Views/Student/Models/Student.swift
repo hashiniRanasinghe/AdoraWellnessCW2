@@ -5,8 +5,8 @@
 //  Created by Hashini Ranasinghe on 2025-08-10.
 //
 
-import Foundation
 import FirebaseFirestore
+import Foundation
 
 struct Student: Identifiable, Codable {
     let id: String
@@ -16,8 +16,8 @@ struct Student: Identifiable, Codable {
     var phoneNumber: String
     var dateOfBirth: Date
     var gender: Gender
-    var weight: Double // in kg
-    var height: Double // in cm
+    var weight: Double  // in kg
+    var height: Double  // in cm
     var fitnessLevel: FitnessLevel
     var healthConditions: String
     var fitnessGoals: [String]
@@ -28,12 +28,12 @@ struct Student: Identifiable, Codable {
     var isActive: Bool
     var createdAt: Date
     var updatedAt: Date
-    
+
     enum Gender: String, CaseIterable, Codable {
         case male = "male"
         case female = "female"
         case preferNotToSay = "prefer_not_to_say"
-        
+
         var displayName: String {
             switch self {
             case .male: return "Male"
@@ -42,13 +42,13 @@ struct Student: Identifiable, Codable {
             }
         }
     }
-    
+
     enum FitnessLevel: String, CaseIterable, Codable {
         case beginner = "beginner"
         case intermediate = "intermediate"
         case advanced = "advanced"
         case expert = "expert"
-        
+
         var displayName: String {
             switch self {
             case .beginner: return "Beginner"
@@ -58,18 +58,20 @@ struct Student: Identifiable, Codable {
             }
         }
     }
-    
+
     var fullName: String {
         return "\(firstName) \(lastName)"
     }
-    
+
     var age: Int {
         let calendar = Calendar.current
         let now = Date()
-        let ageComponents = calendar.dateComponents([.year], from: dateOfBirth, to: now)
+        //calculates the difference between two dates in years
+        let ageComponents = calendar.dateComponents(
+            [.year], from: dateOfBirth, to: now)
         return ageComponents.year ?? 0
     }
-    
+
     init(
         id: String,
         firstName: String,

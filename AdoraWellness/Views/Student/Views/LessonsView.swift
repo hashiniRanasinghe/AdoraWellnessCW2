@@ -152,6 +152,7 @@ struct LessonCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
+
             HStack(spacing: 16) {
                 //icon
                 Image(systemName: lesson.iconName)
@@ -163,6 +164,7 @@ struct LessonCard: View {
                     )
                     .clipShape(Circle())
 
+                //lesson info
                 VStack(alignment: .leading, spacing: 4) {
                     Text(lesson.title)
                         .font(.system(size: 18, weight: .semibold))
@@ -176,21 +178,35 @@ struct LessonCard: View {
 
                 Spacer()
 
+                //duration & fav btn
                 VStack(alignment: .trailing, spacing: 8) {
                     Text("\(lesson.duration) min")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.primary)
+
+                    Button(action: {
+                        favoritesManager.toggleFavorite(lesson)
+                    }) {
+                        Image(
+                            systemName: favoritesManager.isFavorite(lesson)
+                                ? "heart.fill" : "heart"
+                        )
+                        .font(.system(size: 20))
+                        .foregroundColor(
+                            favoritesManager.isFavorite(lesson)
+                                ? Color(red: 0.4, green: 0.3, blue: 0.8)
+                                : .secondary
+                        )
+                    }
                 }
             }
 
             //action btns
             HStack(spacing: 12) {
                 Button(action: {
-                    //video player
                     showVideoPlayer = true
                 }) {
                     Text("Start")
-                        //                    Text("Start on Own")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
@@ -199,37 +215,18 @@ struct LessonCard: View {
                         .cornerRadius(20)
                 }
 
-                //                Button(action: {
-                //                    print("lesson: \(lesson.title) with guidance")
-                //                }) {
-                //                    Text("Start with Guidance")
-                //                        .font(.system(size: 14, weight: .semibold))
-                //                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
-                //                        .padding(.horizontal, 24)
-                //                        .padding(.vertical, 10)
-                //                        .background(
-                //                            Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
-                //                        )
-                //                        .cornerRadius(20)
-                //                        .overlay(
-                //                            RoundedRectangle(cornerRadius: 20)
-                //                                .stroke(
-                //                                    Color(red: 0.4, green: 0.3, blue: 0.8),
-                //                                    lineWidth: 1)
-                //                        )
-                //                }
                 Spacer()
+
+                //level
                 HStack(spacing: 6) {
                     Image(systemName: "star.fill")
                         .font(.system(size: 14))
-                        .foregroundColor(
-                            Color(red: 0.4, green: 0.3, blue: 0.8))
+                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
+
                     Text(lesson.level)
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.primary)
                 }
-
-                Spacer()
             }
         }
         .padding(20)

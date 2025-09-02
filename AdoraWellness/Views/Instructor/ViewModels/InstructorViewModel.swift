@@ -19,6 +19,7 @@ class InstructorViewModel: ObservableObject {
     @Published var isSuccess = false
 
     private let db = Firestore.firestore()
+    //CLGeocoder from CoreLocation convert human-readable address to geographical coordinates -latitude & longitude
     private let geocoder = CLGeocoder()
 
     //save instructor data to db
@@ -32,7 +33,9 @@ class InstructorViewModel: ObservableObject {
         isLoading = true
 
         do {
+            //copy of the instructor
             var updatedInstructor = instructor
+
             updatedInstructor.updatedAt = Date()
 
             //geocode adress to mapkit coordinate
@@ -44,6 +47,7 @@ class InstructorViewModel: ObservableObject {
                 updatedInstructor.longitude = coordinates?.longitude
             }
 
+            //make dictionary for firestore
             let instructorData: [String: Any] = [
                 "id": updatedInstructor.id,
                 "firstName": updatedInstructor.firstName,
@@ -175,12 +179,14 @@ class InstructorViewModel: ObservableObject {
         }
     }
 
-    //geocode address to get coordinates for mapkit
+    //returns coordinates latitude & longitude
     private func geocodeAddress(_ address: String) async
         -> CLLocationCoordinate2D?
     {
         do {
+            //search results maybe multiple matches
             let placemarks = try await geocoder.geocodeAddressString(address)
+            //take the first match
             guard let location = placemarks.first?.location else {
                 print("No location found for address: \(address)")
                 return nil
@@ -198,20 +204,18 @@ class InstructorViewModel: ObservableObject {
         }
     }
 
-    //parse instructor data from firestore
-    private func parseInstructorData(_ data: [String: Any]) throws -> Instructor
+    private func parseInstructorData(_ data: [String: Any]) throws
+        -> Instructor?
     {
+        //check required data
         guard
             let id = data["id"] as? String,
             let firstName = data["firstName"] as? String,
             let lastName = data["lastName"] as? String,
             let email = data["email"] as? String
         else {
-            throw NSError(
-                domain: "InstructorViewModel",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid instructor data"]
-            )
+            print("Invalid instructor data")
+            return nil
         }
 
         let phoneNumber = data["phoneNumber"] as? String ?? ""
@@ -230,6 +234,7 @@ class InstructorViewModel: ObservableObject {
 
         let dateOfBirth: Date
         if let timestamp = data["dateOfBirth"] as? Timestamp {
+            //converts firestore’s timestamp into swift’s date
             dateOfBirth = timestamp.dateValue()
         } else {
             dateOfBirth = Date()

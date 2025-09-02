@@ -107,6 +107,7 @@ struct InstructorProfileSetupView: View {
                     .font(.system(size: 28, weight: .bold))
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
+                    //match the font size with the screen size
                     .minimumScaleFactor(0.8)
 
                 Spacer()
@@ -200,6 +201,7 @@ struct InstructorProfileSetupView: View {
                             }
                         }
                     } label: {
+                        //looks when closed
                         HStack {
                             Text(country.isEmpty ? "Country" : country)
                                 .foregroundColor(
@@ -207,6 +209,7 @@ struct InstructorProfileSetupView: View {
                                 )
                                 .font(.system(size: 16))
                             Spacer()
+                            //icon
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.secondary)
                                 .font(.system(size: 14))
@@ -292,7 +295,9 @@ struct InstructorProfileSetupView: View {
             ) {
                 ForEach(Instructor.Speciality.allCases, id: \.self) {
                     speciality in
+                    //tapping toggles the speciality inside
                     Button(action: {
+                        //checks if already selected
                         if selectedSpecialities.contains(speciality) {
                             selectedSpecialities.remove(speciality)
                         } else {
@@ -328,6 +333,7 @@ struct InstructorProfileSetupView: View {
                                         : Color(.systemGray6)
                                 )
                         )
+                        //border on top - purple border if selected, not gray
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(
@@ -433,8 +439,8 @@ struct InstructorProfileSetupView: View {
             print("No authenticated user")
             return
         }
-
-        let specialitiesArray = selectedSpecialities.map { $0.rawValue }
+        // convert selected specialities enum values into an array of strings
+        let specialitiesArray = selectedSpecialities.map { $0.rawValue }  //take the value insted of key
 
         let instructor = Instructor(
             id: currentUser.uid,

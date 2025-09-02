@@ -5,7 +5,6 @@
 //  Created by Hashini Ranasinghe on 2025-08-13.
 //
 
-import CoreLocation
 import FirebaseFirestore
 import Foundation
 
@@ -31,7 +30,9 @@ struct Instructor: Identifiable, Codable {
     var createdAt: Date
     var updatedAt: Date
 
+    //nested enum
     enum Speciality: String, CaseIterable, Codable {
+        //list of allowed values
         case pilates = "pilates"
         case yoga = "yoga"
         case meditations = "meditations"
@@ -53,14 +54,15 @@ struct Instructor: Identifiable, Codable {
         return "\(address), \(city), \(country)"
     }
 
-    //convert adress to mapkit coordinate
-    var coordinate: CLLocationCoordinate2D? {
-        guard let latitude = latitude, let longitude = longitude else {
-            return nil
-        }
-        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-    }
+    //    //convert adress to mapkit coordinate
+    //    var coordinate: CLLocationCoordinate2D? {
+    //        guard let latitude = latitude, let longitude = longitude else {
+    //            return nil
+    //        }
+    //        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    //    }
 
+    //takes user inputs and assigns them to the object’s properties
     init(
         id: String,
         firstName: String,
