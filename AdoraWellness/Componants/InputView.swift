@@ -13,7 +13,9 @@ struct InputView: View {
     let placeholder: String
     var isSecureField: Bool = false
 
+    //track or control which text field is currently has the keyboard
     @FocusState private var isFocused: Bool
+
     @State private var isPasswordVisible: Bool = false
 
     var body: some View {
@@ -37,20 +39,26 @@ struct InputView: View {
                                 .focused($isFocused)
                                 .tint(Color(.systemGray2))
                         }
-                        
+
                         Button(action: {
                             isPasswordVisible.toggle()
                         }) {
-                            Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
-                                .foregroundColor(Color(.systemGray))
-                                .font(.system(size: 16))
+                            Image(
+                                systemName: isPasswordVisible
+                                    ? "eye.slash.fill" : "eye.fill"
+                            )
+                            .foregroundColor(Color(.systemGray))
+                            .font(.system(size: 16))
                         }
                         .buttonStyle(PlainButtonStyle())
                     }
                 } else {
                     TextField(placeholder, text: $text)
                         .focused($isFocused)
-                        .keyboardType(title.lowercased().contains("email") ? .emailAddress : .default)
+                        .keyboardType(
+                            title.lowercased().contains("email")
+                                ? .emailAddress : .default
+                        )
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
                         .tint(Color(.systemGray2))

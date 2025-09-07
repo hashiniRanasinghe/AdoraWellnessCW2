@@ -46,6 +46,7 @@ struct InstructorScheduleView: View {
                 return sessionDateTime < now
             }.sorted { $0.date > $1.date }
         default:
+            //sorts sessions from earliest → latest
             return sessions.sorted { $0.date < $1.date }
         }
     }
@@ -167,6 +168,7 @@ struct InstructorScheduleView: View {
             .ignoresSafeArea(.all, edges: .bottom)
         }
         .navigationBarHidden(true)
+        //show AddSessionView as a modal sheet whenever showingAddSession is true
         .sheet(
             isPresented: $showingAddSession,
             onDismiss: {
@@ -207,7 +209,10 @@ struct InstructorScheduleView: View {
         ]
 
         let shuffledIcons = availableIcons.shuffled()
+        //Loop through all sessions,n also tell their position/index in the list
         for (index, session) in sessions.enumerated() {
+            //ensures that even if there are more sessions than icons, the icons repeat in order
+            //modulo
             let iconIndex = index % shuffledIcons.count
             sessionIcons[session.id] = shuffledIcons[iconIndex]
         }

@@ -19,6 +19,7 @@ struct SessionSuccessView: View {
     let level: String
     let price: Double
     @Binding var isPresented: Bool
+
     @State var isEventAdded: Bool = false
     @State var isCalenderAdded: Bool = false
 
@@ -157,7 +158,7 @@ struct SessionSuccessView: View {
             let event = EKEvent(eventStore: eventStore)
             event.title = "Teach: \(sessionTitle)"
 
-            //combine date and time
+            //convert date and time
             let sessionStartDateTime = Utils.combineDateAndTime(
                 date: sessionDate, timeString: startTime)
             let sessionEndDateTime = Utils.combineDateAndTime(
@@ -165,8 +166,7 @@ struct SessionSuccessView: View {
 
             event.startDate = sessionStartDateTime
             event.endDate = sessionEndDateTime
-            event.notes =
-                "Yoga session - \(sessionType) | Level: \(level) | Price: $\(String(format: "%.2f", price))"
+            event.notes = "Yoga session - \(sessionType) | Level: \(level)"
             event.calendar = eventStore.defaultCalendarForNewEvents
 
             do {

@@ -10,6 +10,7 @@ struct FooterNavigationView: View {
     @State private var navigateToHome = false
     @State private var navigateToSchedule = false
 
+    //0 as the default
     init(selectedTab: Int = 0, userRole: UserType) {
         self.selectedTab = selectedTab
         self.userRole = userRole
@@ -26,6 +27,7 @@ struct FooterNavigationView: View {
                         isSelected: selectedTab == 0
                     ) { if selectedTab != 0 { navigateToHome = true } }
 
+                    //student
                     if userRole == .student {
                         footerButton(
                             systemName: selectedTab == 1
@@ -47,7 +49,9 @@ struct FooterNavigationView: View {
                             isSelected: selectedTab == 3
                         ) { if selectedTab != 3 { navigateToProfile = true } }
 
-                    } else if userRole == .instructor {
+                    }
+                    //instructor
+                    else if userRole == .instructor {
                         footerButton(
                             systemName: selectedTab == 1
                                 ? "calendar.badge.clock" : "calendar",
@@ -108,6 +112,6 @@ struct FooterNavigationView: View {
                     isSelected ? Color(red: 0.4, green: 0.3, blue: 0.8) : .gray)
         }
         .frame(maxWidth: .infinity)
-        .onTapGesture { action() }
+        .onTapGesture { action() }  // run action when tapped
     }
 }

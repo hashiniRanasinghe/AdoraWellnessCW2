@@ -18,14 +18,16 @@ class SessionViewModel: ObservableObject {
     private let db = Firestore.firestore()
 
     // fetch sessions by instructor
-    func fetchSessionsByInstructor(instructorId: String) async -> [Session] {
+    func fetchSessionsByInstructor(instructorId: String) async -> [Session] {  //return an array of [Session] objects
         isLoading = true
 
         do {
             let querySnapshot = try await db.collection("sessions")
                 .whereField("instructorId", isEqualTo: instructorId)
                 .getDocuments()
-
+            
+            //get the db data dictionary and convert to Session struct
+            //raw firestore data -> Swift objects
             var sessions: [Session] = []
 
             for document in querySnapshot.documents {
@@ -54,6 +56,7 @@ class SessionViewModel: ObservableObject {
             return []
         }
     }
+    
     // check if student is already registered for a session
     func isStudentRegistered(sessionId: String, studentId: String) async -> Bool
     {
