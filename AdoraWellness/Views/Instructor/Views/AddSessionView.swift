@@ -32,7 +32,7 @@ struct AddSessionView: View {
     //calculate duration
     private var durationMinutes: Int {
         let duration = endTime.timeIntervalSince(startTime)
-        return max(Int(duration / 60), 0)
+        return max(Int(duration / 60), 0)  //convert sec to mins, min 0
     }
 
     var body: some View {
@@ -145,6 +145,7 @@ struct AddSessionView: View {
                             .foregroundColor(.secondary)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 16)
+                            //makes the placeholder see-through to touches for doesn’t block user interaction
                             .allowsHitTesting(false)
                     }
                 }
@@ -162,6 +163,7 @@ struct AddSessionView: View {
                 DatePicker(
                     "Session Date",
                     selection: $selectedDate,
+                    //selectable range starts from today
                     in: Date()...,
                     displayedComponents: .date
                 )
@@ -354,6 +356,7 @@ struct AddSessionView: View {
         let startTimeString = timeFormatter.string(from: startTime)
         let endTimeString = timeFormatter.string(from: endTime)
 
+        //create data dictionary for firestore
         let sessionData: [String: Any] = [
             "instructorId": instructorId,
             "title": title,
@@ -363,7 +366,7 @@ struct AddSessionView: View {
             "durationMinutes": durationMinutes,
             "price": sessionPrice,
             "sessionType": selectedSessionType,
-            "date": Timestamp(date: selectedDate),
+            "date": Timestamp(date: selectedDate),  //firebase timestamp
             "createdAt": Timestamp(date: Date()),
             "level": selectedLevel,
             "registeredStudents": [],

@@ -184,7 +184,9 @@ struct InstructorDetailsView: View {
                             .sheet(isPresented: $showDatePicker) {
                                 DatePickerSheet(
                                     selectedDate: Binding(
+                                        //if selectedDate is nil, return today’s date when reading
                                         get: { selectedDate ?? Date() },
+                                        //picked a new date -> write it and update parant componant
                                         set: { selectedDate = $0 }
                                     ),
                                     onDateSelected: {
@@ -301,6 +303,7 @@ struct InstructorDetailsView: View {
 
     private func filterSessionsByDate() {
         if isDateFilterActive, let selectedDate = selectedDate {
+            //system calendar to work with dates properly
             let calendar = Calendar.current
             filteredSessions = allSessions.filter { session in
                 calendar.isDate(session.date, inSameDayAs: selectedDate)

@@ -48,6 +48,8 @@ struct OnboardingScreen1: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
+                        .lineLimit(nil)  // allow unlimited lines
+                        .fixedSize(horizontal: false, vertical: true)  // expand vertically
                     }
 
                     VStack(spacing: 16) {

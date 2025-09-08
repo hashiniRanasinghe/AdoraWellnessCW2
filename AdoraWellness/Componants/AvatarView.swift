@@ -10,7 +10,7 @@ import SwiftUI
 struct AvatarView: View {
     let imageURL: String?
     let initials: String
-    let size: CGFloat
+    let size: CGFloat //double
     
     init(imageURL: String? = nil, initials: String, size: CGFloat = 60) {
         self.imageURL = imageURL
@@ -46,9 +46,7 @@ struct AvatarView: View {
     }
 }
 
-// Usage examples - replace your current avatars with:
-
-// Example 1: Replace this:
+//1
 // Text(user.initials)
 //     .font(.title)
 //     .fontWeight(.semibold)
@@ -57,12 +55,5 @@ struct AvatarView: View {
 //     .background(Color(.systemGray3))
 //     .clipShape(Circle())
 
-// With this:
+//2
 // AvatarView(initials: user.initials, size: 62)
-
-// Example 2: With image URL:
-// AvatarView(imageURL: user.profileImageURL, initials: user.initials, size: 62)
-
-// Example 3: Different sizes:
-// AvatarView(initials: "AB", size: 40)  // Small
-// AvatarView(initials: "CD", size: 80)  // Large

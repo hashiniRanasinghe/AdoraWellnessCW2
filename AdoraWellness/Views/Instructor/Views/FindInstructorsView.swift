@@ -15,12 +15,14 @@ struct FindInstructorsView: View {
 
     private let filterOptions = ["All", "Yoga", "Pilates", "Map"]
 
+    //computed
     var filteredInstructors: [Instructor] {
         if selectedFilter == "All" {
             return instructors
         } else if selectedFilter == "Map" {
             return instructors  //return all for map view
         } else {
+            //filter by specialty - case-insensitive matching
             return instructors.filter { instructor in
                 instructor.specialities.contains { speciality in
                     speciality.lowercased() == selectedFilter.lowercased()
@@ -66,7 +68,7 @@ struct FindInstructorsView: View {
                         .padding(.bottom, 32)
 
                         //filter tabs
-                        ScrollView(.horizontal, showsIndicators: false) {
+                        ScrollView(.horizontal, showsIndicators: false) {  //no orizontal scrollbar
                             HStack(spacing: 32) {
                                 ForEach(filterOptions, id: \.self) { filter in
                                     Button(action: {
@@ -283,10 +285,12 @@ struct InstructorListCard: View {
 }
 
 //get initials from name
+//don't change the original Instructor struct, extended it by adding a new computed property-initials
 extension Instructor {
     var initials: String {
         let names = fullName.components(separatedBy: " ")
         let initials = names.compactMap { $0.first }.map { String($0) }
+        //joins array elements without spaces.
         return initials.joined()
     }
 }

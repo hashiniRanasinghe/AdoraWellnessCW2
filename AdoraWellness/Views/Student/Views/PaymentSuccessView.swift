@@ -11,9 +11,11 @@ import SwiftUI
 import UserNotifications
 
 struct PaymentSuccessView: View {
+    //params
     let session: Session
     let instructor: Instructor
     @Binding var isPresented: Bool
+    //variables
     @State var isEventAdded: Bool = false
     @State var isCalenderAdded: Bool = false
 
@@ -31,9 +33,12 @@ struct PaymentSuccessView: View {
                             named: "Mollitiam.jpeg")
                         {
                             Image(uiImage: logoImage)
+                                //makes the image flexible for stretch/shrink it to fit frames
                                 .resizable()
+                                //fills the frame completely, but may crop some parts of the image
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 350, height: 350)
+                                //trims any overflow outside that square frame
                                 .clipped()
                                 .cornerRadius(20)
                         }
@@ -106,13 +111,15 @@ struct PaymentSuccessView: View {
     }
 
     private func addToCalendar() {
-        let eventStore = EKEventStore()
+        let eventStore = EKEventStore()  //gate to the user’s Calendars app
 
         //request access
-        eventStore.requestWriteOnlyAccessToEvents { granted, error in
+        eventStore.requestWriteOnlyAccessToEvents {
+            granted,
+            error in
             guard granted else { return }
 
-            let event = EKEvent(eventStore: eventStore)
+            let event = EKEvent(eventStore: eventStore)  //representing a single calendar event
             event.title = session.title
             event.startDate = session.date
             event.endDate = Calendar.current.date(
@@ -120,6 +127,7 @@ struct PaymentSuccessView: View {
                 to: session.date)
             event.notes =
                 "Yoga session with \(instructor.firstName) \(instructor.lastName)"
+            //user’s default calendar amoung Work, Home, iCloud
             event.calendar = eventStore.defaultCalendarForNewEvents
 
             do {
@@ -137,10 +145,12 @@ struct PaymentSuccessView: View {
                 let trigger = UNTimeIntervalNotificationTrigger(
                     timeInterval: 5, repeats: false)
                 let request = UNNotificationRequest(
-                    identifier: UUID().uuidString, content: content,
+                    identifier: UUID().uuidString,  //uniqueness of this notifi
+                    content: content,
                     trigger: trigger)
 
-                UNUserNotificationCenter.current().add(request) { error in
+                UNUserNotificationCenter.current().add(request)  //sending it to the system to show at the right time
+                { error in
                     if let error = error {
                         print("Failed to show notification: \(error)")
                     } else {
@@ -159,18 +169,21 @@ struct PaymentSuccessView: View {
 
         // request access
         eventStore.requestFullAccessToReminders { granted, error in
+            //checks if permission was actually given
             guard granted else {
                 print("Reminders access denied")
                 return
             }
 
-            let reminder = EKReminder(eventStore: eventStore)
+            let reminder = EKReminder(eventStore: eventStore)  //single reminder object
             reminder.title = "Yoga Session: \(session.title)"
             reminder.notes =
                 "Yoga session with \(instructor.firstName) \(instructor.lastName)"
 
+            //user current calender to compute dateComponents
             let calendar = Calendar.current
 
+            //converts session.date into year, month, day, hour, minute with timezone
             var dateComponents = calendar.dateComponents(
                 [.year, .month, .day, .hour, .minute, .timeZone],
                 from: session.date

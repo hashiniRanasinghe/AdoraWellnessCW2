@@ -110,6 +110,7 @@ struct InstructorSessionDetailsView: View {
                                 .font(.caption)
                                 .foregroundColor(.secondary)
 
+                            //formats price as a string with no decimal places (25.00 - 25)
                             Text("$\(String(format: "%.0f", session.price))")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
@@ -190,9 +191,11 @@ struct InstructorSessionDetailsView: View {
                     Spacer()
 
                     Button(action: {
+                        //if email is available on device -> open mail composer
                         if MFMailComposeViewController.canSendMail() {
                             showingMailComposer = true
                         } else {
+                            //if not ->  show alert “Mail Not Available”
                             showingMailAlert = true
                         }
                     }) {
@@ -227,6 +230,8 @@ struct InstructorSessionDetailsView: View {
             )
         }
         .navigationBarHidden(true)
+
+        //presents the mail composer screen
         .sheet(isPresented: $showingMailComposer) {
             MailComposeView(
                 recipients: studentEmails,
@@ -248,8 +253,10 @@ struct InstructorSessionDetailsView: View {
 
     //load student emails for the mail composer
     private func loadStudentEmails() async {
+        //view model fetch student objects by their IDs
         let students = await studentViewModel.fetchStudentsByIds(
             studentIds: session.registeredStudents)
+        //extract just the email address from each student
         studentEmails = students.map { $0.email }
     }
 
@@ -264,7 +271,9 @@ struct InstructorSessionDetailsView: View {
         let dateString = Utils.formatDate(
             session.date, format: "EEEE, MMMM d, yyyy")
 
+        //return a multi-line string as the email body
         return """
+
             Dear Student,
 
             This is a reminder for your upcoming session:
@@ -331,26 +340,21 @@ struct StudentRowView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                 } placeholder: {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.blue.opacity(0.6),
-                                    Color.purple.opacity(0.6),
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .overlay(
-                            Text(
-                                (student?.firstName.prefix(1).uppercased())
-                                    ?? "S"
-                            )
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                        )
+                    AvatarView(
+                        initials: {
+                            let first =
+                                student?.firstName.first.map {
+                                    String($0).uppercased()
+                                } ?? ""
+                            let last =
+                                student?.lastName.first.map {
+                                    String($0).uppercased()
+                                } ?? ""
+                            return (first + last).isEmpty ? "S" : first + last
+                        }(),
+                        size: 60
+                    )
+
                 }
                 .frame(width: 60, height: 60)
                 .clipShape(Circle())
@@ -358,10 +362,12 @@ struct StudentRowView: View {
                     Circle()
                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                 )
+
             }
 
             VStack(alignment: .leading, spacing: 6) {
                 if isLoadingStudent {
+                    //gray rectangles that imitate the shape of text lines
                     VStack(alignment: .leading, spacing: 6) {
                         Rectangle()
                             .fill(Color.gray.opacity(0.3))
@@ -412,12 +418,14 @@ struct StudentRowView: View {
 
             Spacer()
 
-            //cction btns
+            //action btns
             if !isLoadingStudent {
+                //student data has finished loading
                 VStack(spacing: 8) {
                     //copy email
                     Button(action: {
                         if let email = student?.email, !email.isEmpty {
+                            //copies the student’s email to the clipboard - UIPasteboard
                             UIPasteboard.general.string = email
                             showCopiedFeedback = true
 
@@ -500,30 +508,33 @@ struct MailComposeView: UIViewControllerRepresentable {
     let messageBody: String
     @Environment(\.dismiss) private var dismiss
 
+    //create and configure the UIKit mail composer
     func makeUIViewController(context: Context) -> MFMailComposeViewController {
-        let composer = MFMailComposeViewController()
-        composer.mailComposeDelegate = context.coordinator
+        let composer = MFMailComposeViewController()  // standard mail screen
+        composer.mailComposeDelegate = context.coordinator  // set listener (when the user finishes sending, cancels, or saves)
         composer.setToRecipients(recipients)
         composer.setSubject(subject)
-        composer.setMessageBody(messageBody, isHTML: false)
+        composer.setMessageBody(messageBody, isHTML: false)  //body is plain text not HTML
         return composer
     }
-
+    //sync changes from SwiftUI state to the UIKit component whenever SwiftUI re-renders
     func updateUIViewController(
         _ uiViewController: MFMailComposeViewController, context: Context
-    ) {}
+    ) {}  //empty here because mail composers can't be modified after they're presented
 
+    // messenger that reports back what happened with the email
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-
+    //Coordinator = helper that watches the mail screen
     class Coordinator: NSObject, MFMailComposeViewControllerDelegate {
         let parent: MailComposeView
 
+        //parent reference - when the coordinator is created, it remembers which SwiftUI view is the parent.
         init(_ parent: MailComposeView) {
             self.parent = parent
         }
-
+        //called when user finishes (send, cancel, or save)
         func mailComposeController(
             _ controller: MFMailComposeViewController,
             didFinishWith result: MFMailComposeResult, error: Error?

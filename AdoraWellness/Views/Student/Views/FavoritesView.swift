@@ -10,10 +10,11 @@ import SwiftUI
 struct FavoritesView: View {
     @StateObject private var favoritesManager = FavoritesManager()
     @StateObject private var viewModel = LessonsViewModel()
-    @State private var allLessons: [Lesson] = []
+    @State private var allLessons: [Lesson] = []  //keeps all available lessons
     @State private var isLoading = true
     @Environment(\.dismiss) private var dismiss
 
+    //picks only the lessons that are in favorites
     var favoriteLessons: [Lesson] {
         return favoritesManager.getFavorites(from: allLessons)
     }
@@ -38,21 +39,6 @@ struct FavoritesView: View {
                     .foregroundColor(.primary)
 
                 Spacer()
-
-                //                    Button(action: {
-                //                        //search
-                //                    }) {
-                //                        Image(systemName: "magnifyingglass")
-                //                            .font(.title2)
-                //                            .foregroundColor(.primary)
-                //                    }
-
-                //                    Button(action: {
-                //                    }) {
-                //                        Image(systemName: "heart.fill")
-                //                            .font(.title2)
-                //                            .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
-                //                    }
             }
             .padding(.horizontal, 24)
             .padding(.top, 20)
@@ -90,6 +76,7 @@ struct FavoritesView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.top, 100)
                     } else {
+                        //each fav lesson as a card
                         ForEach(favoriteLessons) { lesson in
                             FavoriteLessonCard(lesson: lesson)
                                 .environmentObject(favoritesManager)
@@ -109,7 +96,7 @@ struct FavoritesView: View {
             await loadLessons()
         }
     }
-
+    //when the screen appears,fetches all lessons asynly
     private func loadLessons() async {
         isLoading = true
         allLessons = await viewModel.fetchAllLessons()
@@ -120,6 +107,7 @@ struct FavoritesView: View {
 struct FavoriteLessonCard: View {
     let lesson: Lesson
     @EnvironmentObject var favoritesManager: FavoritesManager
+    @State private var showVideoPlayer = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -166,9 +154,9 @@ struct FavoriteLessonCard: View {
             //action btns
             HStack(spacing: 12) {
                 Button(action: {
-                    print("Starting lesson: \(lesson.title) on own")
+                    showVideoPlayer = true
                 }) {
-                    Text("Start on Own")
+                    Text("Start")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
@@ -176,27 +164,6 @@ struct FavoriteLessonCard: View {
                         .background(Color(red: 0.4, green: 0.3, blue: 0.8))
                         .cornerRadius(20)
                 }
-
-                Button(action: {
-                    print("Starting lesson: \(lesson.title) with guidance")
-                }) {
-                    Text("Start with Guidance")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(
-                            Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
-                        )
-                        .cornerRadius(20)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8),
-                                    lineWidth: 1)
-                        )
-                }
-
                 Spacer()
             }
         }
@@ -204,6 +171,9 @@ struct FavoriteLessonCard: View {
         .background(Color(.systemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .sheet(isPresented: $showVideoPlayer) {
+            VideoPlayerView(lesson: lesson)
+        }
     }
 }
 
