@@ -10,6 +10,8 @@ import SwiftUI
 
 struct StudiosMapView: View {
     let instructors: [Instructor]
+
+    //default map position (world view)
     @State private var position: MapCameraPosition = .region(
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 23.0, longitude: -40.0),
@@ -17,54 +19,32 @@ struct StudiosMapView: View {
         )
     )
 
-    //group instructors by studio location
+    //turns each instructor into a studio on the map
     var studioLocations: [StudioLocation] {
-        let filtered = instructors.filter { instructor in
-            if let lat = instructor.latitude,
+        //only get instructors with valid latitude, longitude, and studio name
+        instructors.compactMap { instructor in
+            guard let lat = instructor.latitude,
                 let lng = instructor.longitude,
                 !instructor.studioName.isEmpty
-            {
-                return true
-            } else {
-                print(
-                    "filtering out instructor \(instructor.fullName) - lat: \(instructor.latitude ?? 0), lng: \(instructor.longitude ?? 0), studio: '\(instructor.studioName)'"
-                )
-                return false
-            }
-        }
-
-        print("found \(filtered.count) instructors")
-
-        let grouped = Dictionary(grouping: filtered) { instructor in
-            "\(instructor.studioName)-\(instructor.latitude ?? 0)-\(instructor.longitude ?? 0)"
-        }
-
-        let locations = grouped.compactMap {
-            (key, instructors) -> StudioLocation? in
-            guard let firstInstructor = instructors.first,
-                let latitude = firstInstructor.latitude,
-                let longitude = firstInstructor.longitude
-            else {
-                return nil
-            }
+            else { return nil }
 
             return StudioLocation(
-                id: key,
-                name: firstInstructor.studioName,
-                address: firstInstructor.fullAddress,
+                id: instructor.id,
+                name: instructor.studioName,
+                address: instructor.fullAddress,
+                //represents a geographical coordinate on the Earth
                 coordinate: CLLocationCoordinate2D(
-                    latitude: latitude, longitude: longitude),
-                instructors: instructors
+                    latitude: lat, longitude: lng),
+                instructor: instructor
             )
         }
-
-        print("created \(locations.count) studio locations")
-        return locations
     }
 
+    //main UI
     var body: some View {
         ZStack {
             Map(position: $position) {
+                //poops through each studio location For each one creates an Annotation
                 ForEach(studioLocations) { studio in
                     Annotation("", coordinate: studio.coordinate) {
                         StudioMapPin(studio: studio)
@@ -74,22 +54,18 @@ struct StudiosMapView: View {
             .padding()
         }
         .onAppear {
-            updateMapRegion()
+            focusOnRandomStudio()
         }
     }
 
-    private func updateMapRegion() {
-        guard let randomStudio = studioLocations.randomElement() else {
-            print("no studios found")
-            return
-        }
-
-        let newRegion = MKCoordinateRegion(
-            center: randomStudio.coordinate,
+    private func focusOnRandomStudio() {
+        guard let studio = studioLocations.randomElement() else { return }
+        let newRegion = MKCoordinateRegion(  //creates a new map region
+            center: studio.coordinate,  //center to the selected random one
             span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
         )
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {  //wait 0.1 seconds then run the code (give time to load the map)
+            //move the map to the new location - animate the movement smoothly
             withAnimation(.easeInOut(duration: 1.0)) {
                 position = .region(newRegion)
             }
@@ -97,29 +73,23 @@ struct StudiosMapView: View {
     }
 }
 
-struct StudioLocation: Identifiable, Equatable {
+//model
+struct StudioLocation: Identifiable {
     let id: String
     let name: String
     let address: String
     let coordinate: CLLocationCoordinate2D
-    let instructors: [Instructor]
-
-    static func == (lhs: StudioLocation, rhs: StudioLocation) -> Bool {
-        return lhs.id == rhs.id
-    }
+    let instructor: Instructor
 }
 
 struct StudioMapPin: View {
     let studio: StudioLocation
 
     var body: some View {
-        //navigate to instructor details
-        if let instructor = studio.instructors.first {
-            NavigationLink(
-                destination: InstructorDetailsView(instructor: instructor)
-            ) {
-                PinContent(studio: studio)
-            }
+        NavigationLink(
+            destination: InstructorDetailsView(instructor: studio.instructor)
+        ) {
+            PinContent(studio: studio)
         }
     }
 }
@@ -129,6 +99,7 @@ struct PinContent: View {
 
     var body: some View {
         VStack(spacing: 2) {
+            //studio name badge
             Text(studio.name)
                 .font(.caption2)
                 .fontWeight(.semibold)
@@ -138,27 +109,26 @@ struct PinContent: View {
                 .background(Color(red: 0.4, green: 0.3, blue: 0.8))
                 .cornerRadius(12)
 
-            //main pin
+            //main map pin
             ZStack {
                 Circle()
                     .fill(Color(red: 0.4, green: 0.3, blue: 0.8))
                     .frame(width: 40, height: 40)
                     .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
 
-                VStack(spacing: 1) {
-                    Image(systemName: "building.2.fill")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                }
+                Image(systemName: "building.2.fill")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.white)
             }
 
             //instructor name
-            if let instructor = studio.instructors.first {
-                Text(instructor.fullName).font(.system(size: 8))
-                    .foregroundColor(.primary).padding(.horizontal, 4).padding(
-                        .vertical, 1
-                    ).background(Color.white.opacity(0.8)).cornerRadius(4)
-            }
+            Text(studio.instructor.fullName)
+                .font(.system(size: 8))
+                .foregroundColor(.primary)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1)
+                .background(Color.white.opacity(0.8))
+                .cornerRadius(4)
         }
         .frame(width: 120)
     }

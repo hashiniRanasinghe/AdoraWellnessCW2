@@ -163,6 +163,7 @@ struct AddSessionView: View {
                 DatePicker(
                     "Session Date",
                     selection: $selectedDate,
+                    //selectable range starts from today
                     in: Date()...,
                     displayedComponents: .date
                 )
