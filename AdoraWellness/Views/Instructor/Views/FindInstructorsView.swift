@@ -35,12 +35,8 @@ struct FindInstructorsView: View {
         if !searchText.isEmpty {
             filtered = filtered.filter { instructor in
                 instructor.fullName.localizedCaseInsensitiveContains(searchText)
-                    || instructor.studioName.localizedCaseInsensitiveContains(
-                        searchText)
-                    || instructor.specialities.contains { speciality in
-                        speciality.localizedCaseInsensitiveContains(searchText)
-                    }
             }
+
         }
 
         return filtered
@@ -114,25 +110,17 @@ struct FindInstructorsView: View {
                         if isSearchVisible && !isMapVisible {
                             HStack {
                                 TextField(
-                                    "Search instructors, studios, or specialties...",
+                                    "Search Instructors",
                                     text: $searchText
                                 )
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .font(.system(size: 16))
-
-                                if !searchText.isEmpty {
-                                    Button(action: {
-                                        searchText = ""
-                                    }) {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
+                                .tint(Color(.systemGray2))
                             }
                             .padding(.horizontal, 24)
                             .padding(.bottom, 24)
-                            .transition(
-                                .opacity.combined(with: .move(edge: .top)))
+                            .cornerRadius(10)
+
                         }
 
                         //filter tabs (only show when not in map view)
