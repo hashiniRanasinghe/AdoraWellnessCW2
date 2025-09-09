@@ -11,7 +11,8 @@ struct UserProfileView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @Environment(\.presentationMode) var presentationMode
     @State private var showingDeleteAlert = false
-
+    @State private var showingEditProfile = false
+    
     var body: some View {
         if let user = viewModel.currentUser {
             NavigationStack {
@@ -50,7 +51,7 @@ struct UserProfileView: View {
                                 VStack(spacing: 16) {
                                     //edit profile bts
                                     Button(action: {
-                                        //handle edit profile
+                                        showingEditProfile = true 
                                     }) {
                                         HStack(spacing: 12) {
                                             Image(
@@ -168,6 +169,10 @@ struct UserProfileView: View {
                     Text(
                         "Are you sure you want to delete your account? This action cannot be undone."
                     )
+                }
+                .sheet(isPresented: $showingEditProfile) {  // Add this sheet
+                    EditProfileView()
+                        .environmentObject(viewModel)
                 }
             }
         }

@@ -249,4 +249,58 @@ class AuthViewModel: ObservableObject {
         }
     }
 
+    func updateUserInfo(name: String, email: String) async throws {
+        guard let currentUser = Auth.auth().currentUser else {
+            throw NSError(
+                domain: "AuthViewModel", code: -1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "No authenticated user found"
+                ])
+        }
+
+        do {
+            //update display name
+            if name != (currentUser.displayName ?? "") {
+                let changeRequest = currentUser.createProfileChangeRequest()
+                changeRequest.displayName = name
+                try await changeRequest.commitChanges()
+            }
+
+            //update email
+            if email != currentUser.email {
+                try await currentUser.sendEmailVerification(
+                    beforeUpdatingEmail: email)
+            }
+
+            //update user document in Firestore
+            guard let userType = self.currentUser?.userType else {
+                throw NSError(
+                    domain: "AuthViewModel", code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "User type not found"]
+                )
+            }
+
+            let updatedUserData: [String: Any] = [
+                "id": currentUser.uid,
+                "fullname": name,
+                "email": email,
+                "userType": userType.rawValue,
+            ]
+
+            try await Firestore.firestore()
+                .collection("users")
+                .document(currentUser.uid)
+                .updateData(updatedUserData)
+
+            //refresh the current user data
+            await fetchUser()
+
+        } catch {
+            print("Failed to update user info: \(error.localizedDescription)")
+            self.alertMessage = Utils.userFriendlyErrorMessage(from: error)
+            self.showAlert = true
+            throw error
+        }
+    }
+
 }

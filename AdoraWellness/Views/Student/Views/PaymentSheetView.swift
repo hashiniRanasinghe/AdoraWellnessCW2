@@ -23,7 +23,8 @@ struct PaymentSheetView: View {
     @State private var alertMessage: String = ""
     @State private var showAlert: Bool = false
     @FocusState private var focusedField: Field?
-    
+
+    //@FocusState can differentiate between multiple text fields
     enum Field {
         case cardNumber, expiryDate, cvv
     }
@@ -128,6 +129,7 @@ struct PaymentSheetView: View {
                                     Spacer()
 
                                     Text(
+                                        //two decimal places
                                         "$\(String(format: "%.2f", session.price))"
                                     )
                                     .font(.system(size: 16, weight: .semibold))
@@ -153,10 +155,14 @@ struct PaymentSheetView: View {
                                         )
                                         .textFieldStyle(PlainTextFieldStyle())
                                         .keyboardType(.numberPad)
-                                        .focused($focusedField, equals: .cardNumber)
+                                        .focused(
+                                            $focusedField, equals: .cardNumber
+                                        )
                                         .tint(.gray)
-                                        .onChange(of: cardNumber) { oldValue, newValue in
-                                            cardNumber = formatCardNumber(newValue)
+                                        .onChange(of: cardNumber) {
+                                            oldValue, newValue in
+                                            cardNumber = formatCardNumber(
+                                                newValue)
                                         }
 
                                         Spacer()
@@ -182,10 +188,15 @@ struct PaymentSheetView: View {
                                                 PlainTextFieldStyle()
                                             )
                                             .keyboardType(.numberPad)
-                                            .focused($focusedField, equals: .expiryDate)
+                                            .focused(
+                                                $focusedField,
+                                                equals: .expiryDate
+                                            )
                                             .tint(.gray)
-                                            .onChange(of: expiryDate) { _, newValue in
-                                                expiryDate = formatExpiryDate(newValue)
+                                            .onChange(of: expiryDate) {
+                                                _, newValue in
+                                                expiryDate = formatExpiryDate(
+                                                    newValue)
                                             }
 
                                             Image(systemName: "calendar")
@@ -202,11 +213,15 @@ struct PaymentSheetView: View {
                                                     PlainTextFieldStyle()
                                                 )
                                                 .keyboardType(.numberPad)
-                                                .focused($focusedField, equals: .cvv)
+                                                .focused(
+                                                    $focusedField, equals: .cvv
+                                                )
                                                 .tint(.gray)
-                                                .onChange(of: cvv) { _, newValue in
+                                                .onChange(of: cvv) {
+                                                    _, newValue in
                                                     if newValue.count > 3 {
-                                                        cvv = String(newValue.prefix(3))
+                                                        cvv = String(
+                                                            newValue.prefix(3))
                                                     }
                                                 }
 
@@ -232,6 +247,7 @@ struct PaymentSheetView: View {
                         Spacer(minLength: 120)
                     }
                 }
+                //dismiss keyboard when click outside
                 .onTapGesture {
                     focusedField = nil
                 }
@@ -239,7 +255,7 @@ struct PaymentSheetView: View {
                 //pay btn
                 VStack(spacing: 0) {
                     Button(action: {
-                        focusedField = nil // dismiss keyboard before payment
+                        focusedField = nil  // dismiss keyboard before payment
                         handlePayment()
                     }) {
                         HStack {
@@ -269,7 +285,7 @@ struct PaymentSheetView: View {
             }
             .background(Color.white)
             .ignoresSafeArea(.all, edges: .bottom)
-            // Add toolbar with Done button when keyboard is active
+            //toolbar with Done btn when keyboard is active
             .toolbar {
                 ToolbarItem(placement: .keyboard) {
                     if focusedField != nil {
@@ -278,7 +294,8 @@ struct PaymentSheetView: View {
                             Button("Done") {
                                 focusedField = nil
                             }
-                            .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
+                            .foregroundColor(
+                                Color(red: 0.4, green: 0.3, blue: 0.8))
                         }
                     }
                 }
@@ -305,7 +322,10 @@ struct PaymentSheetView: View {
     }
 
     private func authenticateWithBiometrics() {
+
+        //object that handles biometrics
         let context = LAContext()
+        //Stores any error if biometrics check fails
         var error: NSError?
 
         //check for face id or touch id
@@ -314,10 +334,11 @@ struct PaymentSheetView: View {
         {
             let reason = "Authenticate to complete your session payment"
 
-            context.evaluatePolicy(
+            context.evaluatePolicy(  //show built-in iOS auth popup
                 .deviceOwnerAuthenticationWithBiometrics,
                 localizedReason: reason
             ) { success, authenticationError in
+                //makes sure UI updates happen on main thread
                 DispatchQueue.main.async {
                     if success {
                         //faceid or touch id success
@@ -360,6 +381,7 @@ struct PaymentSheetView: View {
 
     private func processPayment() {
         Task {
+            //show “processing”
             try? await Task.sleep(nanoseconds: 2_000_000_000)  //2s
 
             //get the user id from the user object
@@ -371,7 +393,9 @@ struct PaymentSheetView: View {
                 }
                 return
             }
-            print("Registering student:", currentUserId, "for session:", session.id)
+            print(
+                "Registering student:", currentUserId, "for session:",
+                session.id)
 
             //register the student for the session
             let success = await sessionViewModel.registerStudentForSession(
@@ -399,13 +423,19 @@ struct PaymentSheetView: View {
             && cvv.count == 3
     }
 
+    //"1234567812345678" -> "1234 5678 1234 5678"
     private func formatCardNumber(_ number: String) -> String {
+
+        //removes all spaces user entered spaces
         let cleanNumber = number.replacingOccurrences(of: " ", with: "")
         let limitedNumber = String(cleanNumber.prefix(16))
 
+        //loops through each character with its index n every 4 characters (except first), adds a space
         var formatted = ""
+        //loop over elements and know their index at the same time
         for (index, character) in limitedNumber.enumerated() {
             if index > 0 && index % 4 == 0 {
+                //every 4 digits - a space is added.
                 formatted += " "
             }
             formatted += String(character)
@@ -414,13 +444,16 @@ struct PaymentSheetView: View {
     }
 
     private func formatExpiryDate(_ date: String) -> String {
+        //remove / and spaces
         let cleanDate = date.replacingOccurrences(of: "/", with: "")
             .replacingOccurrences(of: " ", with: "")
+
+        //only the first 6 digits. "0520261234" -- "052026"
         let limitedDate = String(cleanDate.prefix(6))
 
         if limitedDate.count >= 3 {
-            let month = String(limitedDate.prefix(2))
-            let year = String(limitedDate.suffix(limitedDate.count - 2))
+            let month = String(limitedDate.prefix(2))  //first 2 characters = month
+            let year = String(limitedDate.suffix(limitedDate.count - 2))  //Remainin = year
             return "\(month) / \(year)"
         }
         return limitedDate
