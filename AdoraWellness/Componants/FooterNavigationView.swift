@@ -69,6 +69,7 @@ struct FooterNavigationView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 34)
+                .padding(.top, 15)
             }
             .background(Color.white.opacity(0.8))  // transparent footer
             //nav

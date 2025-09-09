@@ -12,23 +12,38 @@ struct FindInstructorsView: View {
     @StateObject private var viewModel = InstructorViewModel()
     @State private var instructors: [Instructor] = []
     @State private var selectedFilter = "All"
+    @State private var searchText = ""
+    @State private var isSearchVisible = false
+    @State private var isMapVisible = false
 
-    private let filterOptions = ["All", "Yoga", "Pilates", "Map"]
+    private let filterOptions = ["All", "Yoga", "Pilates", "Meditations"]
 
     //computed
     var filteredInstructors: [Instructor] {
-        if selectedFilter == "All" {
-            return instructors
-        } else if selectedFilter == "Map" {
-            return instructors  //return all for map view
-        } else {
-            //filter by specialty - case-insensitive matching
-            return instructors.filter { instructor in
+        var filtered = instructors
+
+        //first filter by selected tab
+        if selectedFilter != "All" {
+            filtered = filtered.filter { instructor in
                 instructor.specialities.contains { speciality in
                     speciality.lowercased() == selectedFilter.lowercased()
                 }
             }
         }
+
+        //filter by search text
+        if !searchText.isEmpty {
+            filtered = filtered.filter { instructor in
+                instructor.fullName.localizedCaseInsensitiveContains(searchText)
+                    || instructor.studioName.localizedCaseInsensitiveContains(
+                        searchText)
+                    || instructor.specialities.contains { speciality in
+                        speciality.localizedCaseInsensitiveContains(searchText)
+                    }
+            }
+        }
+
+        return filtered
     }
 
     var body: some View {
@@ -37,17 +52,10 @@ struct FindInstructorsView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
-                            //                            Button(action: {
-                            //                            }) {
-                            //                                Image(systemName: "arrow.left")
-                            //                                    .font(.title2)
-                            //                                    .foregroundColor(.primary)
-                            //                            }
-
                             Spacer()
 
                             Text(
-                                selectedFilter == "Map"
+                                isMapVisible
                                     ? "Studios Map" : "Find Instructors"
                             )
                             .font(.title3)
@@ -55,58 +63,121 @@ struct FindInstructorsView: View {
                             .foregroundColor(.primary)
 
                             Spacer()
-                            //search
-                            //                            Button(action: {
-                            //                            }) {
-                            //                                Image(systemName: "magnifyingglass")
-                            //                                    .font(.title2)
-                            //                                    .foregroundColor(.primary)
-                            //                            }
+
+                            //search + map icons
+                            //search + map icons
+                            HStack(spacing: 16) {
+                                if !isMapVisible {
+                                    Button(action: {
+                                        withAnimation(.easeInOut(duration: 0.3))
+                                        {
+                                            isSearchVisible.toggle()
+                                            if !isSearchVisible {
+                                                searchText = ""  //clear search when hiding
+                                            }
+                                        }
+                                    }) {
+                                        Image(
+                                            systemName: isSearchVisible
+                                                ? "xmark" : "magnifyingglass"
+                                        )
+                                        .font(.title2)
+                                        .foregroundColor(.primary)
+                                    }
+                                }
+
+                                Button(action: {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        isMapVisible.toggle()
+                                        //clear search when switching to map
+                                        if isMapVisible {
+                                            isSearchVisible = false
+                                            searchText = ""
+                                        }
+                                    }
+                                }) {
+                                    Image(
+                                        systemName: isMapVisible
+                                            ? "list.bullet" : "map"
+                                    )
+                                    .font(.title2)
+                                    .foregroundColor(.primary)
+                                }
+                            }
+
                         }
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
-                        .padding(.bottom, 32)
+                        .padding(.bottom, isSearchVisible ? 8 : 32)
 
-                        //filter tabs
-                        ScrollView(.horizontal, showsIndicators: false) {  //no orizontal scrollbar
-                            HStack(spacing: 32) {
-                                ForEach(filterOptions, id: \.self) { filter in
+                        //search -only when not in map view
+                        if isSearchVisible && !isMapVisible {
+                            HStack {
+                                TextField(
+                                    "Search instructors, studios, or specialties...",
+                                    text: $searchText
+                                )
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .font(.system(size: 16))
+
+                                if !searchText.isEmpty {
                                     Button(action: {
-                                        selectedFilter = filter
+                                        searchText = ""
                                     }) {
-                                        VStack(spacing: 8) {
-                                            HStack(spacing: 4) {
-                                                Text(filter)
-                                                    .font(.headline)
-                                                    .fontWeight(.medium)
-                                            }
-                                            .foregroundColor(
-                                                selectedFilter == filter
-                                                    ? .primary : .secondary
-                                            )
-
-                                            Rectangle()
-                                                .fill(
-                                                    selectedFilter == filter
-                                                        ? Color(
-                                                            red: 0.4,
-                                                            green: 0.3,
-                                                            blue: 0.8)
-                                                        : Color.clear
-                                                )
-                                                .frame(height: 2)
-                                                .frame(
-                                                    width: filter.count > 6
-                                                        ? 80 : 60)
-                                        }
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(.secondary)
                                     }
                                 }
                             }
                             .padding(.horizontal, 24)
+                            .padding(.bottom, 24)
+                            .transition(
+                                .opacity.combined(with: .move(edge: .top)))
                         }
-                        .padding(.bottom, 32)
 
-                        //content based on selected filter
+                        //filter tabs (only show when not in map view)
+                        if !isMapVisible {
+                            ScrollView(.horizontal, showsIndicators: false) {  //no horizontal scrollbar
+                                HStack(spacing: 32) {
+                                    ForEach(filterOptions, id: \.self) {
+                                        filter in
+                                        Button(action: {
+                                            selectedFilter = filter
+                                        }) {
+                                            VStack(spacing: 8) {
+                                                HStack(spacing: 4) {
+                                                    Text(filter)
+                                                        .font(.headline)
+                                                        .fontWeight(.medium)
+                                                }
+                                                .foregroundColor(
+                                                    selectedFilter == filter
+                                                        ? .primary : .secondary
+                                                )
+
+                                                Rectangle()
+                                                    .fill(
+                                                        selectedFilter == filter
+                                                            ? Color(
+                                                                red: 0.4,
+                                                                green: 0.3,
+                                                                blue: 0.8)
+                                                            : Color.clear
+                                                    )
+                                                    .frame(height: 2)
+                                                    .frame(
+                                                        width: filter.count > 6
+                                                            ? 80 : 60)
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 24)
+                            }
+                            .padding(.bottom, 32)
+                        }
+
+                        //content based on view mode
                         if viewModel.isLoading {
                             VStack(spacing: 16) {
                                 ProgressView()
@@ -117,8 +188,8 @@ struct FindInstructorsView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.top, 100)
-                        } else if selectedFilter == "Map" {
-                            //map view
+                        } else if isMapVisible {
+                            //map view - show all instructors on map
                             VStack {
                                 if instructors.isEmpty {
                                     VStack(spacing: 16) {
@@ -140,6 +211,7 @@ struct FindInstructorsView: View {
                                         .frame(height: 500)
                                         .cornerRadius(12)
                                         .padding(.horizontal, 24)
+                                        .padding(.top, 32)
 
                                     //studios summary
                                     let studiosCount = Set(
@@ -171,10 +243,19 @@ struct FindInstructorsView: View {
                                 Image(systemName: "person.slash")
                                     .font(.system(size: 48))
                                     .foregroundColor(.secondary)
-                                Text("No Results Found")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
+                                Text(
+                                    searchText.isEmpty
+                                        ? "No Results Found" : "No Match Found"
+                                )
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                                if !searchText.isEmpty {
+                                    Text("No instructors match '\(searchText)'")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+                                }
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.top, 100)
@@ -209,78 +290,71 @@ struct FindInstructorsView: View {
 
 struct InstructorListCard: View {
     let instructor: Instructor
-    @State private var navigateToDetails = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            HStack(spacing: 16) {
-                //avatar pic with initials
-                AvatarView(initials: instructor.initials, size: 60)
+        NavigationLink(
+            destination: InstructorDetailsView(instructor: instructor)
+        ) {
+            VStack(alignment: .leading, spacing: 20) {
+                HStack(spacing: 16) {
+                    //avatar pic with initials
+                    AvatarView(initials: instructor.initials, size: 60)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(instructor.fullName)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.primary)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(instructor.fullName)
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.primary)
 
-                    Text("Certified Yoga Instructor")
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
+                        Text("Certified Yoga Instructor")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
 
-                    HStack(spacing: 16) {
-                        Text(
-                            "\(instructor.experience) \(instructor.experience == 1 ? "year" : "years")"
-                        )
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
+                        HStack(spacing: 16) {
+                            Text(
+                                "\(instructor.experience) \(instructor.experience == 1 ? "year" : "years")"
+                            )
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
 
-                        //specialities
-                        HStack(spacing: 8) {
-                            ForEach(
-                                instructor.specialities.prefix(2), id: \.self
-                            ) { speciality in
-                                HStack(spacing: 2) {
-                                    Circle()
-                                        .fill(Color.secondary)
-                                        .frame(width: 4, height: 4)
-                                    Text(speciality.capitalized)
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.secondary)
+                            //specialities
+                            HStack(spacing: 8) {
+                                ForEach(
+                                    instructor.specialities.prefix(2),
+                                    id: \.self
+                                ) { speciality in
+                                    HStack(spacing: 2) {
+                                        Circle()
+                                            .fill(Color.secondary)
+                                            .frame(width: 4, height: 4)
+                                        Text(speciality.capitalized)
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.secondary)
+                                    }
                                 }
                             }
                         }
                     }
+
+                    Spacer()
                 }
 
-                Spacer()
-            }
+                //fees only
+                HStack {
+                    Spacer()
 
-            //book now and fees
-            HStack {
-                NavigationLink(
-                    destination: InstructorDetailsView(instructor: instructor)
-                ) {
-                    Text("More Details..")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(Color(red: 0.4, green: 0.3, blue: 0.8))
-                        .cornerRadius(20)
+                    Text(
+                        "From $\(String(format: "%.0f", instructor.hourlyRate))/session"
+                    )
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.primary)
                 }
-
-                Spacer()
-
-                Text(
-                    "From $\(String(format: "%.0f", instructor.hourlyRate))/session"
-                )
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.primary)
             }
+            .padding(20)
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
-        .padding(20)
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -290,7 +364,7 @@ extension Instructor {
     var initials: String {
         let names = fullName.components(separatedBy: " ")
         let initials = names.compactMap { $0.first }.map { String($0) }
-        //joins array elements without spaces.
+        //joins array elements without spaces
         return initials.joined()
     }
 }
