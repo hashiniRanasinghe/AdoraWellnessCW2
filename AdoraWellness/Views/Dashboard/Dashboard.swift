@@ -245,117 +245,203 @@ struct DashboardView: View {
                 .padding(.horizontal, 24)
 
             if let session = randomSession {
-                VStack(spacing: 16) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(session.title)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
+                if let instructor = getInstructorById(session.instructorId) {
+                    NavigationLink(
+                        destination: SessionDetailsView(
+                            session: session, instructor: instructor)
+                    ) {
+                        VStack(spacing: 16) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(session.title)
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.primary)
 
-                            HStack(spacing: 16) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "clock")
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                    Text("\(session.durationMinutes) min")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                    HStack(spacing: 16) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "clock")
+                                                .foregroundColor(.secondary)
+                                                .font(.caption)
+                                            Text(
+                                                "\(session.durationMinutes) min"
+                                            )
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        }
+
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "star.fill")
+                                                .foregroundColor(
+                                                    Color(
+                                                        red: 0.4, green: 0.3,
+                                                        blue: 0.8)
+                                                ).font(.caption)
+                                            Text(session.level)
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                        }
+
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "calendar")
+                                                .foregroundColor(.secondary)
+                                                .font(.caption)
+                                            Text(
+                                                Utils.formatDate(
+                                                    session.date,
+                                                    format: "MMM d")
+                                            )
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        }
+                                    }
                                 }
 
-                                HStack(spacing: 4) {
-                                    Image(systemName: "star.fill")
-                                        .foregroundColor(.orange)
-                                        .font(.caption)
-                                    Text(session.level)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
+                                Spacer()
 
-                                HStack(spacing: 4) {
-                                    Image(systemName: "calendar")
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
+                                VStack(alignment: .trailing, spacing: 4) {
                                     Text(
-                                        Utils.formatDate(
-                                            session.date, format: "MMM d")
+                                        "$\(String(format: "%.0f", session.price))"
                                     )
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+
+                                    Text(session.sessionType)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
                                 }
                             }
+
+                            if !session.description.isEmpty {
+                                Text(session.description)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(2)
+                                    .frame(
+                                        maxWidth: .infinity, alignment: .leading
+                                    )
+                            }
+
+                            HStack(spacing: 8) {
+                                Text(
+                                    "\(session.startTime) - \(session.endTime)"
+                                )
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+
+                                Spacer()
+
+                                Text(
+                                    "\(session.registeredStudents.count) enrolled"
+                                )
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            }
                         }
+                        .padding(20)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(16)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .padding(.horizontal, 24)
+                } else {
+                    //loading state when instructor is not available yet
+                    VStack(spacing: 16) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(session.title)
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
 
-                        Spacer()
+                                HStack(spacing: 16) {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "clock")
+                                            .foregroundColor(.secondary)
+                                            .font(.caption)
+                                        Text("\(session.durationMinutes) min")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    }
 
-                        VStack(alignment: .trailing, spacing: 4) {
-                            Text("$\(String(format: "%.0f", session.price))")
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "star.fill")
+                                            .foregroundColor(.orange)
+                                            .font(.caption)
+                                        Text(session.level)
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    }
+
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "calendar")
+                                            .foregroundColor(.secondary)
+                                            .font(.caption)
+                                        Text(
+                                            Utils.formatDate(
+                                                session.date, format: "MMM d")
+                                        )
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    }
+                                }
+                            }
+
+                            Spacer()
+
+                            VStack(alignment: .trailing, spacing: 4) {
+                                Text(
+                                    "$\(String(format: "%.0f", session.price))"
+                                )
                                 .font(.title3)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primary)
 
-                            Text(session.sessionType)
+                                Text(session.sessionType)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+
+                        if !session.description.isEmpty {
+                            Text(session.description)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .lineLimit(2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+
+                        HStack(spacing: 8) {
+                            Text("\(session.startTime) - \(session.endTime)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+
+                            Spacer()
+
+                            Text("\(session.registeredStudents.count) enrolled")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-                    }
 
-                    if !session.description.isEmpty {
-                        Text(session.description)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .lineLimit(2)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-
-                    HStack(spacing: 8) {
-                        Text("\(session.startTime) - \(session.endTime)")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-
-                        Spacer()
-
-                        Text("\(session.registeredStudents.count) enrolled")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-
-                    //book session btn
-                    if let instructor = getInstructorById(session.instructorId)
-                    {
-                        NavigationLink(
-                            destination: SessionDetailsView(
-                                session: session, instructor: instructor)
-                        ) {
-                            Text("Book This Session")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 50)
-                                .background(
-                                    Color(red: 0.4, green: 0.3, blue: 0.8)
-                                )
-                                .cornerRadius(25)
+                        //loading instructor
+                        HStack {
+                            Spacer()
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                    .scaleEffect(0.7)
+                                Text("Loading instructor...")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
                         }
-                    } else {
-                        Button(action: {}) {
-                            Text("Loading...")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 50)
-                                .background(Color.gray)
-                                .cornerRadius(25)
-                        }
-                        .disabled(true)
                     }
+                    .padding(20)
+                    .background(Color(.systemGray5))
+                    .cornerRadius(16)
+                    .padding(.horizontal, 24)
                 }
-                .padding(20)
-                .background(Color(.systemGray6))
-                .cornerRadius(16)
-                .padding(.horizontal, 24)
             } else {
                 //empty when no sessions
                 VStack(spacing: 12) {

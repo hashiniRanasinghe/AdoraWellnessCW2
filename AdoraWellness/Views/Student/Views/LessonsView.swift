@@ -14,7 +14,7 @@ struct LessonsView: View {
     @State private var selectedFilter = "All"
 
     private let filterOptions = [
-        "All", "Yoga", "Pilates", "Meditation", "Beginner",
+        "All", "Yoga", "Pilates", "Meditation",
     ]
 
     var filteredLessons: [Lesson] {
@@ -123,7 +123,6 @@ struct LessonsView: View {
                                         .padding(.horizontal, 24)
                                 }
                             }
-                            .padding(.bottom, 100)
                         }
                     }
                 }
@@ -169,11 +168,18 @@ struct LessonCard: View {
                     Text(lesson.title)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.primary)
+                    //level
+                    HStack(spacing: 6) {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(
+                                Color(red: 0.4, green: 0.3, blue: 0.8)
+                            ).font(.caption)
 
-                    Text(lesson.subtitle)
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+                        Text(lesson.level)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+
                 }
 
                 Spacer()
@@ -201,38 +207,27 @@ struct LessonCard: View {
                 }
             }
 
-            //action btns
-            HStack(spacing: 12) {
-                Button(action: {
-                    showVideoPlayer = true
-                }) {
-                    Text("Start")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(Color(red: 0.4, green: 0.3, blue: 0.8))
-                        .cornerRadius(20)
-                }
-
-                Spacer()
-
-                //level
-                HStack(spacing: 6) {
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 14))
-                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
-
-                    Text(lesson.level)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.primary)
-                }
-            }
+            //level
+            //            HStack {
+            //                Spacer()
+            //                HStack(spacing: 6) {
+            //                    Image(systemName: "star.fill")
+            //                        .font(.system(size: 14))
+            //                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
+            //
+            //                    Text(lesson.level)
+            //                        .font(.system(size: 14, weight: .medium))
+            //                        .foregroundColor(.primary)
+            //                }
+            //            }
         }
         .padding(20)
         .background(Color(.systemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .onTapGesture {
+            showVideoPlayer = true
+        }
         .sheet(isPresented: $showVideoPlayer) {
             VideoPlayerView(lesson: lesson)
         }

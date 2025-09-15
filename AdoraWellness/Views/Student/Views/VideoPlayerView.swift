@@ -292,6 +292,7 @@ class VideoPlayerViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
+    //load a video using a URL
     func loadVideo(from urlString: String) {
         guard !urlString.isEmpty else {
             hasError = true
@@ -299,8 +300,9 @@ class VideoPlayerViewModel: ObservableObject {
             return
         }
 
-        print("Loading video from URL: \(urlString)")
+        print("loading video from URL: \(urlString)")
 
+        //convert string to URL
         guard let videoURL = URL(string: urlString), videoURL.scheme != nil
         else {
             hasError = true
@@ -312,8 +314,9 @@ class VideoPlayerViewModel: ObservableObject {
         hasError = false
         errorMessage = ""
         cleanup()
-
+        //check if the video file is online or not
         if urlString.hasPrefix("http") {
+            //call the helper to validate the url and return true or false
             testURL(videoURL) { [weak self] success in
                 DispatchQueue.main.async {
                     if success {
