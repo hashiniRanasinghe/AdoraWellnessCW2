@@ -148,12 +148,12 @@ struct InstructorScheduleView: View {
                                 ForEach(filteredSessions) { session in
                                     InstructorSessionCard(
                                         session: session,
-                                        iconName: sessionIcons[session.id],
-                                        onViewTapped: {
-                                            selectedSession = session
-                                            showingSessionDetails = true
-                                        }
+                                        iconName: sessionIcons[session.id]
                                     )
+                                    .onTapGesture {
+                                        selectedSession = session
+                                        showingSessionDetails = true
+                                    }
                                     .padding(.horizontal, 24)
                                 }
                             }
@@ -223,7 +223,6 @@ struct InstructorScheduleView: View {
 struct InstructorSessionCard: View {
     let session: Session
     let iconName: String?
-    let onViewTapped: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -284,38 +283,12 @@ struct InstructorSessionCard: View {
 
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")
-                        .foregroundColor(.orange)
+                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
                         .font(.caption)
                     Text(session.level)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-            }
-
-            //action button
-            HStack(spacing: 12) {
-                Button(action: onViewTapped) {
-                    Text("View")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(Color(red: 0.4, green: 0.3, blue: 0.8))
-                        .cornerRadius(20)
-                }
-
-                Spacer()
-
-                //session type
-                Text(session.sessionType)
-                    .font(.caption)
-                    .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
-                    .background(
-                        Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
-                    )
-                    .cornerRadius(12)
             }
         }
         .padding(20)
