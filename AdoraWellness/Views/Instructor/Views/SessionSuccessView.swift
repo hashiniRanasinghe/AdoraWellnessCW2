@@ -127,7 +127,7 @@ struct SessionSuccessView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 34)
                 }
-                .background(Color.white)
+                .background(Color(UIColor.systemBackground))
                 .ignoresSafeArea(.all, edges: .bottom)
             }
         }

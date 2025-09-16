@@ -59,7 +59,7 @@ struct DashboardView: View {
 
                     FooterNavigationView(selectedTab: 0, userRole: .student)
                 }
-                .background(Color.white)
+                .background(Color(UIColor.systemBackground))
                 .ignoresSafeArea(.all, edges: .bottom)
             }
             .navigationBarHidden(true)

@@ -170,7 +170,7 @@ struct SignUpView: View {
 
                 }
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
         }
         .navigationBarHidden(true)
     }

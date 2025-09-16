@@ -13,7 +13,7 @@ struct OnboardingScreen1: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color.white.ignoresSafeArea()
+                Color(UIColor.systemBackground).ignoresSafeArea()
 
                 VStack(spacing: 40) {
                     Spacer()
@@ -58,7 +58,7 @@ struct OnboardingScreen1: View {
                         }) {
                             Text("Continue")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
                                 .background(

@@ -114,7 +114,7 @@ struct CheckEmailView: View {
                         .padding(.bottom, 8)
                 }
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
             .navigationBarBackButtonHidden(true)
         }
         .navigationBarHidden(true)

@@ -174,7 +174,7 @@ struct LoginView: View {
                         .padding(.bottom, 8)
                 }
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
             .navigationBarBackButtonHidden(true)
 
         }
@@ -199,4 +199,3 @@ struct LoginView_Previews: PreviewProvider {
 
 //https://adorawellnessioscw2.firebaseapp.com/__/auth/handler
 //bf3Y5nraJ3x9yte - password of the ranasinghehashinih@gmail.com
-

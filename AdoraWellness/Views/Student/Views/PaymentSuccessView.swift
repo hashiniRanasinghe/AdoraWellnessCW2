@@ -105,7 +105,7 @@ struct PaymentSuccessView: View {
                 .padding(.bottom, 34)
             }
 
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
             .ignoresSafeArea(.all, edges: .bottom)
         }
     }

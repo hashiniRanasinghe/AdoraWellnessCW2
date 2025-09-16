@@ -12,7 +12,7 @@ struct OnboardingScreen2: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color(UIColor.systemBackground).ignoresSafeArea()
             VStack(alignment: .leading, spacing: 0) {
 
                 HStack {
@@ -47,10 +47,15 @@ struct OnboardingScreen2: View {
                                 Text("I want to teach & guide")
                                     .font(.title2)
                                     .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
 
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 20)
-                                        .fill(Color.white)
+                                        .fill(
+                                            Color(
+                                                UIColor
+                                                    .secondarySystemBackground)
+                                        )
                                         .frame(height: 150)
 
                                     if let logoImage = UIImage(
@@ -69,35 +74,35 @@ struct OnboardingScreen2: View {
                                 VStack(alignment: .leading, spacing: 8) {
                                     HStack {
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
+                                            .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
                                         Text("Create your instructor profile")
                                             .font(.subheadline)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.secondary)
                                     }
                                     HStack {
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
+                                            .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
                                         Text("Schedule live sessions")
                                             .font(.subheadline)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.secondary)
                                     }
                                     HStack {
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
+                                            .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
                                         Text("Build your student community")
                                             .font(.subheadline)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.secondary)
                                     }
                                     HStack {
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
+                                            .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
                                         Text("Earn from your expertise")
                                             .font(.subheadline)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.secondary)
                                     }
                                 }
                                 .padding(.horizontal, 40)
@@ -125,10 +130,15 @@ struct OnboardingScreen2: View {
                                 Text("I want to learn & practice")
                                     .font(.title2)
                                     .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
 
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 20)
-                                        .fill(Color.white)
+                                        .fill(
+                                            Color(
+                                                UIColor
+                                                    .secondarySystemBackground)
+                                        )
                                         .frame(height: 150)
 
                                     if let logoImage = UIImage(
@@ -147,35 +157,35 @@ struct OnboardingScreen2: View {
                                 VStack(alignment: .leading, spacing: 8) {
                                     HStack {
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
+                                            .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
                                         Text("AI-guided solo sessions")
                                             .font(.subheadline)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.secondary)
                                     }
                                     HStack {
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
+                                            .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
                                         Text("Find expert instructors")
                                             .font(.subheadline)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.secondary)
                                     }
                                     HStack {
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
+                                            .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
                                         Text("Track my progress")
                                             .font(.subheadline)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.secondary)
                                     }
                                     HStack {
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
+                                            .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
                                         Text("Join live classes")
                                             .font(.subheadline)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.secondary)
                                     }
                                 }
                                 .padding(.horizontal, 40)
@@ -206,7 +216,6 @@ struct OnboardingScreen2: View {
         .navigationBarBackButtonHidden(true)
     }
 }
-
 #Preview {
     OnboardingScreen2()
 }

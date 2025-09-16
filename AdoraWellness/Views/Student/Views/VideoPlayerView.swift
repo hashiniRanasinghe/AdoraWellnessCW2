@@ -17,10 +17,11 @@ struct VideoPlayerView: View {
     @State private var isFullScreen = false
 
     var body: some View {
-        GeometryReader { geometry in
+        //swiftUI container that gives info abt its size and position
+        GeometryReader { geometry in  //calculate the height of the video player dynamically
             ZStack {
                 Color(.systemBackground)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea()  //makes the background fill the entire screen,
 
                 VStack(spacing: 0) {
                     headerView
@@ -303,7 +304,7 @@ class VideoPlayerViewModel: ObservableObject {
         print("loading video from URL: \(urlString)")
 
         //convert string to URL
-        guard let videoURL = URL(string: urlString), videoURL.scheme != nil
+        guard let videoURL = URL(string: urlString), videoURL.scheme != nil  //ensures the URL has a scheme like http, https, file
         else {
             hasError = true
             errorMessage = "Invalid video URL format"
@@ -320,7 +321,7 @@ class VideoPlayerViewModel: ObservableObject {
             testURL(videoURL) { [weak self] success in
                 DispatchQueue.main.async {
                     if success {
-                        self?.configureAudioSession()
+                        self?.configureAudioSession()  //configure AVAudioSession
                         self?.createPlayer(with: videoURL)
                     } else {
                         self?.hasError = true
@@ -330,6 +331,7 @@ class VideoPlayerViewModel: ObservableObject {
                 }
             }
         } else {
+            //if the URL is not remote, skip the network test and create a player immediately
             configureAudioSession()
             createPlayer(with: videoURL)
         }
@@ -347,7 +349,8 @@ class VideoPlayerViewModel: ObservableObject {
     }
 
     private func createPlayer(with url: URL) {
-        let asset = AVURLAsset(url: url)
+        let asset = AVURLAsset(url: url)  //AVFoundation representation of a media resource
+        //fetch information about these keys- playable and tracks
         asset.loadValuesAsynchronously(forKeys: ["playable", "tracks"]) {
             [weak self] in
             DispatchQueue.main.async {
@@ -367,7 +370,9 @@ class VideoPlayerViewModel: ObservableObject {
                     return
                 }
 
+                //continue if both the playable info and the tracks info loaded successfully
                 if playableStatus == .loaded && tracksStatus == .loaded {
+                    //if the file is not playable OR there are no video tracks, then error
                     if !asset.isPlayable
                         || asset.tracks(withMediaType: .video).isEmpty
                     {
@@ -382,7 +387,9 @@ class VideoPlayerViewModel: ObservableObject {
                     self.player = AVPlayer(playerItem: playerItem)
 
                     playerItem.publisher(for: \.status)
+                        //video events can come from bg threads but UI updates must happen on main thread.
                         .receive(on: DispatchQueue.main)
+                        //handle the status updates
                         .sink { [weak self] status in
                             switch status {
                             case .readyToPlay:
@@ -398,6 +405,7 @@ class VideoPlayerViewModel: ObservableObject {
                             default: break
                             }
                         }
+                        //keeps the subscription alive as long as the view model exist
                         .store(in: &self.cancellables)
 
                 } else {
@@ -409,10 +417,13 @@ class VideoPlayerViewModel: ObservableObject {
         }
     }
 
+    //before playing video, configure the iPhone’s audio system (AVAudioSession)
     private func configureAudioSession() {
         do {
+            //gives the global audio session on iOS - control how app interacts with other sounds on the device
             try AVAudioSession.sharedInstance().setCategory(
-                .playback, mode: .moviePlayback)
+                //media playback,gnores the mute switch sts and doesn’t mix with other apps sounds
+                .playback, mode: .moviePlayback)  //sub-mode optimized for watching video.
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Audio session error: \(error.localizedDescription)")
@@ -422,9 +433,10 @@ class VideoPlayerViewModel: ObservableObject {
     func cleanup() {
         player?.pause()
         player = nil
+        //cancel all Combine subscriptions
         cancellables.removeAll()
         try? AVAudioSession.sharedInstance().setActive(
-            false, options: .notifyOthersOnDeactivation)
+            false, options: .notifyOthersOnDeactivation)  //deactivates audio session and tells iOS to give audio back to other apps
     }
 }
 

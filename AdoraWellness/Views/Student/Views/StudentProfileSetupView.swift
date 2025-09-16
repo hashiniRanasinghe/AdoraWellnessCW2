@@ -39,7 +39,7 @@ struct StudentProfileSetupView: View {
                     .padding(.bottom, 100)
             }
         }
-        .background(Color(.systemBackground))
+        .background(Color(UIColor.systemBackground))
         .navigationBarHidden(true)
         .navigationDestination(isPresented: $navigateToDashboard) {
             DashboardView()

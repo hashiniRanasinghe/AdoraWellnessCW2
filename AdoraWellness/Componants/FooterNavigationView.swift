@@ -71,7 +71,7 @@ struct FooterNavigationView: View {
                 .padding(.bottom, 34)
                 .padding(.top, 15)
             }
-            .background(Color.white.opacity(0.8))  // transparent footer
+            .background(Color(UIColor.systemBackground))  
             //nav
             .navigationDestination(isPresented: $navigateToHome) {
                 if userRole == .student {

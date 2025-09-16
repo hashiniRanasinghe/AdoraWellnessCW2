@@ -170,7 +170,7 @@ struct EditProfileView: View {
                     .padding(.bottom, 34)
                 }
             }
-            .background(Color(.systemBackground))
+            .background(Color(UIColor.systemBackground))
             .navigationBarHidden(true)
             .onAppear {
                 loadCurrentUserData()

@@ -164,7 +164,7 @@ struct InstructorScheduleView: View {
 
                 FooterNavigationView(selectedTab: 1, userRole: .instructor)
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
             .ignoresSafeArea(.all, edges: .bottom)
         }
         .navigationBarHidden(true)
@@ -230,12 +230,13 @@ struct InstructorSessionCard: View {
                 //session icon
                 if let iconName = iconName {
                     Image(systemName: iconName)
-                        .font(.system(size: 28, weight: .semibold))
-                        .foregroundColor(.gray)
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.8))
                         .frame(width: 60, height: 60)
-                        .background(Color.white)
+                        .background(
+                            Color(red: 0.4, green: 0.3, blue: 0.8).opacity(0.1)
+                        )
                         .clipShape(Circle())
-
                 }
 
                 VStack(alignment: .leading, spacing: 4) {

@@ -97,7 +97,7 @@ struct ResetPasswordView: View {
                         .padding(.bottom, 8)
                 }
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
 
             //watch viewModel.isSuccess
             .onChange(of: viewModel.isSuccess) {

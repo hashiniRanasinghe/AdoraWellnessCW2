@@ -283,7 +283,7 @@ struct PaymentSheetView: View {
                     .padding(.bottom, 34)
                 }
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
             .ignoresSafeArea(.all, edges: .bottom)
             //toolbar with Done btn when keyboard is active
             .toolbar {
