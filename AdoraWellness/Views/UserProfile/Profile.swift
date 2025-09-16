@@ -76,7 +76,7 @@ struct UserProfileView: View {
                                                 .foregroundColor(.secondary)
                                         }
                                         .padding(20)
-                                        .background(Color.white)
+                                        .background(Color(UIColor.systemBackground))
                                         .cornerRadius(16)
                                         .shadow(
                                             color: .black.opacity(0.05),
@@ -107,7 +107,7 @@ struct UserProfileView: View {
                                                 .foregroundColor(.secondary)
                                         }
                                         .padding(20)
-                                        .background(Color.white)
+                                        .background(Color(UIColor.systemBackground))
                                         .cornerRadius(16)
                                         .shadow(
                                             color: .black.opacity(0.05),
@@ -135,7 +135,7 @@ struct UserProfileView: View {
                                                 .foregroundColor(.secondary)
                                         }
                                         .padding(20)
-                                        .background(Color.white)
+                                        .background(Color(UIColor.systemBackground))
                                         .cornerRadius(16)
                                         .shadow(
                                             color: .black.opacity(0.05),
@@ -153,7 +153,7 @@ struct UserProfileView: View {
                         userRole: user.userType
                     )
                 }
-                .background(Color.white)
+                .background(Color(UIColor.systemBackground))
                 .navigationBarBackButtonHidden(true)
                 .ignoresSafeArea(.all, edges: .bottom)
                 .navigationBarTitleDisplayMode(.inline)

@@ -262,7 +262,7 @@ struct FindInstructorsView: View {
                 FooterNavigationView(selectedTab: 1, userRole: .student)
 
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
             .ignoresSafeArea(.all, edges: .bottom)
         }
         .navigationBarHidden(true)

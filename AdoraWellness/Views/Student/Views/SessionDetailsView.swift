@@ -135,7 +135,7 @@ struct SessionDetailsView: View {
                         .padding(.bottom, 34)
                 }
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
             .ignoresSafeArea(.all, edges: .bottom)
         }
         .navigationBarHidden(true)

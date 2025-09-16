@@ -394,7 +394,7 @@ struct InstructorProfileSetupView: View {
                 if viewModel.isLoading {
                     ProgressView()
                         .scaleEffect(0.8)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                 } else {
                     Text("Confirmation")
                         .font(.system(size: 18, weight: .semibold))

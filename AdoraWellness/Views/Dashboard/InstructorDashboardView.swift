@@ -51,7 +51,7 @@ struct InstructorDashboardView: View {
 
                     FooterNavigationView(selectedTab: 0, userRole: .instructor)
                 }
-                .background(Color.white)
+                .background(Color(UIColor.systemBackground))
                 .ignoresSafeArea(.all, edges: .bottom)
             }
             .navigationBarHidden(true)

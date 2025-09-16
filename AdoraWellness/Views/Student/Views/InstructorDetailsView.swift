@@ -286,7 +286,7 @@ struct InstructorDetailsView: View {
                 }
 
             }
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
             .ignoresSafeArea(.all, edges: .bottom)
         }
         .navigationBarHidden(true)

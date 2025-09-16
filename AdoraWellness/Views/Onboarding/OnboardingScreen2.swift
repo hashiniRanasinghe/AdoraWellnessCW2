@@ -185,7 +185,7 @@ struct OnboardingScreen2: View {
                                 ) {
                                     Text("Continue as Student")
                                         .font(.headline)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.primary)
                                         .frame(maxWidth: .infinity)
                                         .frame(height: 50)
                                         .background(
