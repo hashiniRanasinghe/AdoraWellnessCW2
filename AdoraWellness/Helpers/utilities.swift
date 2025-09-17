@@ -81,6 +81,7 @@ struct Utils {
         return formatter.string(from: date)
     }
 
+    //converts 24-hour time string to 12-hour AM/PM
     static func formatTime(_ time: String) -> String {
         let components = time.split(separator: ":")
         guard components.count >= 2,
@@ -104,6 +105,7 @@ struct Utils {
             "Gentle, slow-paced with basic postures Vinyasa - Flow-style linking breath with movement Ashtanga - Athletic, fast-paced with set sequences Yin"
     }
 
+    //2025-09-17 14:30
     static func combineDateAndTime(date: Date, timeString: String) -> Date {
         let calendar = Calendar.current
         let timeComponents = timeString.split(separator: ":").compactMap {
