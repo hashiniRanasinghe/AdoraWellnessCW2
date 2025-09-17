@@ -755,6 +755,7 @@ struct DashboardView: View {
             //sessions hasnt started
             let sessionDateTime = Utils.combineDateAndTime(
                 date: session.date, timeString: session.startTime)
+            //checks if the session is in the future
             let isFuture = sessionDateTime > Date()
 
             //user havnt booke
@@ -794,7 +795,7 @@ struct DashboardView: View {
             return isRegistered && isUpcoming
         }
 
-        //show closest sessions first
+        //show closest sessions first - sort sessions by date
         enrolledSessions = userSessions.sorted { session1, session2 in
             let date1 = Utils.combineDateAndTime(
                 date: session1.date, timeString: session1.startTime)
@@ -806,13 +807,16 @@ struct DashboardView: View {
 
     //instructor info
     private func getInstructorById(_ instructorId: String) -> Instructor? {
+        //finds the first instructor whose id matches instructorId
         return instructors.first { $0.id == instructorId }
     }
 
     // calculate bmi
     private func calculateBMI(weight: Double, height: Double) -> Double {
         if height > 0 {
-            let heightInMeters = height / 100  //cm to m
+            //height in meters=height in cm/100
+            let heightInMeters = height / 100
+            //BMI = weight​/heightInMeters2
             return weight / (heightInMeters * heightInMeters)
         }
         return 0
