@@ -10,12 +10,16 @@ import SwiftUI
 struct InstructorDetailsView: View {
     let instructor: Instructor
     @StateObject private var viewModel = SessionViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
+
     @State private var allSessions: [Session] = []
     @State private var filteredSessions: [Session] = []
     @State private var selectedDate: Date? = nil
     @State private var showDatePicker = false
     @State private var isDateFilterActive = false
     @Environment(\.dismiss) private var dismiss
+
+    @State private var studentRegistrations: [String: Bool] = [:]
 
     var body: some View {
         NavigationStack {
@@ -275,7 +279,11 @@ struct InstructorDetailsView: View {
                                     ForEach(filteredSessions) { session in
                                         SessionCard(
                                             session: session,
-                                            instructor: instructor)
+                                            instructor: instructor,
+                                            isAlreadyBooked:
+                                                studentRegistrations[session.id]
+                                                ?? false
+                                        )
                                     }
                                 }
                             }
@@ -298,6 +306,7 @@ struct InstructorDetailsView: View {
     private func loadSessions() async {
         allSessions = await viewModel.fetchSessionsByInstructor(
             instructorId: instructor.id)
+        await checkStudentRegistrations()
         filterSessionsByDate()
     }
 
@@ -324,6 +333,18 @@ struct InstructorDetailsView: View {
     private func getDefaultBio() -> String {
         return
             "\(instructor.firstName) was born and raised with a passion for wellness and fitness. With \(instructor.experience) years of experience in \(instructor.specialities.joined(separator: ", ")), \(instructor.firstName) brings expertise and dedication to every session."
+    }
+    private func checkStudentRegistrations() async {
+        guard let currentUser = authViewModel.currentUser else { return }
+        let currentStudentId = currentUser.id
+
+        for session in allSessions {
+            let isRegistered = await viewModel.isStudentRegistered(
+                sessionId: session.id,
+                studentId: currentStudentId
+            )
+            studentRegistrations[session.id] = isRegistered
+        }
     }
 
 }
@@ -459,17 +480,27 @@ struct SessionCard: View {
 
                 Spacer()
 
-                NavigationLink(
-                    destination: SessionDetailsView(
-                        session: session, instructor: instructor)
-                ) {
-                    Text("Book Session")
+                if isAlreadyBooked {
+                    Text("Already Booked")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(.secondary)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
-                        .background(Color(red: 0.4, green: 0.3, blue: 0.8))
+                        .background(Color(.systemGray4))
                         .cornerRadius(16)
+                } else {
+                    NavigationLink(
+                        destination: SessionDetailsView(
+                            session: session, instructor: instructor)
+                    ) {
+                        Text("Book Session")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 8)
+                            .background(Color(red: 0.4, green: 0.3, blue: 0.8))
+                            .cornerRadius(16)
+                    }
                 }
             }
         }
