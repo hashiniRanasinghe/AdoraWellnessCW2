@@ -96,6 +96,7 @@ struct CheckEmailView: View {
                     } message: {
                         Text(viewModel.alertMessage ?? "Something went wrong")
                     }
+                    Spacer()
 
                     NavigationLink(destination: LoginView()) {
                         Text("Back To Login")
