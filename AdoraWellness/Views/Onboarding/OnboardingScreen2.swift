@@ -159,7 +159,7 @@ struct OnboardingScreen2: View {
                                         Circle()
                                             .fill(Color.secondary.opacity(0.5))
                                             .frame(width: 6, height: 6)
-                                        Text("AI-guided solo sessions")
+                                        Text("Solo sessions")
                                             .font(.subheadline)
                                             .foregroundColor(.secondary)
                                     }
