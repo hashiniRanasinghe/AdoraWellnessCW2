@@ -428,6 +428,7 @@ struct DatePickerSheet: View {
 struct SessionCard: View {
     let session: Session
     let instructor: Instructor
+    let isAlreadyBooked: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
