@@ -6,6 +6,18 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5300402F2E50BDF800BB4167 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5300402D2E50BDF800BB4167 /* EventKitUI.framework */; };
+		530040302E50BDF800BB4167 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5300402E2E50BDF800BB4167 /* EventKit.framework */; };
+		5397B6942E477894002DDCAF /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 5397B6932E477894002DDCAF /* GoogleSignIn */; };
+		5397B6962E477894002DDCAF /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5397B6952E477894002DDCAF /* GoogleSignInSwift */; };
+		53D65FC62E52122000BFCE39 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D65FC52E52122000BFCE39 /* CoreData.framework */; };
+		53D65FD12E52141100BFCE39 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 53D65FCF2E52141100BFCE39 /* DataModel.xcdatamodeld */; };
+		53E27F662E4450C500E90879 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F652E4450C500E90879 /* FirebaseAuth */; };
+		53E27F682E4450C500E90879 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F672E4450C500E90879 /* FirebaseFirestore */; };
+		53E27F6A2E4450C500E90879 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 53E27F692E4450C500E90879 /* FirebaseStorage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		53298D732E42139600B30820 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,14 +36,31 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5300402D2E50BDF800BB4167 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
+		5300402E2E50BDF800BB4167 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		53298D622E42138D00B30820 /* AdoraWellness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdoraWellness.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53298D722E42139600B30820 /* AdoraWellnessTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdoraWellnessTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		53298D7C2E42139600B30820 /* AdoraWellnessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdoraWellnessUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		53D65FC52E52122000BFCE39 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		53D65FD02E52141100BFCE39 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5397B6982E477925002DDCAF /* Exceptions for "AdoraWellness" folder in "AdoraWellness" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 53298D612E42138D00B30820 /* AdoraWellness */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		53298D642E42138D00B30820 /* AdoraWellness */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5397B6982E477925002DDCAF /* Exceptions for "AdoraWellness" folder in "AdoraWellness" target */,
+			);
 			path = AdoraWellness;
 			sourceTree = "<group>";
 		};
@@ -52,6 +81,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5300402F2E50BDF800BB4167 /* EventKitUI.framework in Frameworks */,
+				53D65FC62E52122000BFCE39 /* CoreData.framework in Frameworks */,
+				530040302E50BDF800BB4167 /* EventKit.framework in Frameworks */,
+				5397B6962E477894002DDCAF /* GoogleSignInSwift in Frameworks */,
+				53E27F662E4450C500E90879 /* FirebaseAuth in Frameworks */,
+				5397B6942E477894002DDCAF /* GoogleSignIn in Frameworks */,
+				53E27F682E4450C500E90879 /* FirebaseFirestore in Frameworks */,
+				53E27F6A2E4450C500E90879 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +109,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5300402C2E50BDF700BB4167 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				53D65FC52E52122000BFCE39 /* CoreData.framework */,
+				5300402E2E50BDF800BB4167 /* EventKit.framework */,
+				5300402D2E50BDF800BB4167 /* EventKitUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		53298D592E42138D00B30820 = {
 			isa = PBXGroup;
 			children = (
+				53D65FCF2E52141100BFCE39 /* DataModel.xcdatamodeld */,
 				53298D642E42138D00B30820 /* AdoraWellness */,
 				53298D752E42139600B30820 /* AdoraWellnessTests */,
 				53298D7F2E42139600B30820 /* AdoraWellnessUITests */,
+				5300402C2E50BDF700BB4167 /* Frameworks */,
 				53298D632E42138D00B30820 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,6 +161,11 @@
 			);
 			name = AdoraWellness;
 			packageProductDependencies = (
+				53E27F652E4450C500E90879 /* FirebaseAuth */,
+				53E27F672E4450C500E90879 /* FirebaseFirestore */,
+				53E27F692E4450C500E90879 /* FirebaseStorage */,
+				5397B6932E477894002DDCAF /* GoogleSignIn */,
+				5397B6952E477894002DDCAF /* GoogleSignInSwift */,
 			);
 			productName = AdoraWellness;
 			productReference = 53298D622E42138D00B30820 /* AdoraWellness.app */;
@@ -195,6 +249,10 @@
 			);
 			mainGroup = 53298D592E42138D00B30820;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				53E27F642E4450C500E90879 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				5397B6922E477893002DDCAF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 53298D632E42138D00B30820 /* Products */;
 			projectDirPath = "";
@@ -236,6 +294,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53D65FD12E52141100BFCE39 /* DataModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,8 +455,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"AdoraWellness/Preview Content\"";
+				DEVELOPMENT_TEAM = VR5XBCBD6G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AdoraWellness/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSRemindersUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -424,8 +491,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"AdoraWellness/Preview Content\"";
+				DEVELOPMENT_TEAM = VR5XBCBD6G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AdoraWellness/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSRemindersUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -552,6 +627,66 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5397B6922E477893002DDCAF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+		53E27F642E4450C500E90879 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5397B6932E477894002DDCAF /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5397B6922E477893002DDCAF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		5397B6952E477894002DDCAF /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5397B6922E477893002DDCAF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		53E27F652E4450C500E90879 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53E27F642E4450C500E90879 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		53E27F672E4450C500E90879 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53E27F642E4450C500E90879 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		53E27F692E4450C500E90879 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53E27F642E4450C500E90879 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		53D65FCF2E52141100BFCE39 /* DataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				53D65FD02E52141100BFCE39 /* DataModel.xcdatamodel */,
+			);
+			currentVersion = 53D65FD02E52141100BFCE39 /* DataModel.xcdatamodel */;
+			path = DataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 53298D5A2E42138D00B30820 /* Project object */;
 }
