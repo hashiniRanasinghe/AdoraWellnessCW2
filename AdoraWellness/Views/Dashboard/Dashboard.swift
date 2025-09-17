@@ -862,29 +862,29 @@ struct EnrolledSessionCard: View {
 
             // action button or session details on the right
             VStack(alignment: .trailing, spacing: 4) {
-                if isSessionToday(session) {
-                    Button(action: {
-                        //
-                    }) {
-                        Text("Join")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.green)
-                            .cornerRadius(16)
-                    }
-                } else {
-                    Text(session.sessionType)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                //                if isSessionToday(session) {
+                //                    Button(action: {
+                //                        //
+                //                    }) {
+                //                        Text("Join")
+                //                            .font(.subheadline)
+                //                            .fontWeight(.semibold)
+                //                            .foregroundColor(.white)
+                //                            .padding(.horizontal, 16)
+                //                            .padding(.vertical, 8)
+                //                            .background(Color.green)
+                //                            .cornerRadius(16)
+                //                    }
+                //                } else {
+                Text(session.sessionType)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
 
-                    Text("$\(String(format: "%.0f", session.price))")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                }
+                Text("$\(String(format: "%.0f", session.price))")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                //                }
             }
         }
         .padding(16)
